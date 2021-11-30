@@ -2,10 +2,18 @@ import { readFileSync } from 'fs'
 
 process.chdir(require.main.path)
 
-export const inputLines = (splitWith: string | RegExp = /\n/) => readFileSync('input.txt').toString().split(splitWith)
+export const readInput = () => readFileSync('input.txt').toString()
 
 export const fillArray = <T>(n: number, v: T = null): T[] => Array.from(Array(n)).map(_ => v)
-export const range = (n1: number, n2?: number) => (n2 == undefined ? fillArray(n1).map((_, i) => i) : fillArray(n2 - n1).map((_, i) => i + n1))
+export const range = (l: number) => fillArray(l).map((_, i) => i)
+export const loopUntil = <T>(fn: (i: number) => T | null): T => {
+  let result: T
+  let i = 0
+  do {
+    result = fn(i++)
+  } while (result == null)
+  return result
+}
 
 type CF<A, B> = (a: A) => B
 export function $<A>(v: A): A
@@ -37,6 +45,10 @@ export const map =
   <T, U>(fn: MapFn<T, U>) =>
   (arr: T[]): U[] =>
     arr.map(fn)
+export const reduce =
+  <T, U>(fn: (agg: U, val: T, i: number, arr: T[]) => U, init: U) =>
+  (arr: T[]): U =>
+    arr.reduce(fn, init)
 export const forEach =
   <T>(fn: MapFn<T, void>) =>
   (arr: T[]): void =>
@@ -61,26 +73,97 @@ export const includes =
   <T>(v: T) =>
   (arr: T[]): boolean =>
     arr.includes(v)
-export const reduce =
-  <T, U>(fn: (agg: U, val: T, i: number, arr: T[]) => U, init: U) =>
-  (arr: T[]): U =>
-    arr.reduce(fn, init)
 export const slice =
   <T>(start: number, end?: number) =>
   (arr: T[]): T[] =>
     arr.slice(start, end)
-export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
-export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
+
 export const zipWith =
   <T, U>(other: U[]) =>
   (arr: T[]): [T, U][] =>
     arr.map((v: T, i: number) => [v, other[i]])
 export const first = <T>(arr: T[]): T => arr[0]
 export const last = <T>(arr: T[]): T => arr[arr.length - 1]
+export const length = <T>(arr: T[]): number => arr.length
+
+export const frequencies = <T>(arr: T[]): Map<T, number> =>
+  $(
+    arr,
+    reduce((freqs: Map<T, number>, e: T) => freqs.set(e, (freqs.get(e) || 0) + 1), new Map<T, number>())
+  )
+
+export const sort =
+  <T>(fn?: (a: T, b: T) => number) =>
+  (arr: T[]): T[] =>
+    fn ? arr.sort(fn) : arr.sort()
+export const sortNumeric =
+  ({ reverse }: { reverse: boolean } = { reverse: false }) =>
+  (arr: number[]): number[] =>
+    arr.sort((a: number, b: number) => (reverse ? b - a : a - b))
+
+export const flatten =
+  <T, A extends Array<T>, D extends number = 1>(depth?: D) =>
+  (arr: A): FlatArray<A, D>[] =>
+    arr.flat(depth)
+
+export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
+export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
+export const max = (nums: number[]): number => Math.max(...nums)
+export const min = (nums: number[]): number => Math.min(...nums)
+
+export const pluck =
+  <T, K extends keyof T>(key: K) =>
+  (o: T) =>
+    o[key]
+
+export const getIn =
+  (...keys: (string | number)[]) =>
+  (val: any[] | { [key: string]: any }): any =>
+    keys.reduce((o, key) => (o && o[key] ? o[key] : null), val)
+
 export const int = (s: string): number => parseInt(s, 10)
 export const ints = map(int)
 export const float = (s: string): number => parseFloat(s)
 export const floats = map(float)
+export const split =
+  (sep: RegExp | string = '') =>
+  (s: string): string[] =>
+    s.split(sep)
+export const lines = split('\n')
+export const match =
+  (reg: RegExp) =>
+  (s: string): RegExpMatchArray =>
+    s.match(reg)
+export const test =
+  (reg: RegExp) =>
+  (s: string): boolean =>
+    reg.test(s)
+
+export const intoSet = <T>(val: T[]): Set<T> => new Set(val)
+export const union = <T>(sets: Set<T>[]): Set<T> =>
+  $(
+    sets,
+    map(set => Array.from(set)),
+    flatten(),
+    intoSet
+  )
+
+export const cond =
+  <T, U>(o: [T | T[], U | ((v: T) => U)][], def?: U) =>
+  (v: T): U => {
+    const hit = o.find(e => (e[0] instanceof Array ? e[0].some(ee => ee == v) : e[0] == v))
+    if (!hit && def !== undefined) {
+      return def
+    } else if (!hit && def === undefined) {
+      throw new Error(`Missing condition: ${v}`)
+    }
+    if (hit[1] instanceof Function) {
+      return hit[1](v)
+    } else {
+      return hit[1]
+    }
+  }
+export const is = <T>(...v: T[]) => cond([[v, true]], false)
 
 export const spyWith =
   <T>(fn: (v: T) => unknown) =>
