@@ -39,6 +39,12 @@ export function pipe<A>(...fns: CF<any, any>[]) {
   return (v: A) => fns.filter(fn => fn != null).reduce((v, fn) => fn(v), v)
 }
 
+export const isNull = <T>(v: T): boolean => v == null
+export const not =
+  <T>(fn: (v: T) => boolean) =>
+  (v: T): boolean =>
+    !fn(v)
+
 type MapFn<T, U> = (v: T, i: number, arr: T[]) => U
 
 export const map =
@@ -97,7 +103,7 @@ export function zipWith<T>(...others: unknown[]) {
 
 export const first = <T>(arr: T[]): T => arr[0]
 export const last = <T>(arr: T[]): T => arr[arr.length - 1]
-export const length = <T>(arr: T[]): number => arr.length
+export const length = <T>(arr: T[] | string): number => arr.length
 
 export const frequencies = <T>(arr: T[]): Map<T, number> =>
   $(
@@ -119,6 +125,29 @@ export const flatten =
   (arr: A): FlatArray<A, D>[] =>
     arr.flat(depth)
 
+export const without =
+  <T>(v: T) =>
+  (arr: T[]): T[] =>
+    $(arr, includes(v)) ? [...$(arr, slice(0, arr.indexOf(v))), ...$(arr, slice(arr.indexOf(v) + 1))] : arr
+
+export const permutations = <T>(arr: T[]): T[][] =>
+  $(arr, length) == 1
+    ? $(
+        arr,
+        map(a => [a])
+      )
+    : $(
+        arr.map(v =>
+          $(
+            arr,
+            without(v),
+            permutations,
+            map(a => [v, ...a])
+          )
+        ),
+        flatten()
+      )
+
 export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
 export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
 export const max = (nums: number[]): number => Math.max(...nums)
@@ -133,6 +162,25 @@ export const getIn =
   (...keys: (string | number)[]) =>
   (val: any[] | { [key: string]: any }): any =>
     keys.reduce((o, key) => (o && o[key] ? o[key] : null), val)
+
+export function values<K, V>(m: { [key: string]: V } | Map<K, V> | Set<V>) {
+  if (m instanceof Map || m instanceof Set) return Array.from(m.values())
+  return Object.values(m)
+}
+
+export function keys<K>(m: Map<K, any>): K[]
+export function keys(m: { [key: string]: any }): string[]
+export function keys(m: any): any {
+  if (m instanceof Map) return Array.from(m.keys())
+  return Object.keys(m)
+}
+
+export function entries<K, V>(m: Map<K, V>): [K, V][]
+export function entries<V>(m: { [key: string]: V }): [string, V][]
+export function entries(m: any): any {
+  if (m instanceof Map) return Array.from(m.entries())
+  return m.entries()
+}
 
 export const int = (s: string): number => parseInt(s, 10)
 export const ints = map(int)
