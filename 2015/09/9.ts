@@ -18,7 +18,6 @@ import {
   pluck,
   readInput,
   slice,
-  spy,
   sum,
   values,
   zipWith
