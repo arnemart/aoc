@@ -78,10 +78,23 @@ export const slice =
   (arr: T[]): T[] =>
     arr.slice(start, end)
 
-export const zipWith =
-  <T, U>(other: U[]) =>
-  (arr: T[]): [T, U][] =>
-    arr.map((v: T, i: number) => [v, other[i]])
+export function zipWith<A, B>(o1: B[]): (a: A[]) => [A, B][]
+export function zipWith<A, B, C>(o1: B[], o2: C[]): (a: A[]) => [A, B, C][]
+export function zipWith<A, B, C, D>(o1: B[], o2: C[], o3: D[]): (a: A[]) => [A, B, C, D][]
+export function zipWith<T>(...others: unknown[]) {
+  return (arr: T[]) =>
+    $(
+      arr,
+      map((v, i) => [
+        v,
+        ...$(
+          others,
+          map(o => o[i])
+        )
+      ])
+    )
+}
+
 export const first = <T>(arr: T[]): T => arr[0]
 export const last = <T>(arr: T[]): T => arr[arr.length - 1]
 export const length = <T>(arr: T[]): number => arr.length

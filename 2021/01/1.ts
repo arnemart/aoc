@@ -14,7 +14,7 @@ console.log(
 
 console.log(
   'Part 2:',
-  $(input, zipWith($(input, slice(1))), zipWith($(input, slice(2))), map(pipe(flatten(), sum)), newInput =>
+  $(input, zipWith($(input, slice(1)), $(input, slice(2))), map(sum), newInput =>
     $(
       newInput,
       zipWith($(newInput, slice(1))),
