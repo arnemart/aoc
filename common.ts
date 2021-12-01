@@ -131,6 +131,12 @@ export const indexOf =
   <T>(v: T) =>
   (arr: T[]): number =>
     arr.indexOf(v)
+export const shift =
+  <T>(distance: number) =>
+  (arr: T[]) =>
+    distance > 0
+      ? [...$(arr, slice(-distance)), ...$(arr, slice(0, arr.length - distance))]
+      : [...$(arr, slice(-distance)), ...$(arr, slice(0, -distance))]
 
 export function zipWith<A, B>(o1: B[]): (a: A[]) => [A, B][]
 export function zipWith<A, B, C>(o1: B[], o2: C[]): (a: A[]) => [A, B, C][]
