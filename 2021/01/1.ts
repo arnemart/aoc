@@ -1,25 +1,15 @@
-import { $, filter, flatten, ints, length, lines, map, pipe, readInput, slice, spy, sum, zipWith } from '../../common'
+import { $, filter, ints, length, lines, map, readInput, slice, sum, zipWith } from '../../common'
 
-const input = $(readInput(), lines, ints, spy)
+const input = $(readInput(), lines, ints)
 
-console.log(
-  'Part 1:',
+const countIncreasing = (input: number[]) =>
   $(
     input,
     zipWith($(input, slice(1))),
     filter(([a, b]) => b > a),
     length
   )
-)
 
-console.log(
-  'Part 2:',
-  $(input, zipWith($(input, slice(1)), $(input, slice(2))), map(sum), newInput =>
-    $(
-      newInput,
-      zipWith($(newInput, slice(1))),
-      filter(([a, b]) => b > a),
-      length
-    )
-  )
-)
+console.log('Part 1:', $(input, countIncreasing))
+
+console.log('Part 2:', $(input, zipWith($(input, slice(1)), $(input, slice(2))), map(sum), countIncreasing))
