@@ -72,9 +72,7 @@ const calculateHappiness = ([p1, p2, p3]: string[]): number =>
 
 const solve = pipe(
   peoplePermutations,
-  map(triples),
-  map(map(calculateHappiness)),
-  map(sum),
+  map(pipe(triples, map(calculateHappiness), sum)),
   sortNumeric({ reverse: true }),
   first
 )
