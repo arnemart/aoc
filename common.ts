@@ -6,12 +6,18 @@ export const readInput = () => readFileSync('input.txt').toString()
 
 export const fillArray = <T>(n: number, v: T = null): T[] => Array.from(Array(n)).map(_ => v)
 export const range = (l: number) => fillArray(l).map((_, i) => i)
-export const loopUntil = <T>(fn: (i: number) => T | null): T => {
+export const loopUntil = <T>(
+  fn: (i: number, result: T) => T | null,
+  cond = (v: T) => v != null,
+  initialValue: T = null
+): T => {
   let result: T
+  let prevResult: T = initialValue
   let i = 0
   do {
-    result = fn(i++)
-  } while (result == null)
+    result = fn(i++, prevResult)
+    prevResult = result
+  } while (!cond(result))
   return result
 }
 
@@ -22,8 +28,25 @@ export function $<A, B, C>(v: A, fn1: CF<A, B>, fn2: CF<B, C>): C
 export function $<A, B, C, D>(v: A, fn1: CF<A, B>, fn2: CF<B, C>, fn3: CF<C, D>): D
 export function $<A, B, C, D, E>(v: A, fn1: CF<A, B>, fn2: CF<B, C>, fn3: CF<C, D>, fn4: CF<D, E>): E
 export function $<A, B, C, D, E, F>(v: A, fn1: CF<A, B>, fn2: CF<B, C>, fn3: CF<C, D>, fn4: CF<D, E>, fn5: CF<E, F>): F
-export function $<A, B, C, D, E, F, G>(v: A, fn1: CF<A, B>, fn2: CF<B, C>, fn3: CF<C, D>, fn4: CF<D, E>, fn5: CF<E, F>, fn6: CF<F, G>): G
-export function $<A, B, C, D, E, F, G, H>(v: A, fn1: CF<A, B>, fn2: CF<B, C>, fn3: CF<C, D>, fn4: CF<D, E>, fn5: CF<E, F>, fn6: CF<F, G>, fn7: CF<G, H>): H
+export function $<A, B, C, D, E, F, G>(
+  v: A,
+  fn1: CF<A, B>,
+  fn2: CF<B, C>,
+  fn3: CF<C, D>,
+  fn4: CF<D, E>,
+  fn5: CF<E, F>,
+  fn6: CF<F, G>
+): G
+export function $<A, B, C, D, E, F, G, H>(
+  v: A,
+  fn1: CF<A, B>,
+  fn2: CF<B, C>,
+  fn3: CF<C, D>,
+  fn4: CF<D, E>,
+  fn5: CF<E, F>,
+  fn6: CF<F, G>,
+  fn7: CF<G, H>
+): H
 export function $(v: any, ...fns: CF<any, any>[]) {
   return fns.filter(fn => fn != null).reduce((v, fn) => fn(v), v)
 }
@@ -32,9 +55,30 @@ export function pipe<A, B>(fn1: CF<A, B>): (v: A) => B
 export function pipe<A, B, C>(fn1: CF<A, B>, fn2: CF<B, C>): (v: A) => C
 export function pipe<A, B, C, D>(fn1: CF<A, B>, fn2: CF<B, C>, fn3: CF<C, D>): (v: A) => D
 export function pipe<A, B, C, D, E>(fn1: CF<A, B>, fn2: CF<B, C>, fn3: CF<C, D>, fn4: CF<D, E>): (v: A) => E
-export function pipe<A, B, C, D, E, F>(fn1: CF<A, B>, fn2: CF<B, C>, fn3: CF<C, D>, fn4: CF<D, E>, fn5: CF<E, F>): (v: A) => F
-export function pipe<A, B, C, D, E, F, G>(fn1: CF<A, B>, fn2: CF<B, C>, fn3: CF<C, D>, fn4: CF<D, E>, fn5: CF<E, F>, fn6: CF<F, G>): (v: A) => G
-export function pipe<A, B, C, D, E, F, G, H>(fn1: CF<A, B>, fn2: CF<B, C>, fn3: CF<C, D>, fn4: CF<D, E>, fn5: CF<E, F>, fn6: CF<F, G>, fn7: CF<G, H>): (v: A) => H
+export function pipe<A, B, C, D, E, F>(
+  fn1: CF<A, B>,
+  fn2: CF<B, C>,
+  fn3: CF<C, D>,
+  fn4: CF<D, E>,
+  fn5: CF<E, F>
+): (v: A) => F
+export function pipe<A, B, C, D, E, F, G>(
+  fn1: CF<A, B>,
+  fn2: CF<B, C>,
+  fn3: CF<C, D>,
+  fn4: CF<D, E>,
+  fn5: CF<E, F>,
+  fn6: CF<F, G>
+): (v: A) => G
+export function pipe<A, B, C, D, E, F, G, H>(
+  fn1: CF<A, B>,
+  fn2: CF<B, C>,
+  fn3: CF<C, D>,
+  fn4: CF<D, E>,
+  fn5: CF<E, F>,
+  fn6: CF<F, G>,
+  fn7: CF<G, H>
+): (v: A) => H
 export function pipe<A>(...fns: CF<any, any>[]) {
   return (v: A) => fns.filter(fn => fn != null).reduce((v, fn) => fn(v), v)
 }
@@ -83,6 +127,10 @@ export const slice =
   <T>(start: number, end?: number) =>
   (arr: T[]): T[] =>
     arr.slice(start, end)
+export const indexOf =
+  <T>(v: T) =>
+  (arr: T[]): number =>
+    arr.indexOf(v)
 
 export function zipWith<A, B>(o1: B[]): (a: A[]) => [A, B][]
 export function zipWith<A, B, C>(o1: B[], o2: C[]): (a: A[]) => [A, B, C][]
@@ -152,6 +200,14 @@ export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
 export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
 export const max = (nums: number[]): number => Math.max(...nums)
 export const min = (nums: number[]): number => Math.min(...nums)
+export const add =
+  (n1: number) =>
+  (n2: number): number =>
+    n1 + n2
+export const mod =
+  (n1: number) =>
+  (n2: number): number =>
+    n2 % n1
 
 export const pluck =
   <T, K extends keyof T>(key: K) =>
@@ -163,6 +219,13 @@ export const getIn =
   (val: any[] | { [key: string]: any }): any =>
     keys.reduce((o, key) => (o && o[key] ? o[key] : null), val)
 
+export const setIn =
+  (keys: (string | number)[], val: any) =>
+  (o: any[] | { [key: string]: any }): any => {
+    o[keys[0]] = $(keys, length, is(1)) ? val : $(o[keys[0]], setIn($(keys, slice(1)), val))
+    return o
+  }
+
 export function values<K, V>(m: { [key: string]: V } | Map<K, V> | Set<V>) {
   if (m instanceof Map || m instanceof Set) return Array.from(m.values())
   return Object.values(m)
@@ -170,7 +233,9 @@ export function values<K, V>(m: { [key: string]: V } | Map<K, V> | Set<V>) {
 
 export function keys<K>(m: Map<K, any>): K[]
 export function keys(m: { [key: string]: any }): string[]
+export function keys(m: unknown[]): number[]
 export function keys(m: any): any {
+  if (m instanceof Array) return range(m.length)
   if (m instanceof Map) return Array.from(m.keys())
   return Object.keys(m)
 }
@@ -179,7 +244,7 @@ export function entries<K, V>(m: Map<K, V>): [K, V][]
 export function entries<V>(m: { [key: string]: V }): [string, V][]
 export function entries(m: any): any {
   if (m instanceof Map) return Array.from(m.entries())
-  return m.entries()
+  return Object.entries(m)
 }
 
 export const int = (s: string): number => parseInt(s, 10)
@@ -190,6 +255,10 @@ export const split =
   (sep: RegExp | string = '') =>
   (s: string): string[] =>
     s.split(sep)
+export const join =
+  <T>(joinWith: string = '') =>
+  (arr: T[]): string =>
+    arr.join(joinWith)
 export const lines = split('\n')
 export const match =
   (reg: RegExp) =>
@@ -199,6 +268,10 @@ export const test =
   (reg: RegExp) =>
   (s: string): boolean =>
     reg.test(s)
+export const charAt =
+  (n: number) =>
+  (s: string): string =>
+    s.charAt(n)
 
 export const intoSet = <T>(val: T[]): Set<T> => new Set(val)
 export const union = <T>(sets: Set<T>[]): Set<T> =>
@@ -225,6 +298,14 @@ export const cond =
     }
   }
 export const is = <T>(...v: T[]) => cond([[v, true]], false)
+
+export const repeat =
+  <T>(n: number, fn: (v: T) => T) =>
+  (v: T): T =>
+    $(
+      range(n),
+      reduce(v => fn(v), v)
+    )
 
 export const spyWith =
   <T>(fn: (v: T) => unknown) =>
