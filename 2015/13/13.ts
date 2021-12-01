@@ -62,20 +62,24 @@ const peoplePermutations = (rules: Rule[]) =>
 const triples = (people: string[]): [string, string, string][] =>
   $(people, zipWith($(people, shift(-1)), $(people, shift(1))))
 
-const calculateHappiness = ([p1, p2, p3]: string[]): number =>
-  $(
-    input,
-    filter(rule => $(rule.person1, is(p1)) && $(rule.person2, is(p2, p3))),
-    map(pluck('happiness')),
-    sum
-  )
+const calculateHappiness =
+  (rules: Rule[]) =>
+  ([p1, p2, p3]: string[]): number =>
+    $(
+      rules,
+      filter(rule => $(rule.person1, is(p1)) && $(rule.person2, is(p2, p3))),
+      map(pluck('happiness')),
+      sum
+    )
 
-const solve = pipe(
-  peoplePermutations,
-  map(pipe(triples, map(calculateHappiness), sum)),
-  sortNumeric({ reverse: true }),
-  first
-)
+const solve = (rules: Rule[]) =>
+  $(
+    rules,
+    peoplePermutations,
+    map(pipe(triples, map(calculateHappiness(rules)), sum)),
+    sortNumeric({ reverse: true }),
+    first
+  )
 
 console.log('Part 1:', $(input, solve))
 
