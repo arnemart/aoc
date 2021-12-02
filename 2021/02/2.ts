@@ -20,13 +20,7 @@ const input = $(
   lines,
   map(
     pipe(match(/^(up|down|forward) (\d+)$/), matches => ({
-      dir: $(
-        matches[1],
-        cond([
-          ['forward', 'x'],
-          [['up', 'down'], 'y']
-        ])
-      ),
+      dir: $(matches[1], cond([['forward', 'x']], 'y')),
       dist: $([matches[2], $(matches[1], cond([['up', -1]], 1))], ints, product)
     }))
   )
