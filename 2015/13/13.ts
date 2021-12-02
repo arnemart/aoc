@@ -2,7 +2,6 @@ import {
   $,
   cond,
   filter,
-  first,
   flatten,
   int,
   intoSet,
@@ -10,12 +9,12 @@ import {
   lines,
   map,
   match,
+  max,
   permutations,
   pipe,
   pluck,
   readInput,
   shift,
-  sortNumeric,
   sum,
   values,
   zipWith
@@ -73,13 +72,7 @@ const calculateHappiness =
     )
 
 const solve = (rules: Rule[]) =>
-  $(
-    rules,
-    peoplePermutations,
-    map(pipe(triples, map(calculateHappiness(rules)), sum)),
-    sortNumeric({ reverse: true }),
-    first
-  )
+  $(rules, peoplePermutations, map(pipe(triples, map(calculateHappiness(rules)), sum)), max)
 
 console.log('Part 1:', $(input, solve))
 

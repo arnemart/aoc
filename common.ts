@@ -137,6 +137,10 @@ export const shift =
     distance > 0
       ? [...$(arr, slice(-distance)), ...$(arr, slice(0, arr.length - distance))]
       : [...$(arr, slice(-distance)), ...$(arr, slice(0, -distance))]
+export const concat =
+  <T>(other: T[]) =>
+  (arr: T[]): T[] =>
+    arr.concat(other)
 
 export function zipWith<A, B>(o1: B[]): (a: A[]) => [A, B][]
 export function zipWith<A, B, C>(o1: B[], o2: C[]): (a: A[]) => [A, B, C][]
@@ -202,10 +206,30 @@ export const permutations = <T>(arr: T[]): T[][] =>
         flatten()
       )
 
+export const uniqueCombinations =
+  <T>(count: number) =>
+  (vals: T[]): T[][] =>
+    count == 0
+      ? []
+      : vals.length == 1
+      ? [fillArray(count, vals[0])]
+      : $(
+          range(count),
+          map(n =>
+            $(
+              $(vals, slice(1)),
+              uniqueCombinations(count - n),
+              map(comb => [...fillArray(n, vals[0]), ...comb])
+            )
+          ),
+          flatten(),
+          concat([fillArray(count, vals[0])])
+        )
+
 export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
 export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
 export const floor = (num: number): number => Math.floor(num)
-export const max = (nums: number[]): number => Math.max(...nums)
+export const max: (nums: number[]) => number = pipe(sortNumeric(), last)
 export const min = (nums: number[]): number => Math.min(...nums)
 export const add =
   (n1: number) =>
@@ -215,6 +239,10 @@ export const mod =
   (n1: number) =>
   (n2: number): number =>
     n2 % n1
+export const clamp =
+  (min: number, max: number) =>
+  (n: number): number =>
+    Math.max(Math.min(n, max), min)
 
 export function pluck<T, K extends keyof T>(key: K): (o: T) => T[K]
 export function pluck<T, K extends keyof T>(keys: K[]): (o: T) => T[K][]
@@ -247,9 +275,8 @@ export function values<K, V>(m: { [key: string]: V } | Map<K, V> | Set<V>) {
   return Object.values(m)
 }
 
-export function keys<K>(m: Map<K, any>): K[]
-export function keys(m: { [key: string]: any }): string[]
-export function keys(m: unknown[]): number[]
+export function keys<K, V>(m: Map<K, V>): K[]
+export function keys<V>(m: { [key: string]: V }): string[]
 export function keys(m: any): any {
   if (m instanceof Array) return range(m.length)
   if (m instanceof Map) return Array.from(m.keys())

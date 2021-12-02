@@ -35,7 +35,7 @@ const input = $(
 
 const numberRegex = /^\d+/
 const isNumber = (s: string) => numberRegex.test(s)
-const clamp = (val: number): number => (val < 0 ? 65536 + val : val) % 65536
+const sixteenbit = (val: number): number => (val < 0 ? 65536 + val : val) % 65536
 
 const findValue = (wire: string): number => {
   return isNumber(wire)
@@ -45,11 +45,11 @@ const findValue = (wire: string): number => {
           input[wire].type,
           cond([
             ['VAL', () => findValue(input[wire].op1)],
-            ['AND', () => clamp(findValue(input[wire].op1) & findValue(input[wire].op2))],
-            ['OR', () => clamp(findValue(input[wire].op1) | findValue(input[wire].op2))],
-            ['NOT', () => clamp(~findValue(input[wire].op2))],
-            ['LSHIFT', () => clamp(findValue(input[wire].op1) << findValue(input[wire].op2))],
-            ['RSHIFT', () => clamp(findValue(input[wire].op1) >> findValue(input[wire].op2))]
+            ['AND', () => sixteenbit(findValue(input[wire].op1) & findValue(input[wire].op2))],
+            ['OR', () => sixteenbit(findValue(input[wire].op1) | findValue(input[wire].op2))],
+            ['NOT', () => sixteenbit(~findValue(input[wire].op2))],
+            ['LSHIFT', () => sixteenbit(findValue(input[wire].op1) << findValue(input[wire].op2))],
+            ['RSHIFT', () => sixteenbit(findValue(input[wire].op1) >> findValue(input[wire].op2))]
           ]),
           spyWith(val => (input[wire].memo = val))
         )
