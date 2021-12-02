@@ -37,6 +37,7 @@ console.log(
         ),
       { aim: 0, x: 0, y: 0 }
     ),
-    state => state.x * state.y
+    pluck(['x', 'y']),
+    product
   )
 )

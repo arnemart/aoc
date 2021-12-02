@@ -215,10 +215,19 @@ export const mod =
   (n2: number): number =>
     n2 % n1
 
-export const pluck =
-  <T, K extends keyof T>(key: K) =>
-  (o: T) =>
-    o[key]
+export function pluck<T, K extends keyof T>(key: K): (o: T) => T[K]
+export function pluck<T, K extends keyof T>(keys: K[]): (o: T) => T[K][]
+export function pluck<T, K extends keyof T>(keys: K | K[]) {
+  if (keys instanceof Array) {
+    return (o: T) =>
+      $(
+        keys as K[],
+        map(key => o[key])
+      )
+  } else {
+    return (o: T) => o[keys as K]
+  }
+}
 
 export const getIn =
   (...keys: (string | number)[]) =>
