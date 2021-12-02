@@ -30,7 +30,7 @@ console.log(
   'Part 1:',
   $(
     [
-      $(input, filter(pipe(pluck('dir'), is('y'))), map(pluck('dist')), sum),
+      $(input, filter(pipe(pluck('dir'), is('x'))), map(pluck('dist')), sum),
       $(input, filter(pipe(pluck('dir'), is('y'))), map(pluck('dist')), sum)
     ],
     product
