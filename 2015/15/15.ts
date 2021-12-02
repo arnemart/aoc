@@ -4,15 +4,14 @@ import {
   filter,
   int,
   is,
-  keys,
   last,
   map,
   max,
   parse,
   pipe,
+  pluck,
   product,
   readInput,
-  reduce,
   sortNumeric,
   sum,
   uniqueCombinations
@@ -27,7 +26,7 @@ type Ingredient = {
   calories: number
 }
 
-const ingredients: { [name: string]: Ingredient } = $(
+const ingredients: Ingredient[] = $(
   readInput(),
   parse(
     /^(\w+): \w+ (-?\d+), \w+ (-?\d+), \w+ (-?\d+), \w+ (-?\d+), \w+ (-?\d+)$/,
@@ -39,34 +38,20 @@ const ingredients: { [name: string]: Ingredient } = $(
       texture: $(tex, int),
       calories: $(cal, int)
     })
-  ),
-  reduce((ingrs, ingr) => {
-    ingrs[ingr.name] = ingr
-    return ingrs
-  }, {})
+  )
 )
 
-const score = (ingrs: string[]) =>
+const score = (ingrs: Ingredient[]) =>
   $(
-    ['capacity', 'durability', 'flavor', 'texture'],
-    map(q =>
-      $(
-        ingrs,
-        map(ingr => ingredients[ingr][q]),
-        sum,
-        clamp(0, Infinity)
-      )
-    ),
+    ['capacity', 'durability', 'flavor', 'texture'] as (keyof Ingredient)[],
+    map(q => $(ingrs, map(pluck(q)), sum, clamp(0, Infinity))),
     product
   )
 
-const ingredientCombinations = $(ingredients, keys, uniqueCombinations(100))
+const ingredientCombinations = $(ingredients, uniqueCombinations(100))
 
 console.log('Part 1:', $(ingredientCombinations, map(score), sortNumeric(), last))
 
-const calories: (ingrs: string[]) => number = pipe(
-  map(ingr => ingredients[ingr].calories),
-  sum
-)
+const calories: (ingrs: Ingredient[]) => number = pipe(map(pluck('calories')), sum)
 
 console.log('Part 2:', $(ingredientCombinations, filter(pipe(calories, is(500))), map(score), max))
