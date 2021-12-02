@@ -55,7 +55,7 @@ const cities = $(
 
 const distances = $(
   cities,
-  permutations,
+  permutations(),
   map(
     pipe(
       c => $(c, zipWith(c.slice(1))),

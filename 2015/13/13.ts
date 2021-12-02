@@ -55,7 +55,7 @@ const peoplePermutations = (rules: Rule[]) =>
     flatten(),
     intoSet,
     values,
-    permutations
+    permutations()
   )
 
 const triples = (people: string[]): [string, string, string][] =>

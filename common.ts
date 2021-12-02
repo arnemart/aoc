@@ -188,23 +188,52 @@ export const without =
   (arr: T[]): T[] =>
     $(arr, includes(v)) ? [...$(arr, slice(0, arr.indexOf(v))), ...$(arr, slice(arr.indexOf(v) + 1))] : arr
 
-export const permutations = <T>(arr: T[]): T[][] =>
-  $(arr, length) == 1
-    ? $(
-        arr,
-        map(a => [a])
-      )
-    : $(
-        arr.map(v =>
-          $(
-            arr,
-            without(v),
-            permutations,
-            map(a => [v, ...a])
-          )
-        ),
-        flatten()
-      )
+export const permutations =
+  <T>(n: number = null) =>
+  (arr: T[]): T[][] => {
+    if (n == null) {
+      n = arr.length
+    }
+    return n == 1
+      ? $(
+          arr,
+          map(a => [a])
+        )
+      : $(
+          arr.map(v =>
+            $(
+              arr,
+              without(v),
+              permutations(n - 1),
+              map(a => [v, ...a])
+            )
+          ),
+          flatten()
+        )
+  }
+
+export const uniquePermutations =
+  <T>(n: number) =>
+  (arr: T[]): T[][] =>
+    n == 1
+      ? $(
+          arr,
+          map(a => [a])
+        )
+      : $(
+          arr,
+          first,
+          v => [
+            $(
+              arr,
+              slice(1),
+              uniquePermutations(n - 1),
+              map(a => [v, ...a])
+            ),
+            arr.length <= n ? [] : $(arr, slice(1), uniquePermutations(n))
+          ],
+          flatten()
+        )
 
 export const uniqueCombinations =
   <T>(count: number) =>
