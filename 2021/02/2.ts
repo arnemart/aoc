@@ -15,7 +15,13 @@ import {
   sum
 } from '../../common'
 
-const input = $(
+type Dir = 'x' | 'y'
+type Command = {
+  dir: Dir
+  dist: number
+}
+
+const input: Command[] = $(
   readInput(),
   lines,
   map(
@@ -26,16 +32,10 @@ const input = $(
   )
 )
 
-console.log(
-  'Part 1:',
-  $(
-    [
-      $(input, filter(pipe(pluck('dir'), is('x'))), map(pluck('dist')), sum),
-      $(input, filter(pipe(pluck('dir'), is('y'))), map(pluck('dist')), sum)
-    ],
-    product
-  )
-)
+const sumDir = (dir: Dir): ((commands: Command[]) => number) =>
+  pipe(filter(pipe(pluck('dir'), is(dir))), map(pluck('dist')), sum)
+
+console.log('Part 1:', $([$(input, sumDir('x')), $(input, sumDir('y'))], product))
 
 console.log(
   'Part 2:',
@@ -46,21 +46,8 @@ console.log(
         $(
           d.dir,
           cond([
-            [
-              'y',
-              () => ({
-                ...state,
-                aim: state.aim + d.dist
-              })
-            ],
-            [
-              'x',
-              () => ({
-                ...state,
-                x: state.x + d.dist,
-                y: state.y + state.aim * d.dist
-              })
-            ]
+            ['y', () => ({ ...state, aim: state.aim + d.dist })],
+            ['x', () => ({ ...state, x: state.x + d.dist, y: state.y + state.aim * d.dist })]
           ])
         ),
       { aim: 0, x: 0, y: 0 }
