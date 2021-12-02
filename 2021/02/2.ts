@@ -1,19 +1,4 @@
-import {
-  $,
-  cond,
-  filter,
-  ints,
-  is,
-  lines,
-  map,
-  match,
-  pipe,
-  pluck,
-  product,
-  readInput,
-  reduce,
-  sum
-} from '../../common'
+import { $, cond, filter, int, is, lines, map, pipe, pluck, product, readInput, reduce, split, sum } from '../../common'
 
 type Dir = 'x' | 'y'
 type Command = {
@@ -25,9 +10,9 @@ const input: Command[] = $(
   readInput(),
   lines,
   map(
-    pipe(match(/^(up|down|forward) (\d+)$/), matches => ({
-      dir: $(matches[1], cond([['forward', 'x']], 'y')),
-      dist: $([matches[2], $(matches[1], cond([['up', -1]], 1))], ints, product)
+    pipe(split(' '), ([dir, dist]) => ({
+      dir: $(dir, cond([['forward', 'x']], 'y')),
+      dist: $([$(dist, int), $(dir, cond([['up', -1]], 1))], product)
     }))
   )
 )
@@ -42,12 +27,12 @@ console.log(
   $(
     input,
     reduce(
-      (state, d) =>
+      ({ aim, x, y }, { dir, dist }) =>
         $(
-          d.dir,
+          dir,
           cond([
-            ['y', () => ({ ...state, aim: state.aim + d.dist })],
-            ['x', () => ({ ...state, x: state.x + d.dist, y: state.y + state.aim * d.dist })]
+            ['y', () => ({ x, y, aim: aim + dist })],
+            ['x', () => ({ aim, x: x + dist, y: y + aim * dist })]
           ])
         ),
       { aim: 0, x: 0, y: 0 }
