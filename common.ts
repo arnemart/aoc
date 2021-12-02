@@ -292,7 +292,17 @@ export const charAt =
 export const parse =
   <T>(reg: RegExp, parser: (matches: RegExpMatchArray) => T) =>
   (input: string): T[] =>
-    $(input, lines, map(pipe(match(reg), parser)))
+    $(
+      input,
+      lines,
+      map(line => {
+        const matches = $(line, match(reg))
+        if (!matches) {
+          throw new Error(`No match for input: ${line}`)
+        }
+        return parser(matches)
+      })
+    )
 
 export const intoSet = <T>(val: T[]): Set<T> => new Set(val)
 export const union = <T>(sets: Set<T>[]): Set<T> =>
