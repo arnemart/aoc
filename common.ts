@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 
 process.chdir(require.main.path)
 
-export const readInput = () => readFileSync('input.txt').toString()
+export const readInput = (testInput: string = null) => testInput ?? readFileSync('input.txt').toString()
 
 export const fillArray = <T>(n: number, v: T = null): T[] => Array.from(Array(n)).map(_ => v)
 export const range = (l: number) => fillArray(l).map((_, i) => i)
@@ -204,6 +204,7 @@ export const permutations = <T>(arr: T[]): T[][] =>
 
 export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
 export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
+export const floor = (num: number): number => Math.floor(num)
 export const max = (nums: number[]): number => Math.max(...nums)
 export const min = (nums: number[]): number => Math.min(...nums)
 export const add =
@@ -287,6 +288,11 @@ export const charAt =
   (n: number) =>
   (s: string): string =>
     s.charAt(n)
+
+export const parse =
+  <T>(reg: RegExp, parser: (matches: RegExpMatchArray) => T) =>
+  (input: string): T[] =>
+    $(input, lines, map(pipe(match(reg), parser)))
 
 export const intoSet = <T>(val: T[]): Set<T> => new Set(val)
 export const union = <T>(sets: Set<T>[]): Set<T> =>

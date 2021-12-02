@@ -1,4 +1,4 @@
-import { $, cond, filter, int, is, lines, map, pipe, pluck, product, readInput, reduce, split, sum } from '../../common'
+import { $, cond, filter, int, is, map, parse, pipe, pluck, product, readInput, reduce, sum } from '../../common'
 
 type Dir = 'x' | 'y'
 type Command = {
@@ -8,13 +8,10 @@ type Command = {
 
 const input: Command[] = $(
   readInput(),
-  lines,
-  map(
-    pipe(split(' '), ([dir, dist]) => ({
-      dir: $(dir, cond([['forward', 'x']], 'y')),
-      dist: $([$(dist, int), $(dir, cond([['up', -1]], 1))], product)
-    }))
-  )
+  parse(/^(\w+) (\d+)$/, ([_, dir, dist]) => ({
+    dir: $(dir, cond([['forward', 'x']], 'y')),
+    dist: $([$(dist, int), $(dir, cond([['up', -1]], 1))], product)
+  }))
 )
 
 const sumDir = (dir: Dir): ((commands: Command[]) => number) =>
