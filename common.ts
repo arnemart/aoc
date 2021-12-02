@@ -235,6 +235,26 @@ export const uniquePermutations =
           flatten()
         )
 
+export const combinations =
+  <T>(k: number) =>
+  (a: T[]): T[][] =>
+    k > 1
+      ? $(
+          a,
+          combinations(k - 1),
+          map(l =>
+            $(
+              a,
+              map(n => [...l, n])
+            )
+          ),
+          flatten()
+        )
+      : $(
+          a,
+          map(n => [n])
+        )
+
 export const uniqueCombinations =
   <T>(count: number) =>
   (vals: T[]): T[][] =>
