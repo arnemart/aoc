@@ -209,9 +209,7 @@ export const permutations = <T>(arr: T[]): T[][] =>
 export const uniqueCombinations =
   <T>(count: number) =>
   (vals: T[]): T[][] =>
-    count == 0
-      ? []
-      : vals.length == 1
+    vals.length == 1
       ? [fillArray(count, vals[0])]
       : $(
           range(count),
