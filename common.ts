@@ -145,6 +145,7 @@ export const concat =
 export function zipWith<A, B>(o1: B[]): (a: A[]) => [A, B][]
 export function zipWith<A, B, C>(o1: B[], o2: C[]): (a: A[]) => [A, B, C][]
 export function zipWith<A, B, C, D>(o1: B[], o2: C[], o3: D[]): (a: A[]) => [A, B, C, D][]
+export function zipWith<T>(...others: T[][]): (a: T[]) => T[][]
 export function zipWith<T>(...others: unknown[]) {
   return (arr: T[]) =>
     $(
@@ -337,6 +338,10 @@ export function entries(m: any): any {
   return Object.entries(m)
 }
 
+export const number =
+  (radix: number = 10) =>
+  (s: string): number =>
+    parseInt(s, radix)
 export const int = (s: string): number => parseInt(s, 10)
 export const ints = map(int)
 export const float = (s: string): number => parseFloat(s)
@@ -388,9 +393,11 @@ export const union = <T>(sets: Set<T>[]): Set<T> =>
   )
 
 export const cond =
-  <T, U>(o: [T | T[], U | ((v: T) => U)][], def?: U) =>
+  <T, U>(o: [T | T[] | ((v: T) => boolean), U | ((v: T) => U)][], def?: U) =>
   (v: T): U => {
-    const hit = o.find(e => (e[0] instanceof Array ? e[0].some(ee => ee == v) : e[0] == v))
+    const hit = o.find(e =>
+      e[0] instanceof Array ? e[0].some(ee => ee == v) : e[0] instanceof Function ? e[0](v) : e[0] == v
+    )
     if (!hit && def !== undefined) {
       return def
     } else if (!hit && def === undefined) {
