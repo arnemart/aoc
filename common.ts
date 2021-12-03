@@ -4,6 +4,8 @@ process.chdir(require.main.path)
 
 export const readInput = (testInput: string = null) => testInput ?? readFileSync('input.txt').toString()
 
+export const id = <T>(v: T) => v
+
 export const fillArray = <T>(n: number, v: T = null): T[] => Array.from(Array(n)).map(_ => v)
 export const range = (l: number) => fillArray(l).map((_, i) => i)
 export const loopUntil = <T>(
@@ -81,6 +83,17 @@ export function pipe<A, B, C, D, E, F, G, H>(
 ): (v: A) => H
 export function pipe<A>(...fns: CF<any, any>[]) {
   return (v: A) => fns.filter(fn => fn != null).reduce((v, fn) => fn(v), v)
+}
+
+export function tee<T, A, B>(fn1: CF<T, A>, fn2: CF<T, B>): (v: T) => [A, B]
+export function tee<T, A, B, C>(fn1: CF<T, A>, fn2: CF<T, B>, fn3: CF<T, C>): (v: T) => [A, B, C]
+export function tee<T, A, B, C, D>(fn1: CF<T, A>, fn2: CF<T, B>, fn3: CF<T, C>, fn4: CF<T, D>): (v: T) => [A, B, C, D]
+export function tee<T>(...cmds: ((v: T) => unknown)[]): (v: T) => unknown[] {
+  return (v: T) =>
+    $(
+      cmds,
+      map(cmd => cmd(v))
+    )
 }
 
 export const isNull = <T>(v: T): boolean => v == null

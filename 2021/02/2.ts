@@ -1,4 +1,4 @@
-import { $, cond, filter, int, is, map, parse, pipe, pluck, product, readInput, reduce, sum } from '../../common'
+import { $, cond, filter, int, is, map, parse, pipe, pluck, product, readInput, reduce, sum, tee } from '../../common'
 
 type Dir = 'x' | 'y'
 type Command = {
@@ -17,7 +17,7 @@ const input: Command[] = $(
 const sumDir = (dir: Dir): ((commands: Command[]) => number) =>
   pipe(filter(pipe(pluck('dir'), is(dir))), map(pluck('dist')), sum)
 
-console.log('Part 1:', $([$(input, sumDir('x')), $(input, sumDir('y'))], product))
+console.log('Part 1:', $(input, tee(sumDir('x'), sumDir('y')), product))
 
 console.log(
   'Part 2:',
