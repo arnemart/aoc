@@ -6,8 +6,21 @@ export const readInput = (testInput: string = null) => testInput ?? readFileSync
 
 export const id = <T>(v: T) => v
 
+export const xor = (a: boolean, b: boolean) => (a && !b) || (!a && b)
 export const fillArray = <T>(n: number, v: T = null): T[] => Array.from(Array(n)).map(_ => v)
-export const range = (l: number) => fillArray(l).map((_, i) => i)
+export const range = (n1: number, n2?: number) =>
+  n2 == undefined ? fillArray(n1).map((_, i) => i) : fillArray(n2 - n1).map((_, i) => i + n1)
+
+export const memoize = <A, B>(fn: (v: A) => B) => {
+  const memos = new Map<A, B>()
+  return (v: A): B => {
+    if (!memos.has(v)) {
+      memos.set(v, fn(v))
+    }
+    return memos.get(v)
+  }
+}
+
 export const loopUntil = <T>(
   fn: (i: number, result: T) => T | null,
   cond = (v: T) => v != null,
@@ -88,6 +101,7 @@ export function pipe<A>(...fns: CF<any, any>[]) {
 export function tee<T, A, B>(fn1: CF<T, A>, fn2: CF<T, B>): (v: T) => [A, B]
 export function tee<T, A, B, C>(fn1: CF<T, A>, fn2: CF<T, B>, fn3: CF<T, C>): (v: T) => [A, B, C]
 export function tee<T, A, B, C, D>(fn1: CF<T, A>, fn2: CF<T, B>, fn3: CF<T, C>, fn4: CF<T, D>): (v: T) => [A, B, C, D]
+export function tee<T, U>(...cmds: ((v: T) => U)[]): (v: T) => U[]
 export function tee<T>(...cmds: ((v: T) => unknown)[]): (v: T) => unknown[] {
   return (v: T) =>
     $(
@@ -102,8 +116,8 @@ export const not =
   (v: T): boolean =>
     !fn(v)
 
+// ARRAY STUFF
 type MapFn<T, U> = (v: T, i: number, arr: T[]) => U
-
 export const map =
   <T, U>(fn: MapFn<T, U>) =>
   (arr: T[]): U[] =>
@@ -132,6 +146,19 @@ export const find =
   <T>(fn: MapFn<T, boolean>) =>
   (arr: T[]): T =>
     arr.find(fn)
+export const findWithContext =
+  <T, U>(callback: (value: T, i: number) => [found: boolean, context: U]) =>
+  (arr: T[]): [value: T, context: U] | undefined => {
+    for (const { v, i } of $(
+      arr,
+      map((v, i) => ({ v, i }))
+    )) {
+      const [found, context] = callback(v, i)
+      if (found) {
+        return [v, context]
+      }
+    }
+  }
 export const includes =
   <T>(v: T) =>
   (arr: T[]): boolean =>
@@ -184,6 +211,10 @@ export function zip<T>([first, ...rest]: unknown[][]): unknown[][] {
 export const first = <T>(arr: T[]): T => arr[0]
 export const last = <T>(arr: T[]): T => arr[arr.length - 1]
 export const length = <T>(arr: T[] | string): number => arr.length
+export const count =
+  <T>(fn: (v: T) => boolean) =>
+  (arr: T[]) =>
+    arr.filter(fn).length
 
 export const frequencies = <T>(arr: T[]): Map<T, number> =>
   $(
@@ -199,6 +230,8 @@ export const sortNumeric =
   ({ reverse }: { reverse: boolean } = { reverse: false }) =>
   (arr: number[]): number[] =>
     arr.sort((a: number, b: number) => (reverse ? b - a : a - b))
+
+export const reverse = <T>(a: T[]): T[] => a.slice().reverse()
 
 export const flatten =
   <T, A extends Array<T>, D extends number = 1>(depth?: D) =>
@@ -295,6 +328,7 @@ export const uniqueCombinations =
           concat([fillArray(count, vals[0])])
         )
 
+// NUMBER STUFF
 export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
 export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
 export const floor = (num: number): number => Math.floor(num)
@@ -312,7 +346,12 @@ export const clamp =
   (min: number, max: number) =>
   (n: number): number =>
     Math.max(Math.min(n, max), min)
+export const within =
+  (min: number, max: number) =>
+  (n: number): boolean =>
+    n != null && n >= min && n <= max
 
+// OBJECT STUFF
 export function pluck<T, K extends keyof T>(key: K): (o: T) => T[K]
 export function pluck<T, K extends keyof T>(keys: K[]): (o: T) => T[K][]
 export function pluck<T, K extends keyof T>(keys: K | K[]) {
@@ -359,6 +398,7 @@ export function entries(m: any): any {
   return Object.entries(m)
 }
 
+// STRING STUFF
 export const number =
   (radix: number = 10) =>
   (s: string): number =>
@@ -388,7 +428,18 @@ export const charAt =
   (n: number) =>
   (s: string): string =>
     s.charAt(n)
+export const chars = (s: string) => s.replace(/\n/g, '').split('')
+export function replace(fnd: RegExp | string, rep: string): (s: string) => string
+export function replace(fnd: RegExp | string, rep: (substring: string, ...args: any[]) => string): (s: string) => string
+export function replace(fnd: RegExp | string, rep: any = '') {
+  return (s: string): string => s.replace(fnd, rep)
+}
+export const leftPad =
+  (length: number, padWith: string) =>
+  (s: string): string =>
+    Array.from(Array(Math.max(0, length - s.length + 1))).join(padWith) + s
 
+// OTHER STUFF
 export const parse =
   <T>(reg: RegExp, parser: (matches: RegExpMatchArray) => T) =>
   (input: string): T[] =>
@@ -403,6 +454,11 @@ export const parse =
         return parser(matches)
       })
     )
+
+export const next =
+  <T>(i: number, amt: number = 1) =>
+  (arr: T[]): T =>
+    arr[(i + arr.length + (amt % arr.length)) % arr.length]
 
 export const intoSet = <T>(val: T[]): Set<T> => new Set(val)
 export const union = <T>(sets: Set<T>[]): Set<T> =>
