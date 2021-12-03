@@ -13,6 +13,7 @@ import {
   not,
   pipe,
   readInput,
+  reduce,
   repeat,
   setIn,
   split
@@ -62,13 +63,15 @@ const countActive = pipe(flatten(), filter(Boolean), length)
 
 console.log('Part 1:', $(input, repeat(100, step), countActive))
 
-const turnOnCorners = (grid: Grid): Grid =>
+const turnOnCornerLights = (grid: Grid): Grid =>
   $(
-    grid,
-    setIn([0, 0], true),
-    setIn([grid.length - 1, 0], true),
-    setIn([0, grid[0].length - 1], true),
-    setIn([grid.length - 1, grid[0].length - 1], true)
+    [
+      [0, 0],
+      [0, grid[0].length - 1],
+      [grid.length - 1, 0],
+      [grid.length - 1, grid[0].length - 1]
+    ],
+    reduce((grid, corner) => $(grid, setIn(corner, true)), grid)
   )
 
-console.log('Part 2:', $(input, turnOnCorners, repeat(100, pipe(step, turnOnCorners)), countActive))
+console.log('Part 2:', $(input, turnOnCornerLights, repeat(100, pipe(step, turnOnCornerLights)), countActive))
