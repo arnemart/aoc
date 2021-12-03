@@ -160,6 +160,14 @@ export function zipWith<T>(...others: unknown[]) {
     )
 }
 
+export function zip<A, B>(arrs: [A[], B[]]): [A, B][]
+export function zip<A, B, C>(arrs: [A[], B[], C[]]): [A, B, C][]
+export function zip<A, B, C, D>(arrs: [A[], B[], C[], D[]]): [A, B, C, D][]
+export function zip<T>(arrs: T[][]): T[][]
+export function zip<T>([first, ...rest]: unknown[][]): unknown[][] {
+  return $(first, zipWith(...rest))
+}
+
 export const first = <T>(arr: T[]): T => arr[0]
 export const last = <T>(arr: T[]): T => arr[arr.length - 1]
 export const length = <T>(arr: T[] | string): number => arr.length

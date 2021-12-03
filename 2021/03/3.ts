@@ -14,17 +14,16 @@ import {
   pluck,
   product,
   readInput,
-  slice,
   split,
   sum,
-  zipWith
+  zip
 } from '../../common'
 
 type Input = number[][]
 
 const input: Input = $(readInput(), lines, map(split()), map(ints))
 
-const count = (nums: Input) => $(nums[0], zipWith(...$(nums, slice(1))), map(sum))
+const count = (nums: Input) => $(nums, zip, map(sum))
 
 const part1 = (input: Input) => (vals: number[]) =>
   $(
