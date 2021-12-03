@@ -11,6 +11,7 @@ import {
   loopUntil,
   map,
   number,
+  pipe,
   pluck,
   product,
   readInput,
@@ -21,7 +22,7 @@ import {
 
 type Input = number[][]
 
-const input: Input = $(readInput(), lines, map(split()), map(ints))
+const input: Input = $(readInput(), lines, map(pipe(split(), ints)))
 
 const count = (nums: Input) => $(nums, zip, map(sum))
 
@@ -63,7 +64,7 @@ const part2 = (input: Input) => (values: number[]) =>
             )
           )
         ),
-      numbers => numbers.length == 1,
+      pipe(length, is(1)),
       input
     ),
     first,
