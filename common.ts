@@ -239,9 +239,16 @@ export const flatten =
     arr.flat(depth)
 
 export const without =
-  <T>(v: T) =>
+  <T>(vs: T | T[]) =>
   (arr: T[]): T[] =>
-    $(arr, includes(v)) ? [...$(arr, slice(0, arr.indexOf(v))), ...$(arr, slice(arr.indexOf(v) + 1))] : arr
+    $(
+      vs instanceof Array ? vs : [vs],
+      reduce(
+        (arr, v) =>
+          $(arr, includes(v)) ? [...$(arr, slice(0, arr.indexOf(v))), ...$(arr, slice(arr.indexOf(v) + 1))] : arr,
+        arr
+      )
+    )
 
 export const permutations =
   <T>(n: number = null) =>

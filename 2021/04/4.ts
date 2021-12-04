@@ -20,7 +20,6 @@ import {
   product,
   range,
   readInput,
-  reduce,
   slice,
   split,
   sum,
@@ -59,13 +58,7 @@ const rowsCols = $(
 
 const getRowsCols = (board: Board): Row[] => $(board, b => $(rowsCols, map(map(c => $(b, getIn(...c))))))
 
-const score = ([board, nums]) =>
-  $(
-    nums,
-    reduce((b, n) => $(b, without(n)), $(board, flatten())),
-    sum,
-    s => $([s, $(nums, last)], product)
-  )
+const score = ([board, nums]) => $(board, flatten(), without(nums), sum, s => $([s, $(nums, last)], product))
 
 const findMatchingRow =
   (nums: number[]) =>
