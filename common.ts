@@ -369,7 +369,7 @@ export function pluck<T, K extends keyof T>(keys: K | K[]) {
 export const getIn =
   (...keys: (string | number)[]) =>
   (val: any[] | { [key: string]: any }): any =>
-    keys.reduce((o, key) => (o && o[key] ? o[key] : null), val)
+    keys.reduce((o, key) => (o && o[key] != null ? o[key] : null), val)
 
 export const setIn =
   (keys: (string | number)[], val: any) =>
@@ -434,6 +434,7 @@ export function replace(fnd: RegExp | string, rep: (substring: string, ...args: 
 export function replace(fnd: RegExp | string, rep: any = '') {
   return (s: string): string => s.replace(fnd, rep)
 }
+export const trim = (s: string) => s.trim()
 export const leftPad =
   (length: number, padWith: string) =>
   (s: string): string =>
