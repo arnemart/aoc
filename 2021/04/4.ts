@@ -9,6 +9,7 @@ import {
   getIn,
   includes,
   ints,
+  is,
   isNull,
   last,
   length,
@@ -82,10 +83,6 @@ const findFirstWinningBoard = (boards: Board[]) =>
 console.log('Part 1:', $(boards, findFirstWinningBoard, score))
 
 const findLastWinningBoard = (boards: Board[]) =>
-  loopUntil(i =>
-    $(boards, filter(pipe(findMatchingRow(numbers.slice(0, i)), isNull)), boards =>
-      $(boards, length, cond([[1, boards]], null))
-    )
-  )
+  loopUntil(i => $(boards, filter(pipe(findMatchingRow(numbers.slice(0, i)), isNull))), pipe(length, is(1)))
 
 console.log('Part 2:', $(boards, findLastWinningBoard, findFirstWinningBoard, score))
