@@ -41,20 +41,16 @@ const [numbers, boards]: [number[], Board[]] = $(
 const rowsCols = $(
   range(5),
   tee(
-    $(
-      map(y =>
-        $(
-          range(5),
-          map(x => [y, x])
-        )
+    map(y =>
+      $(
+        range(5),
+        map(x => [y, x])
       )
     ),
-    $(
-      map(x =>
-        $(
-          range(5),
-          map(y => [y, x])
-        )
+    map(x =>
+      $(
+        range(5),
+        map(y => [y, x])
       )
     )
   ),
