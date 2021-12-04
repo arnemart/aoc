@@ -1,5 +1,6 @@
 import {
   $,
+  concat,
   every,
   filter,
   find,
@@ -56,9 +57,9 @@ const rowsCols = $(
   flatten()
 )
 
-const getRowsCols = (board: Board): Row[] => $(board, b => $(rowsCols, map(map(c => $(b, getIn(...c))))))
+const getRowsCols = (board: Board): Row[] => $(rowsCols, map(map(c => $(board, getIn(...c)))))
 
-const score = ([board, nums]) => $(board, flatten(), without(nums), sum, s => $([s, $(nums, last)], product))
+const score = ([board, nums]) => $(board, flatten(), without(nums), sum, concat($(nums, last)), product)
 
 const findMatchingRow =
   (nums: number[]) =>

@@ -178,9 +178,9 @@ export const shift =
       ? [...$(arr, slice(-distance)), ...$(arr, slice(0, arr.length - distance))]
       : [...$(arr, slice(-distance)), ...$(arr, slice(0, -distance))]
 export const concat =
-  <T>(other: T[]) =>
-  (arr: T[]): T[] =>
-    arr.concat(other)
+  <T>(other: T | T[]) =>
+  (arr: T | T[]): T[] =>
+    (arr instanceof Array ? arr : [arr]).concat(other)
 
 export function zipWith<A, B>(o1: B[]): (a: A[]) => [A, B][]
 export function zipWith<A, B, C>(o1: B[], o2: C[]): (a: A[]) => [A, B, C][]
