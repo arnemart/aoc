@@ -1,6 +1,7 @@
 import {
   $,
   concat,
+  cond,
   every,
   filter,
   find,
@@ -22,6 +23,7 @@ import {
   range,
   readInput,
   slice,
+  some,
   split,
   sum,
   tee,
@@ -59,15 +61,15 @@ const rowsCols = $(
 
 const getRowsCols = (board: Board): Row[] => $(rowsCols, map(map(c => $(board, getIn(...c)))))
 
-const score = ([board, nums]) => $(board, flatten(), without(nums), sum, concat($(nums, last)), product)
-
 const findMatchingRow =
   (nums: number[]) =>
-  (board: Board): [Board, number[]] =>
-    $(board, getRowsCols, find(every(n => $(nums, includes(n))))) ? [board, nums] : null
+  (board: Board): [Board, number[]] | null =>
+    $(board, getRowsCols, some(every(n => $(nums, includes(n)))), cond([[true, [board, nums]]], null))
 
 const findFirstWinningBoard = (boards: Board[]) =>
   loopUntil(i => $(boards, map(findMatchingRow(numbers.slice(0, i))), find(not(isNull))))
+
+const score = ([board, nums]) => $(board, flatten(), without(nums), sum, concat($(nums, last)), product)
 
 console.log('Part 1:', $(boards, findFirstWinningBoard, score))
 
