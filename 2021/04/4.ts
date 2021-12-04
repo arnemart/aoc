@@ -1,6 +1,5 @@
 import {
   $,
-  cond,
   every,
   filter,
   find,
