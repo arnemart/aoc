@@ -7,9 +7,29 @@ export const readInput = (testInput: string = null) => testInput ?? readFileSync
 export const id = <T>(v: T) => v
 
 export const xor = (a: boolean, b: boolean) => (a && !b) || (!a && b)
-export const fillArray = <T>(n: number, v: T = null): T[] => Array.from(Array(n)).map(_ => v)
 export const range = (n1: number, n2?: number) =>
-  n2 == undefined ? fillArray(n1).map((_, i) => i) : fillArray(n2 - n1).map((_, i) => i + n1)
+  n2 == undefined ? Array.from(Array(n1)).map((_, i) => i) : Array.from(Array(n2 - n1)).map((_, i) => i + n1)
+
+export const inclusiveRange = (n1: number, n2: number) => (n2 > n1 ? range(n1, n2 + 1) : range(n2, n1 + 1).reverse())
+
+export function fillArray<T>(n: number, v?: T | ((i: number) => T)): T[]
+export function fillArray<T>(n: [number, number], v?: T | ((i: number) => T)): T[][]
+export function fillArray<T>(n: number | [number, number], v: T | ((i: number) => T) = null): T[] | T[][] {
+  return n instanceof Array
+    ? $(
+        range(n[1]),
+        map(i =>
+          $(
+            range(n[0]),
+            map(i => (v instanceof Function ? v(i) : v))
+          )
+        )
+      )
+    : $(
+        range(n),
+        map(i => (v instanceof Function ? v(i) : v))
+      )
+}
 
 export const memoize = <A, B>(fn: (v: A) => B) => {
   const memos = new Map<A, B>()
@@ -379,10 +399,14 @@ export const getIn =
     keys.reduce((o, key) => (o && o[key] != null ? o[key] : null), val)
 
 export const setIn =
-  (keys: (string | number)[], val: any) =>
-  (o: any[] | { [key: string]: any }): any => {
-    o[keys[0]] = $(keys, length, is(1)) ? val : $(o[keys[0]], setIn($(keys, slice(1)), val))
-    return o
+  <T, U>(keys: (string | number)[], val: T | ((v: T) => T)) =>
+  (o: any[] | { [key: string]: any }): U => {
+    if ($(keys, length, is(1))) {
+      o[keys[0]] = val instanceof Function ? val(o[keys[0]]) : val
+    } else {
+      o[keys[0]] = $(o[keys[0]], setIn($(keys, slice(1)), val))
+    }
+    return o as U
   }
 
 export function values<K, V>(m: { [key: string]: V } | Map<K, V> | Set<V>) {
