@@ -32,7 +32,7 @@ type Coord = number[]
 
 const size = (dimension: [number, number]) => (vents: Vent[]) => $(vents, map(pluck(dimension)), flatten(), max, add(1))
 
-const grid = (vents: Vent[]): Grid => fillArray([$(vents, size([1, 3])), $(vents, size([0, 1]))], 0)
+const grid = (vents: Vent[]): Grid => fillArray($(vents, tee(size([1, 3]), size([0, 1]))), 0)
 
 const ventDirection = ([x1, y1, x2, y2]: Vent) => (x1 == x2 ? 'horizontal' : y1 == y2 ? 'vertical' : 'diagonal')
 
