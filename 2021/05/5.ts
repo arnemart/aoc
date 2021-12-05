@@ -1,6 +1,8 @@
 import {
   $,
   add,
+  concat,
+  cond,
   count,
   fillArray,
   filter,
@@ -14,6 +16,7 @@ import {
   pluck,
   readInput,
   reduce,
+  reverse,
   setIn,
   split,
   zipWith
@@ -36,17 +39,14 @@ const height = (vents: Vent[]) => $(vents, map(pluck([1, 3])), flatten(), max, a
 const grid = (vents: Vent[]): Grid => fillArray([$(vents, height), $(vents, width)], 0)
 
 const coords = ([x1, y1, x2, y2]: Vent): Coord[] =>
-  x1 == x2
-    ? $(
-        inclusiveRange(y1, y2),
-        map(y => [y, x1])
-      )
-    : y1 == y2
-    ? $(
-        inclusiveRange(x1, x2),
-        map(x => [y1, x])
-      )
-    : $(inclusiveRange(y1, y2), zipWith(inclusiveRange(x1, x2)))
+  $(
+    x1 == x2 ? 'horizontal' : y1 == y2 ? 'vertical' : 'diagonal',
+    cond([
+      ['horizontal', $(inclusiveRange(y1, y2), map(concat(x1)))],
+      ['vertical', $(inclusiveRange(x1, x2), map(pipe(concat(y1), reverse)))],
+      ['diagonal', $(inclusiveRange(y1, y2), zipWith(inclusiveRange(x1, x2)))]
+    ])
+  )
 
 const fillVent = (grid: Grid, ventCoords: Coord[]): Grid =>
   $(
