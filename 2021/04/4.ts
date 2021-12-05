@@ -1,6 +1,6 @@
 import {
   $,
-  concat,
+  push,
   cond,
   every,
   filter,
@@ -69,7 +69,7 @@ const findMatchingRow =
 const findFirstWinningBoard = (boards: Board[]) =>
   loopUntil(i => $(boards, map(findMatchingRow(numbers.slice(0, i))), find(not(isNull))))
 
-const score = ([board, nums]) => $(board, flatten(), without(nums), sum, concat($(nums, last)), product)
+const score = ([board, nums]) => $(board, flatten(), without(nums), sum, push($(nums, last)), product)
 
 console.log('Part 1:', $(boards, findFirstWinningBoard, score))
 

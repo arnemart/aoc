@@ -197,9 +197,13 @@ export const shift =
     distance > 0
       ? [...$(arr, slice(-distance)), ...$(arr, slice(0, arr.length - distance))]
       : [...$(arr, slice(-distance)), ...$(arr, slice(0, -distance))]
-export const concat =
+export const push =
   <T>(other: T | T[]) =>
   (arr: T | T[]): T[] =>
+    (arr instanceof Array ? arr : [arr]).concat(other)
+export const unshift =
+  <T>(arr: T | T[]) =>
+  (other: T | T[]): T[] =>
     (arr instanceof Array ? arr : [arr]).concat(other)
 
 export function zipWith<A, B>(o1: B[]): (a: A[]) => [A, B][]
@@ -352,7 +356,7 @@ export const uniqueCombinations =
             )
           ),
           flatten(),
-          concat([fillArray(count, vals[0])])
+          push([fillArray(count, vals[0])])
         )
 
 // NUMBER STUFF
@@ -377,6 +381,11 @@ export const within =
   (min: number, max: number) =>
   (n: number): boolean =>
     n != null && n >= min && n <= max
+
+export const gt = (n1: number) => (n2: number) => n2 > n1
+export const lt = (n1: number) => (n2: number) => n2 < n1
+export const gte = (n1: number) => (n2: number) => n2 >= n1
+export const lte = (n1: number) => (n2: number) => n2 <= n1
 
 // OBJECT STUFF
 export function pluck<T, K extends keyof T>(key: K): (o: T) => T[K]
