@@ -263,6 +263,11 @@ export const flatten =
   (arr: A): FlatArray<A, D>[] =>
     arr.flat(depth)
 
+export const flatmap =
+  <T, U>(fn: MapFn<T, U[]>) =>
+  (arr: T[]): U[] =>
+    $(arr, map(fn), flatten())
+
 export const without =
   <T>(vs: T | T[]) =>
   (arr: T[]): T[] =>
@@ -371,6 +376,10 @@ export const add =
   (n1: number) =>
   (n2: number): number =>
     n1 + n2
+export const subtract =
+  (n1: number) =>
+  (n2: number): number =>
+    n2 - n1
 export const mult =
   (n1: number) =>
   (n2: number): number =>
