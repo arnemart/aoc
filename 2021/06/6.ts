@@ -3,8 +3,6 @@ import { $, add, frequencies, get, ints, range, readInput, reduce, repeat, set, 
 type Fishes = Map<number, number>
 const fishes: Fishes = $(readInput(), split(','), ints, frequencies)
 
-$(fishes, set(1, 4))
-
 const step = (fishes: Fishes): Fishes =>
   $(
     range(8),
