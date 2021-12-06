@@ -44,11 +44,12 @@ export const memoize = <A, B>(fn: (v: A) => B) => {
 export const loopUntil = <T>(
   fn: (i: number, result: T) => T | null,
   cond = (v: T) => v != null,
-  initialValue: T = null
+  initialValue: T = null,
+  startAt = 0
 ): T => {
   let result: T
   let prevResult: T = initialValue
-  let i = 0
+  let i = startAt
   do {
     result = fn(i++, prevResult)
     prevResult = result
@@ -363,12 +364,17 @@ export const uniqueCombinations =
 export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
 export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
 export const floor = (num: number): number => Math.floor(num)
+export const sqrt = (num: number): number => Math.sqrt(num)
 export const max: (nums: number[]) => number = pipe(sortNumeric(), last)
 export const min = (nums: number[]): number => Math.min(...nums)
 export const add =
   (n1: number) =>
   (n2: number): number =>
     n1 + n2
+export const mult =
+  (n1: number) =>
+  (n2: number): number =>
+    n1 * n2
 export const mod =
   (n1: number) =>
   (n2: number): number =>
@@ -498,6 +504,21 @@ export const leftPad =
   (length: number, padWith: string) =>
   (s: string): string =>
     Array.from(Array(Math.max(0, length - s.length + 1))).join(padWith) + s
+export const substr =
+  (start: number, end?: number) =>
+  (str: string): string =>
+    str.slice(start, end)
+export const replaceIndex =
+  (start: number, length: number, what: string) =>
+  (where: string): string =>
+    $([$(where, substr(0, start)), what, $(where, substr(start + length))], join())
+export const allIndexesOf =
+  (what: string) =>
+  (where: string): number[] =>
+    $(
+      range(0, where.length - what.length + 1),
+      filter(n => where.slice(n, n + what.length) == what)
+    )
 
 // OTHER STUFF
 export const parse =
@@ -521,6 +542,7 @@ export const next =
     arr[(i + arr.length + (amt % arr.length)) % arr.length]
 
 export const intoSet = <T>(val: T[]): Set<T> => new Set(val)
+export const unique = pipe(intoSet, values)
 export const union = <T>(sets: Set<T>[]): Set<T> =>
   $(
     sets,

@@ -7,8 +7,8 @@ const step = (fishes: Fishes): Fishes =>
   $(
     range(8),
     reduce((newFishes, n) => $(newFishes, set(n, $(fishes, get(n + 1, 0)))), new Map<number, number>()),
-    set(8, $(fishes, get(0, 0))),
-    set(6, (n: number) => $(fishes, get(0, 0), add(n ?? 0)))
+    set(6, (n: number) => $(fishes, get(0, 0), add(n ?? 0))),
+    set(8, $(fishes, get(0, 0)))
   )
 
 console.log('Part 1:', $(fishes, repeat(80, step), values, sum))
