@@ -404,19 +404,38 @@ export function pluck<T, K extends keyof T>(keys: K | K[]) {
 
 export const getIn =
   (...keys: (string | number)[]) =>
-  (val: any[] | { [key: string]: any }): any =>
-    keys.reduce((o, key) => (o && o[key] != null ? o[key] : null), val)
+  (o: any[] | { [key: string]: any }): any =>
+    keys.reduce((o, key) => {
+      if (o) {
+        return o instanceof Map ? o.get(key) : o[key]
+      }
+      return null
+    }, o)
+
+export const get =
+  <T>(key: string | number, defaultValue: T) =>
+  (o: any[] | { [key: string]: any }): any => {
+    const v = $(o, getIn(key))
+    return v != null ? v : defaultValue
+  }
 
 export const setIn =
   <T, U>(keys: (string | number)[], val: T | ((v: T) => T)) =>
   (o: any[] | { [key: string]: any }): U => {
-    if ($(keys, length, is(1))) {
-      o[keys[0]] = val instanceof Function ? val(o[keys[0]]) : val
-    } else {
-      o[keys[0]] = $(o[keys[0]], setIn($(keys, slice(1)), val))
-    }
+    const oldVal = o instanceof Map ? o.get(keys[0]) : o[keys[0]]
+    const newVal = $(keys, length, is(1))
+      ? val instanceof Function
+        ? val(oldVal)
+        : val
+      : $(oldVal, setIn($(keys, slice(1)), val))
+    o instanceof Map ? o.set(keys[0], newVal) : (o[keys[0]] = newVal)
     return o as U
   }
+
+export const set =
+  <T, U>(key: string | number, val: T | ((v: T) => T)) =>
+  (o: any[] | { [key: string]: any }): U =>
+    $(o, setIn([key], val))
 
 export function values<K, V>(m: { [key: string]: V } | Map<K, V> | Set<V>) {
   if (m instanceof Map || m instanceof Set) return Array.from(m.values())
