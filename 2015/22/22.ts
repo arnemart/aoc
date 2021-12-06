@@ -5,20 +5,29 @@ type Spell = {
   cost: number
   damage: number
   heal: number
-  dur: number
-  armor: number
-  turnDamage: number
-  turnMana: number
+  duration: number
+  shield: number
+  damagePerTurn: number
+  manaPerTurn: number
 }
 
-const blankSpell: Spell = { name: '', damage: 0, heal: 0, cost: 0, dur: 0, armor: 0, turnDamage: 0, turnMana: 0 }
+const defaultSpell: Spell = {
+  name: '',
+  damage: 0,
+  heal: 0,
+  cost: 0,
+  duration: 0,
+  shield: 0,
+  damagePerTurn: 0,
+  manaPerTurn: 0
+}
 
 const spells: Spell[] = [
-  { ...blankSpell, name: 'missile', cost: 53, damage: 4 },
-  { ...blankSpell, name: 'drain', cost: 73, damage: 2, heal: 2 },
-  { ...blankSpell, name: 'shield', cost: 113, dur: 6, armor: 7 },
-  { ...blankSpell, name: 'poison', cost: 173, dur: 6, turnDamage: 3 },
-  { ...blankSpell, name: 'recharge', cost: 229, dur: 5, turnMana: 101 }
+  { ...defaultSpell, name: 'missile', cost: 53, damage: 4 },
+  { ...defaultSpell, name: 'drain', cost: 73, damage: 2, heal: 2 },
+  { ...defaultSpell, name: 'shield', cost: 113, duration: 6, shield: 7 },
+  { ...defaultSpell, name: 'poison', cost: 173, duration: 6, damagePerTurn: 3 },
+  { ...defaultSpell, name: 'recharge', cost: 229, duration: 5, manaPerTurn: 101 }
 ]
 
 type GameState = {
@@ -41,19 +50,19 @@ const performEffects =
     if (state.status == 'won') {
       return state
     } else {
-      const bossHp = state.bossHp - $(state, effect('turnDamage'))
+      const bossHp = state.bossHp - $(state, effect('damagePerTurn'))
       return {
         ...state,
-        mana: state.mana + $(state, effect('turnMana')),
+        mana: state.mana + $(state, effect('manaPerTurn')),
         bossHp: bossHp,
         hp: state.hp - (mode == 'easy' ? 0 : 1),
         status: $(bossHp, lte(0)) ? 'won' : state.status,
         effects: $(
           state.effects,
-          filter(pipe(pluck('dur'), gte(2))),
+          filter(pipe(pluck('duration'), gte(2))),
           map(spell => ({
             ...spell,
-            duration: spell.dur - 1
+            duration: spell.duration - 1
           }))
         )
       }
@@ -71,7 +80,7 @@ const performSpell =
       status: $(bossHp, lte(0)) ? 'won' : 'bossesTurn',
       mana: state.mana - spell.cost,
       manaSpent: state.manaSpent + spell.cost,
-      effects: [...state.effects, ...$(spell.dur ? [{ ...spell }] : [])]
+      effects: [...state.effects, ...$(spell.duration ? [{ ...spell }] : [])]
     }
   }
 
@@ -95,7 +104,7 @@ const playRound =
             [
               {
                 ...state,
-                hp: state.hp - (state.bossDamage - $(state, effect('armor'))),
+                hp: state.hp - (state.bossDamage - $(state, effect('shield'))),
                 status: 'playersTurn'
               } as GameState
             ]
