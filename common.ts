@@ -534,11 +534,12 @@ export function keys(m: any): any {
 }
 
 export function entries<K, V>(m: Map<K, V>): [K, V][]
-export function entries<V>(m: { [key: string]: V }): [string, V][]
-export function entries(m: any): any {
-  if (m instanceof Map) return Array.from(m.entries())
-  return Object.entries(m)
+export function entries<V>(m: Record<string, V>): [string, V][]
+export function entries(m: any) {
+  return m instanceof Map ? Array.from(m.entries()) : Object.entries(m)
 }
+
+export const mapEntries = <K, V>(m: Map<K, V>): [K, V][] => Array.from(m.entries())
 
 // STRING STUFF
 export const number =
@@ -629,13 +630,13 @@ export const union = <T>(sets: Set<T>[]): Set<T> =>
   )
 
 export const cond =
-  <T, U>(o: [T | T[] | ((v: T) => boolean), U | ((v: T) => U)][], def?: U) =>
+  <T, U>(o: [T | T[] | ((v: T) => boolean), U | ((v: T) => U)][], def?: U | ((v: T) => U)) =>
   (v: T): U => {
     const hit = o.find(e =>
       e[0] instanceof Array ? e[0].some(ee => ee == v) : e[0] instanceof Function ? e[0](v) : e[0] == v
     )
     if (!hit && def !== undefined) {
-      return def
+      return def instanceof Function ? def(v) : def
     } else if (!hit && def === undefined) {
       throw new Error(`Missing condition: ${v}`)
     }
