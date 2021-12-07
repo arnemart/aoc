@@ -13,13 +13,12 @@ import {
   pipe,
   product,
   readInput,
-  reverse,
   sort,
   sum,
   uniquePermutations
 } from '../../common'
 
-const packages = $(readInput(), lines, ints, reverse)
+const packages = $(readInput(), lines, ints)
 
 const findSmallestGroup =
   (weight: number) =>
