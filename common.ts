@@ -250,6 +250,13 @@ export const unshift =
   <T>(arr: T | T[]) =>
   (other: T | T[]): T[] =>
     (arr instanceof Array ? arr : [arr]).concat(other)
+export const chop =
+  <T>(n: number) =>
+  (arr: T[]): T[][] =>
+    $(
+      range(Math.ceil(arr.length / n)),
+      map(i => arr.slice(i * n, Math.min((i + 1) * n, arr.length)))
+    )
 
 export function zipWith<A, B>(o1: B[]): (a: A[]) => [A, B][]
 export function zipWith<A, B, C>(o1: B[], o2: C[]): (a: A[]) => [A, B, C][]
@@ -298,7 +305,7 @@ export const sort =
 export const sortNumeric =
   ({ reverse }: { reverse: boolean } = { reverse: false }) =>
   (arr: number[]): number[] =>
-    arr.sort((a: number, b: number) => (reverse ? b - a : a - b))
+    [...arr].sort((a: number, b: number) => (reverse ? b - a : a - b))
 export const sortBy =
   <T>(fn: (v: T) => number) =>
   (arr: T[]): T[] =>
