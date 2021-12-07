@@ -77,7 +77,7 @@ const replaceAllAndCount = (s: string, count: number): [string, number] =>
     )
   )
 
-const partRegex = /([A-Z][a-z]Ca?\([^(]+?\)|[A-Z][a-z]?\([^(]+?\))/
+const partRegex = /[A-Z][a-z]?(Ca)?\([^(]+?\)/
 const replacePart = (molecule: string, count: number): [string, number] =>
   $(molecule, match(partRegex), matches => {
     const [s, currentCount] = loopUntil(
