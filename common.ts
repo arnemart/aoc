@@ -489,7 +489,7 @@ export const getIn =
     }, o)
 
 export const get =
-  <T>(key: string | number, defaultValue: T) =>
+  <T>(key: string | number, defaultValue?: T) =>
   (o: any[] | { [key: string]: any }): any => {
     const v = $(o, getIn(key))
     return v != null ? v : defaultValue
