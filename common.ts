@@ -83,6 +83,29 @@ export function $<A, B, C, D, E, F, G, H>(
   fn6: CF<F, G>,
   fn7: CF<G, H>
 ): H
+export function $<A, B, C, D, E, F, G, H, I>(
+  v: A,
+  fn1: CF<A, B>,
+  fn2: CF<B, C>,
+  fn3: CF<C, D>,
+  fn4: CF<D, E>,
+  fn5: CF<E, F>,
+  fn6: CF<F, G>,
+  fn7: CF<G, H>,
+  fn8: CF<H, I>
+): I
+export function $<A, B, C, D, E, F, G, H, I, J>(
+  v: A,
+  fn1: CF<A, B>,
+  fn2: CF<B, C>,
+  fn3: CF<C, D>,
+  fn4: CF<D, E>,
+  fn5: CF<E, F>,
+  fn6: CF<F, G>,
+  fn7: CF<G, H>,
+  fn8: CF<H, I>,
+  fn9: CF<I, J>
+): J
 export function $(v: any, ...fns: CF<any, any>[]) {
   return fns.filter(fn => fn != null).reduce((v, fn) => fn(v), v)
 }
@@ -115,6 +138,27 @@ export function pipe<A, B, C, D, E, F, G, H>(
   fn6: CF<F, G>,
   fn7: CF<G, H>
 ): (v: A) => H
+export function pipe<A, B, C, D, E, F, G, H, I>(
+  fn1: CF<A, B>,
+  fn2: CF<B, C>,
+  fn3: CF<C, D>,
+  fn4: CF<D, E>,
+  fn5: CF<E, F>,
+  fn6: CF<F, G>,
+  fn7: CF<G, H>,
+  fn8: CF<H, I>
+): (v: A) => I
+export function pipe<A, B, C, D, E, F, G, H, I, J>(
+  fn1: CF<A, B>,
+  fn2: CF<B, C>,
+  fn3: CF<C, D>,
+  fn4: CF<D, E>,
+  fn5: CF<E, F>,
+  fn6: CF<F, G>,
+  fn7: CF<G, H>,
+  fn8: CF<H, I>,
+  fn9: CF<I, J>
+): (v: A) => J
 export function pipe<A>(...fns: CF<any, any>[]) {
   return (v: A) => fns.filter(fn => fn != null).reduce((v, fn) => fn(v), v)
 }
@@ -391,6 +435,10 @@ export const div =
   (n1: number) =>
   (n2: number): number =>
     n2 / n1
+export const intdiv =
+  (n1: number) =>
+  (n2: number): number =>
+    Math.floor(n2 / n1)
 export const mod =
   (n1: number) =>
   (n2: number): number =>
@@ -403,6 +451,8 @@ export const within =
   (min: number, max: number) =>
   (n: number): boolean =>
     n != null && n >= min && n <= max
+export const even = (n: number): boolean => n % 2 == 0
+export const odd = (n: number): boolean => n % 2 != 0
 
 export const gt = (n1: number) => (n2: number) => n2 > n1
 export const lt = (n1: number) => (n2: number) => n2 < n1
