@@ -1,4 +1,4 @@
-import { $, clamp, join, lines, map, pluck, readInput, reduce, split, spy } from '../../common'
+import { $, clamp, join, lines, map, pluck, readInput, reduce, split } from '../../common'
 
 const instructions = $(readInput(), lines, map(split()))
 
