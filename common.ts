@@ -299,6 +299,10 @@ export const sortNumeric =
   ({ reverse }: { reverse: boolean } = { reverse: false }) =>
   (arr: number[]): number[] =>
     arr.sort((a: number, b: number) => (reverse ? b - a : a - b))
+export const sortBy =
+  <T>(fn: (v: T) => number) =>
+  (arr: T[]): T[] =>
+    arr.sort((a, b) => fn(a) - fn(b))
 
 export const reverse = <T>(a: T[]): T[] => a.slice().reverse()
 

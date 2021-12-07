@@ -13,7 +13,7 @@ import {
   pipe,
   product,
   readInput,
-  sort,
+  sortBy,
   sum,
   uniquePermutations
 } from '../../common'
@@ -28,9 +28,9 @@ const findSmallestGroup =
       map(n => $(packages, uniquePermutations(n))),
       flatten(),
       filter(pipe(sum, is(weight))),
-      sort((a, b) => $(a, length) - $(b, length)),
+      sortBy(length),
       groups => $(groups, filter(pipe(length, is($(groups, first, length))))),
-      sort((a, b) => $(a, product) - $(b, product)),
+      sortBy(product),
       first,
       product
     )
