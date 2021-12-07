@@ -369,9 +369,12 @@ export const uniqueCombinations =
 export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
 export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
 export const floor = (num: number): number => Math.floor(num)
+export const round = (num: number): number => Math.round(num)
 export const sqrt = (num: number): number => Math.sqrt(num)
 export const max: (nums: number[]) => number = pipe(sortNumeric(), last)
 export const min = (nums: number[]): number => Math.min(...nums)
+export const abs = (num: number): number => Math.abs(num)
+export const median = (nums: number[]): number => nums.sort((a, b) => a - b)[Math.floor(nums.length / 2)]
 export const add =
   (n1: number) =>
   (n2: number): number =>
@@ -384,6 +387,10 @@ export const mult =
   (n1: number) =>
   (n2: number): number =>
     n1 * n2
+export const div =
+  (n1: number) =>
+  (n2: number): number =>
+    n2 / n1
 export const mod =
   (n1: number) =>
   (n2: number): number =>
