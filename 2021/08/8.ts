@@ -39,14 +39,14 @@ const segment4 = (codes: C) =>
   $(codes, len(5), map(without($(codes, findLen(2)))), findLen(3), overlap($(codes, findLen(4))), first)
 
 const digit0 = (codes: C) => $(codes, len(6), filter(not(includes(segment4(codes)))), first)
-const digit1 = (codes: C) => $(codes, findLen(2))
+const digit1 = findLen(2)
 const digit2 = (codes: C) => $(codes, len(5), findOverlap(digit5(codes), 3))
 const digit3 = (codes: C) => $(codes, len(5), findOverlap(digit1(codes), 2))
-const digit4 = (codes: C) => $(codes, findLen(4))
+const digit4 = findLen(4)
 const digit5 = (codes: C) => $(codes, len(5), findOverlap(digit6(codes), 5))
 const digit6 = (codes: C) => $(codes, len(6), findOverlap(digit1(codes), 1))
-const digit7 = (codes: C) => $(codes, findLen(3))
-const digit8 = (codes: C) => $(codes, findLen(7))
+const digit7 = findLen(3)
+const digit8 = findLen(7)
 const digit9 = (codes: C) => $(codes, len(6), filter(includes(segment4(codes))), findOverlap(digit1(codes), 2))
 
 const digits = tee(digit0, digit1, digit2, digit3, digit4, digit5, digit6, digit7, digit8, digit9)
