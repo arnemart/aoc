@@ -211,6 +211,10 @@ export const find =
   <T>(fn: MapFn<T, boolean>) =>
   (arr: T[]): T =>
     arr.find(fn)
+export const findIndex =
+  <T>(fn: MapFn<T, boolean>) =>
+  (arr: T[]): number =>
+    arr.findIndex(fn)
 export const findWithContext =
   <T, U>(callback: (value: T, i: number) => [found: boolean, context: U]) =>
   (arr: T[]): [value: T, context: U] | undefined => {
@@ -256,6 +260,15 @@ export const chop =
     $(
       range(Math.ceil(arr.length / n)),
       map(i => arr.slice(i * n, Math.min((i + 1) * n, arr.length)))
+    )
+
+export const arrEqual =
+  <T>(s1: T[]) =>
+  (s2: T[]) =>
+    s1.length == s2.length &&
+    $(
+      s1,
+      every(v => $(s2, includes(v)))
     )
 
 export function zipWith<A, B>(o1: B[]): (a: A[]) => [A, B][]
@@ -333,6 +346,14 @@ export const without =
           $(arr, includes(v)) ? [...$(arr, slice(0, arr.indexOf(v))), ...$(arr, slice(arr.indexOf(v) + 1))] : arr,
         arr
       )
+    )
+
+export const overlap =
+  <T>(a1: T[]) =>
+  (a2: T[]): T[] =>
+    $(
+      a1,
+      filter(v => $(a2, includes(v)))
     )
 
 export const permutations =
