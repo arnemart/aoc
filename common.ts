@@ -242,10 +242,12 @@ export const indexOf =
     arr.indexOf(v)
 export const shift =
   <T>(distance: number) =>
-  (arr: T[]) =>
-    distance > 0
-      ? [...$(arr, slice(-distance)), ...$(arr, slice(0, arr.length - distance))]
-      : [...$(arr, slice(-distance)), ...$(arr, slice(0, -distance))]
+  (arr: T[]) => {
+    const dist = distance % arr.length
+    return dist > 0
+      ? [...$(arr, slice(-dist)), ...$(arr, slice(0, arr.length - dist))]
+      : [...$(arr, slice(-dist)), ...$(arr, slice(0, -dist))]
+  }
 export const push =
   <T>(other: T | T[]) =>
   (arr: T | T[]): T[] =>
@@ -293,7 +295,7 @@ export function zip<A, B>(arrs: [A[], B[]]): [A, B][]
 export function zip<A, B, C>(arrs: [A[], B[], C[]]): [A, B, C][]
 export function zip<A, B, C, D>(arrs: [A[], B[], C[], D[]]): [A, B, C, D][]
 export function zip<T>(arrs: T[][]): T[][]
-export function zip<T>([first, ...rest]: unknown[][]): unknown[][] {
+export function zip([first, ...rest]: unknown[][]): unknown[][] {
   return $(first, zipWith(...rest))
 }
 
@@ -590,6 +592,26 @@ export const match =
   (reg: RegExp) =>
   (s: string): RegExpMatchArray =>
     s.match(reg)
+export const matchAll =
+  (reg: RegExp) =>
+  (s: string): RegExpMatchArray[] =>
+    Array.from(s.matchAll(reg))
+export const matchAllOverlapping =
+  (reg: RegExp) =>
+  (s: string): RegExpMatchArray[] =>
+    $(
+      range(0, s.length - 1),
+      reduce((allMatches, n) => {
+        const matches = s.slice(n).match(reg)
+        if (matches) {
+          matches.index = matches.index + n
+          if (allMatches.length == 0 || $(allMatches, last).index != matches.index) {
+            allMatches.push(matches)
+          }
+        }
+        return allMatches
+      }, [] as RegExpMatchArray[])
+    )
 export const test =
   (reg: RegExp) =>
   (s: string): boolean =>
