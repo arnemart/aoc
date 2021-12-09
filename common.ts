@@ -311,6 +311,12 @@ export const frequencies = <T>(arr: T[]): Map<T, number> =>
     reduce((freqs: Map<T, number>, e: T) => freqs.set(e, (freqs.get(e) || 0) + 1), new Map<T, number>())
   )
 
+export const mostCommon = <T>(arr: T[]): T =>
+  Array.from(frequencies(arr).entries()).sort((a: [T, number], b: [T, number]) => b[1] - a[1])[0][0]
+
+export const leastCommon = <T>(arr: T[]): T =>
+  Array.from(frequencies(arr).entries()).sort((a: [T, number], b: [T, number]) => a[1] - b[1])[0][0]
+
 export const sort =
   <T>(fn?: (a: T, b: T) => number) =>
   (arr: T[]): T[] =>
