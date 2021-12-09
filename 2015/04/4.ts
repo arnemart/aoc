@@ -1,12 +1,10 @@
-import { $, loopUntil, test } from '../../common'
-import crypto = require('crypto')
-const hash = (val: string) => crypto.createHash('md5').update(val).digest('hex')
+import { $, loopUntil, md5, test } from '../../common'
 
 const secretKey = 'yzbqklnj'
 
 const solve = (match: RegExp) =>
   loopUntil(i => {
-    if ($(hash(`${secretKey}${i}`), test(match))) {
+    if ($(md5(`${secretKey}${i}`), test(match))) {
       return i
     }
   })

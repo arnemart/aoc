@@ -702,3 +702,6 @@ export const spyWith =
     return v
   }
 export const spy: <T>(v: T) => T = spyWith(console.log)
+
+import crypto = require('crypto')
+export const md5 = (val: string) => crypto.createHash('md5').update(val).digest('hex')
