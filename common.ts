@@ -669,6 +669,24 @@ export const cond =
   }
 export const is = <T>(...v: T[]) => cond([[v, true]], false)
 
+export const and =
+  <T>(...fns: ((v: T) => boolean)[]) =>
+  (v: T) =>
+    $(
+      fns,
+      slice(1),
+      reduce((t, fn) => t && fn(v), fns[0](v))
+    )
+
+export const or =
+  <T>(...fns: ((v: T) => boolean)[]) =>
+  (v: T) =>
+    $(
+      fns,
+      slice(1),
+      reduce((t, fn) => t || fn(v), fns[0](v))
+    )
+
 export const repeat =
   <T>(n: number, fn: (v: T) => T) =>
   (v: T): T =>
