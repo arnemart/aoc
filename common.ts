@@ -1,8 +1,10 @@
 import { readFileSync } from 'fs'
+export const clone = require('rfdc')()
 
 process.chdir(require.main.path)
 
-export const readInput = (testInput: string = null) => testInput ?? readFileSync('input.txt').toString()
+export const readInput = (testInput: string = null, useTestInput: boolean = true) =>
+  testInput && useTestInput ? testInput : readFileSync('input.txt').toString()
 
 export const id = <T>(v: T) => v
 
@@ -301,6 +303,10 @@ export function zip([first, ...rest]: unknown[][]): unknown[][] {
 
 export const first = <T>(arr: T[]): T => arr[0]
 export const last = <T>(arr: T[]): T => arr[arr.length - 1]
+export const nth =
+  <T>(n: number) =>
+  (arr: T[]): T =>
+    arr[n]
 export const length = <T>(arr: T[] | string): number => arr.length
 export const count =
   <T>(fn: (v: T) => boolean) =>
