@@ -166,7 +166,7 @@ const moveAllTheThings = (input: string): ChipLab =>
   $(
     loopUntil(
       (_, labs) => $(labs, map(validMoves), flatten()),
-      labs => labs.length == 0 || $(labs, some(done)),
+      some(done),
       [getChipLab(input)]
     ),
     filter(done),
