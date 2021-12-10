@@ -5,17 +5,17 @@ import {
   find,
   first,
   int,
-  ints,
-  keys,
   lines,
   map,
   match,
   pipe,
   pluck,
   product,
+  push,
   readInput,
   reduce,
   set,
+  slice,
   sortNumeric,
   test
 } from '../../common'
@@ -31,12 +31,12 @@ type Robot = {
   lowType: string
   has: number[]
 }
-type Robots = Record<number, Robot>
+type Robots = Robot[]
 
 const giveToRobot =
   (num: number, val: number) =>
   (bots: Robots): Robots =>
-    $(bots, set(num, { ...bots[num], has: [...bots[num].has, val] }))
+    $(bots, set(num, set('has', push(val))))
 
 const robots = $(readInput(), lines, l =>
   $(
@@ -56,7 +56,7 @@ const robots = $(readInput(), lines, l =>
           } as Robot)
       )
     ),
-    reduce((bots, bot) => $(bots, set(bot.num, bot)), {} as Robots),
+    reduce((bots, bot) => $(bots, set(bot.num, bot)), []),
     bots =>
       $(
         l,
@@ -67,67 +67,46 @@ const robots = $(readInput(), lines, l =>
   )
 )
 
-type Bins = Record<number, number[]>
+type Bins = number[][]
 
 const addToBin =
   (bin: number, val: number) =>
   (bins: Bins): Bins =>
     $(
       bins,
-      set(bin, (b: number[]) => (b ? [...b, val] : [val]))
+      set(bin, b => $(b ?? [], push(val)))
     )
 
-const findBotWith61and17 = (bots: Robots, bins: Bins = {}, foundBot: number = 0): { bot: number; bins: Bins } =>
+const botsDoStuff = (bots: Robots, bins: Bins = [], foundBot: number = 0): { bot: number; bins: Bins } =>
   $(
     bots,
-    keys,
-    ints,
-    filter(key => bots[key].has.length == 2),
+    filter(bot => bot.has.length == 2),
     reduce(
-      ({ bots, bins }, key) => {
-        const bot: Robot = bots[key]
-        const has = $(bot.has, sortNumeric())
+      ({ bots, bins }, bot) => {
+        const [l, h] = $(bot.has, sortNumeric())
         bot.has = []
         if (bot.lowType == 'bot') {
-          bots = $(bots, giveToRobot(bot.low, has[0]))
+          bots = $(bots, giveToRobot(bot.low, l))
         } else {
-          bins = $(bins, addToBin(bot.low, has[0]))
+          bins = $(bins, addToBin(bot.low, l))
         }
         if (bot.highType == 'bot') {
-          bots = $(bots, giveToRobot(bot.high, has[1]))
+          bots = $(bots, giveToRobot(bot.high, h))
         } else {
-          bins = $(bins, addToBin(bot.high, has[1]))
+          bins = $(bins, addToBin(bot.high, h))
         }
         return { bots, bins }
       },
       { bots, bins }
     ),
-    ({ bots, bins }) => {
-      if (foundBot) {
-        if (bins[0] && bins[1] && bins[2]) {
-          return { bot: foundBot, bins }
-        } else {
-          return findBotWith61and17(bots, bins, foundBot)
-        }
-      } else {
-        const botWith61and17 = $(
-          bots,
-          keys,
-          ints,
-          find(key => $(bots[key].has, arrEqual([61, 17])))
-        )
-
-        if (botWith61and17) {
-          return findBotWith61and17(bots, bins, botWith61and17)
-        } else {
-          return findBotWith61and17(bots, bins)
-        }
-      }
-    }
+    ({ bots, bins }) =>
+      foundBot && bins[0] && bins[1] && bins[2]
+        ? { bot: foundBot, bins }
+        : botsDoStuff(bots, bins, foundBot || $(bots, find(pipe(pluck('has'), arrEqual([61, 17]))))?.num)
   )
 
-const result = findBotWith61and17(robots)
+const result = botsDoStuff(robots)
 
 console.log('Part 1:', $(result, pluck('bot')))
 
-console.log('Part 2:', $(result, pluck('bins'), pluck([0, 1, 2]), map(first), product))
+console.log('Part 2:', $(result, pluck('bins'), slice(0, 3), map(first), product))
