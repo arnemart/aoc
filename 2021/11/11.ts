@@ -35,12 +35,11 @@ const octopuses: Octopuses = $(readInput(), lines, map(pipe(split(), ints)))
 const height = $(octopuses, length)
 const width = $(octopuses, first, length)
 
-const neighbors = (x: number, y: number, o: Octopuses) =>
+const neighbors = (x: number, y: number) =>
   $(
     $([-1, 0, 1], combinations(2), filter(not(every(is(0))))),
     map(([xd, yd]) => [x + xd, y + yd]),
-    filter(and(pipe(first, within(0, width - 1)), pipe(last, within(0, height - 1)))),
-    map(([x, y]) => [x, y, o[y][x]])
+    filter(and(pipe(first, within(0, width - 1)), pipe(last, within(0, height - 1))))
   )
 
 const entries2d = (o: Octopuses): number[][] =>
@@ -58,7 +57,7 @@ const entries2d = (o: Octopuses): number[][] =>
 const findOctopuses = (fn: (v: number) => boolean) => (os: Octopuses) => $(os, entries2d, filter(pipe(last, fn)))
 
 const flashOne = (os: Octopuses, [x, y]: number[]): Octopuses =>
-  $(os, setAll(add(1), neighbors(x, y, octopuses)), setIn([y, x], -Infinity))
+  $(os, setAll(add(1), neighbors(x, y)), setIn([y, x], -Infinity))
 
 const flashAll = (os: Octopuses): Octopuses =>
   loopUntil((_, os) => $(os, findOctopuses(gt(9)), reduce(flashOne, os)), pipe(findOctopuses(gt(9)), length, is(0)), os)
