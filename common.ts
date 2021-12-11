@@ -456,6 +456,10 @@ export const uniqueCombinations =
         )
 
 // NUMBER STUFF
+export const toString =
+  (radix = 2) =>
+  (v: number) =>
+    v.toString(radix)
 export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
 export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
 export const floor = (num: number): number => Math.floor(num)
