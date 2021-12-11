@@ -1,6 +1,6 @@
 import {
   $,
-  arrEqual,
+  arrSameValues,
   count,
   filter,
   findIndex,
@@ -58,7 +58,7 @@ console.log(
     map(([codes, nums]) =>
       $(
         nums,
-        map(n => $(codes, digits, findIndex(arrEqual(n)))),
+        map(n => $(codes, digits, findIndex(arrSameValues(n)))),
         join(),
         int
       )

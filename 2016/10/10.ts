@@ -1,6 +1,6 @@
 import {
   $,
-  arrEqual,
+  arrSameValues,
   filter,
   find,
   first,
@@ -102,7 +102,7 @@ const botsDoStuff = (bots: Robots, bins: Bins = [], foundBot: number = 0): { bot
     ({ bots, bins }) =>
       foundBot && bins[0] && bins[1] && bins[2]
         ? { bot: foundBot, bins }
-        : botsDoStuff(bots, bins, foundBot || $(bots, find(pipe(pluck('has'), arrEqual([61, 17]))))?.num)
+        : botsDoStuff(bots, bins, foundBot || $(bots, find(pipe(pluck('has'), arrSameValues([61, 17]))))?.num)
   )
 
 const result = botsDoStuff(robots)

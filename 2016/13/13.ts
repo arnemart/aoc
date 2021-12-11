@@ -1,6 +1,7 @@
 import {
   $,
   and,
+  arrEqual,
   count,
   every,
   filter,
@@ -29,6 +30,8 @@ type Path = C[]
 
 const isWall = ([x, y]: C) => $(x * x + 3 * x + 2 * x * y + y + y * y + 1352, toString(2), split(), count(is('1')), odd)
 
+const onPath = (path: Path) => (to: C) => $(path, some(arrEqual(to)))
+
 const whereToGoFromHere = ([[x, y], ...path]: Path): C[] =>
   $(
     [
@@ -37,7 +40,7 @@ const whereToGoFromHere = ([[x, y], ...path]: Path): C[] =>
       [x - 1, y],
       [x, y - 1]
     ] as C[],
-    filter(and(every(gte(0)), not(isWall), ([x, y]) => $(path, not(some(([px, py]) => px == x && py == y)))))
+    filter(and(every(gte(0)), not(isWall), not(onPath(path))))
   )
 
 const justOneStepFurther = (paths: Path[]): Path[] =>
@@ -53,7 +56,7 @@ const justOneStepFurther = (paths: Path[]): Path[] =>
     flatten()
   )
 
-const goesTo = (to: C) => (path: Path) => $(path, first, ([x, y]) => x == to[0] && y == to[1])
+const goesTo = (to: C) => (path: Path) => $(path, first, arrEqual(to))
 
 const findPath = (from: C, to: C) =>
   $(

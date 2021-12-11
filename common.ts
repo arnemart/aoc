@@ -272,6 +272,14 @@ export const arrEqual =
     s1.length == s2.length &&
     $(
       s1,
+      every((v, i) => s2[i] == v)
+    )
+export const arrSameValues =
+  <T>(s1: T[]) =>
+  (s2: T[]) =>
+    s1.length == s2.length &&
+    $(
+      s1,
       every(v => $(s2, includes(v)))
     )
 
