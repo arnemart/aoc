@@ -9,7 +9,6 @@ import {
   first,
   flatten,
   gte,
-  inclusiveRange,
   is,
   join,
   length,
@@ -69,8 +68,8 @@ console.log('Part 1:', $(findPath([1, 1], [31, 39]), length, subtract(1)))
 console.log(
   'Part 2:',
   $(
-    inclusiveRange(1, 50),
-    map(n => $([[[1, 1]]], repeat(n, justOneStepFurther))),
+    [[[[1, 1]]]],
+    repeat(50, ([ps, ...pss]) => [justOneStepFurther(ps), ps, ...pss]),
     flatten(2),
     map(join(',')),
     unique,
