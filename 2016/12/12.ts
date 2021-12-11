@@ -12,15 +12,7 @@ type Cmd = {
 const numeric = test(/^-?\d+/)
 
 const program = $(
-  readInput(
-    `cpy 41 a
-inc a
-inc a
-dec a
-jnz a 2
-dec a`,
-    false
-  ),
+  readInput(),
   parse(/^(\w+) (-?\w+)( (-?\w+))?$/, ([_, type, v1, __, v2]) => ({
     type,
     r1: numeric(v1) ? null : v1,
