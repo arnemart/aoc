@@ -42,7 +42,7 @@ const neighbors = (x: number, y: number) =>
     filter(and(pipe(first, within(0, width - 1)), pipe(last, within(0, height - 1))))
   )
 
-const entries2d = (o: Octopuses): number[][] =>
+const allOctopuses = (o: Octopuses): number[][] =>
   $(
     o,
     map((row, y) =>
@@ -54,7 +54,7 @@ const entries2d = (o: Octopuses): number[][] =>
     flatten()
   )
 
-const findOctopuses = (fn: (v: number) => boolean) => (os: Octopuses) => $(os, entries2d, filter(pipe(last, fn)))
+const findOctopuses = (fn: (v: number) => boolean) => (os: Octopuses) => $(os, allOctopuses, filter(pipe(last, fn)))
 
 const flashOne = (os: Octopuses, [x, y]: number[]): Octopuses =>
   $(os, setAll(add(1), neighbors(x, y)), setIn([y, x], -Infinity))
@@ -66,7 +66,7 @@ const setAll =
   (fn: (n: number) => number, entries: number[][] = null) =>
   (os: Octopuses) =>
     $(
-      entries || $(os, entries2d),
+      entries || $(os, allOctopuses),
       reduce((os, o) => $(os, setIn([o[1], o[0]], fn)), os)
     )
 
@@ -86,7 +86,7 @@ console.log('Part 1:', $(result, pluck('flashes')))
 console.log(
   'Part 2:',
   $(
-    loopUntil((_, res) => $(res, step), pipe(pluck('octopuses'), entries2d, map(last), every(is(0))), result),
+    loopUntil((_, res) => $(res, step), pipe(pluck('octopuses'), allOctopuses, map(last), every(is(0))), result),
     pluck('steps')
   )
 )
