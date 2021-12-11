@@ -143,7 +143,8 @@ const validMoves = (lab: ChipLab) =>
               // The chips we are leaving behind won't be destroyed
               (lab.floors[lab.elevator].rtgs.length == loadout.rtgs.length ||
                 $(
-                  $(lab.floors[lab.elevator].chips, without(loadout.chips)),
+                  lab.floors[lab.elevator].chips,
+                  without(loadout.chips),
                   every(chip => $(lab.floors[lab.elevator].rtgs, without(loadout.rtgs), includes(chip)))
                 ))
           ),
@@ -164,11 +165,7 @@ const validMoves = (lab: ChipLab) =>
 
 const moveAllTheThings = (input: string): ChipLab =>
   $(
-    loopUntil(
-      (_, labs) => $(labs, map(validMoves), flatten()),
-      some(done),
-      [getChipLab(input)]
-    ),
+    loopUntil((_, labs) => $(labs, map(validMoves), flatten()), some(done), [getChipLab(input)]),
     filter(done),
     sortBy(pluck('moves')),
     first
