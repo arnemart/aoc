@@ -45,6 +45,8 @@ kj-dc`,
   map(split('-'))
 )
 
+const bigCave = test(/[A-Z]/)
+
 const whereGo = (smallCaveFilter: (cs: string[]) => (c: string) => boolean) => (path: string[]) => {
   return $(
     connections,
@@ -73,7 +75,6 @@ const goOneStep = (smallCaveFilter: (cs: string[]) => (c: string) => boolean) =>
     flatten()
   )
 
-const bigCave = test(/[A-Z]/)
 const weCanVisitSmallCavesOnce = (whereHaveWeAlreadyBeen: string[]) => not(isIn(whereHaveWeAlreadyBeen))
 
 const hasEnded = pipe(first, is('end'))
