@@ -234,6 +234,10 @@ export const includes =
   <T>(v: T) =>
   (arr: T[]): boolean =>
     arr.includes(v)
+export const isIn =
+  <T>(arr: T[]) =>
+  (v: T): boolean =>
+    arr.includes(v)
 export const slice =
   <T>(start: number, end?: number) =>
   (arr: T[]): T[] =>
@@ -282,6 +286,8 @@ export const arrSameValues =
       s1,
       every(v => $(s2, includes(v)))
     )
+
+export const allEqual = <T>([v, ...rest]: T[]): boolean => $(rest, every(is(v)))
 
 export function zipWith<A, B>(o1: B[]): (a: A[]) => [A, B][]
 export function zipWith<A, B, C>(o1: B[], o2: C[]): (a: A[]) => [A, B, C][]
