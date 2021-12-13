@@ -1,7 +1,6 @@
 import {
   $,
   add,
-  cond,
   count,
   fillArray,
   first,
@@ -10,7 +9,6 @@ import {
   int,
   ints,
   is,
-  join,
   last,
   length,
   lines,
@@ -26,7 +24,6 @@ import {
   reverse,
   setIn,
   split,
-  spy,
   tee,
   zip
 } from '../../common'

@@ -1,13 +1,10 @@
 import {
   $,
-  cond,
   fillArray,
   flatten,
   int,
-  join,
   map,
   parse,
-  pipe,
   printGrid,
   range,
   readInput,
@@ -15,7 +12,6 @@ import {
   set,
   setIn,
   shift,
-  spy,
   sum,
   zip
 } from '../../common'
