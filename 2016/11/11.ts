@@ -118,6 +118,27 @@ const notSeenYet = (lab: ChipLab) => {
   return !seen
 }
 
+const invalidLoadouts = (lab: ChipLab, fromFloor: number, toFloor: number) => (loadout: Loadout) =>
+  // All the chips we are bringing have a corresponding rtg
+  ((lab.floors[toFloor].rtgs.length == 0 && loadout.rtgs.length == 0) ||
+    $(
+      loadout.chips,
+      every(chip => $(lab.floors[toFloor].rtgs, push(loadout.rtgs), includes(chip)))
+    )) &&
+  // The rtgs we are bringing won't destroy any chips
+  (loadout.rtgs.length == 0 ||
+    $(
+      lab.floors[toFloor].chips,
+      every(chip => $(lab.floors[toFloor].rtgs, push(loadout.rtgs), includes(chip)))
+    )) &&
+  // The chips we are leaving behind won't be destroyed
+  (lab.floors[fromFloor].rtgs.length == loadout.rtgs.length ||
+    $(
+      lab.floors[fromFloor].chips,
+      without(loadout.chips),
+      every(chip => $(lab.floors[fromFloor].rtgs, without(loadout.rtgs), includes(chip)))
+    ))
+
 const validMoves = (lab: ChipLab) =>
   $(lab.floors[lab.elevator], loadouts, loadouts =>
     $(
@@ -126,28 +147,7 @@ const validMoves = (lab: ChipLab) =>
       map(newFloor =>
         $(
           loadouts,
-          filter(
-            loadout =>
-              // All the chips we are bringing have a corresponding rtg
-              ((lab.floors[newFloor].rtgs.length == 0 && loadout.rtgs.length == 0) ||
-                $(
-                  loadout.chips,
-                  every(chip => $(lab.floors[newFloor].rtgs, push(loadout.rtgs), includes(chip)))
-                )) &&
-              // The rtgs we are bringing won't destroy any chips
-              (loadout.rtgs.length == 0 ||
-                $(
-                  lab.floors[newFloor].chips,
-                  every(chip => $(lab.floors[newFloor].rtgs, push(loadout.rtgs), includes(chip)))
-                )) &&
-              // The chips we are leaving behind won't be destroyed
-              (lab.floors[lab.elevator].rtgs.length == loadout.rtgs.length ||
-                $(
-                  lab.floors[lab.elevator].chips,
-                  without(loadout.chips),
-                  every(chip => $(lab.floors[lab.elevator].rtgs, without(loadout.rtgs), includes(chip)))
-                ))
-          ),
+          filter(invalidLoadouts(lab, lab.elevator, newFloor)),
           map(loadout => {
             const newLab = clone(lab) as ChipLab
             newLab.floors[newFloor] = addLoadout(loadout)(newLab.floors[newFloor])
