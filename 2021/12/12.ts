@@ -27,23 +27,7 @@ import {
   unique
 } from '../../common'
 
-const connections = $(
-  readInput(
-    `dc-end
-HN-start
-start-kj
-dc-start
-dc-HN
-LN-dc
-HN-end
-kj-sa
-kj-HN
-kj-dc`,
-    false
-  ),
-  lines,
-  map(split('-'))
-)
+const connections = $(readInput(), lines, map(split('-')))
 
 const bigCave = test(/[A-Z]/)
 
