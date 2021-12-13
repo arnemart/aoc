@@ -78,10 +78,10 @@ console.log('Part 1:', $(dots, fold[folds[0].dir](folds[0].at), countDots))
 
 const print = (d: Dots) => $(d, map(pipe(map(cond([[true, '0']], ' ')), join())), join('\n'), spy)
 
-const allFoldedUp = $(
-  folds,
-  reduce((grid, f) => $(grid, fold[f.dir](f.at)), dots)
-)
-
 console.log('Part 2:')
-print(allFoldedUp)
+
+$(
+  folds,
+  reduce((grid, f) => $(grid, fold[f.dir](f.at)), dots),
+  print
+)
