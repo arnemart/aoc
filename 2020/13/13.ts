@@ -25,7 +25,86 @@ const buses2: Bus[] = $(
   sort((a, b) => b.n - a.n)
 )
 
-// hot garbage alert
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+hot garbage alert
+*/
 
 const findTimestamp2 = (buses: Bus[]): number => {
   const busCount = buses.length
