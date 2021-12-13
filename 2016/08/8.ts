@@ -8,6 +8,7 @@ import {
   map,
   parse,
   pipe,
+  printGrid,
   range,
   readInput,
   reduce,
@@ -68,7 +69,5 @@ const display = $(
 
 console.log('Part 1:', $(display, flatten(), sum))
 
-const print = (d: Display) => $(d, map(pipe(map(cond([[1, '0']], ' ')), join())), join('\n'), spy)
-
 console.log('Part 2:')
-$(display, print)
+$(display, printGrid)

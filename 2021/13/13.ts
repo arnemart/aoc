@@ -19,6 +19,7 @@ import {
   or,
   parse,
   pipe,
+  printGrid,
   range,
   readInput,
   reduce,
@@ -76,12 +77,10 @@ const countDots = (dots: Dots) => $(dots, flatten(), count(is(true)))
 
 console.log('Part 1:', $(dots, fold[folds[0].dir](folds[0].at), countDots))
 
-const print = (d: Dots) => $(d, map(pipe(map(cond([[true, '0']], ' ')), join())), join('\n'), spy)
-
 console.log('Part 2:')
 
 $(
   folds,
   reduce((grid, f) => $(grid, fold[f.dir](f.at)), dots),
-  print
+  printGrid
 )

@@ -755,5 +755,8 @@ export const spyWith =
   }
 export const spy: <T>(v: T) => T = spyWith(console.log)
 
+export const printGrid = (d: any[][]) =>
+  $(d, map(pipe(map(pipe(Boolean, cond([[true, '0']], ' '))), join())), join('\n'), spy)
+
 import crypto = require('crypto')
 export const md5 = (val: string) => crypto.createHash('md5').update(val).digest('hex')
