@@ -1,66 +1,35 @@
-import {
-  $,
-  filter,
-  gt,
-  gte,
-  is,
-  length,
-  loopUntil,
-  map,
-  match,
-  md5,
-  not,
-  pipe,
-  pluck,
-  push,
-  repeat,
-  slice
-} from '../../common'
-
-type Triplet = { char: string; i: number }
-type Result = { triplets: Triplet[]; confirmedTriplets: number[] }
+import { $, loopUntil, match, md5, repeat } from '../../common'
 
 const tripletReg = /(\w)\1\1/
-const quintupletReg = /(\w)\1\1\1\1/
 
-const doTheHashing = (str: string, hashFn: (s: string) => string) =>
-  $(
-    loopUntil(
-      (i, { triplets, confirmedTriplets }) => {
-        const hash = hashFn(`${str}${i}`)
-        const tripletMatches = $(hash, match(tripletReg))
-        if (tripletMatches) {
-          const quintupletMatches = $(hash, match(quintupletReg))
-          if (quintupletMatches) {
-            triplets = $(triplets, filter(pipe(pluck('i'), gt(i - 1000))))
-            confirmedTriplets = $(
-              confirmedTriplets,
-              push(
-                $(
-                  triplets,
-                  filter(t => t.char == quintupletMatches[1]),
-                  map(pluck('i'))
-                )
-              )
-            )
-            triplets = $(triplets, filter(pipe(pluck('char'), not(is(quintupletMatches[1])))))
-          }
-          triplets = $(
-            triplets,
-            push({
-              char: tripletMatches[1],
-              i
-            })
-          )
+const seenHashes = new Map<string, string>()
+const getHash = (str: string, hashFn: (s: string) => string) => {
+  if (!seenHashes.has(str)) {
+    seenHashes.set(str, hashFn(str))
+  }
+  return seenHashes.get(str)
+}
+
+const doTheHashing3 = (str: string, hashFn: (s: string) => string) => {
+  seenHashes.clear()
+  return loopUntil(
+    (i, [_, found]) => {
+      const tripletMatches = $(getHash(`${str}${i}`, hashFn), match(tripletReg))
+      if (tripletMatches) {
+        const quintupletReg = new RegExp(`(${tripletMatches[1]})\\1\\1\\1\\1`)
+        const hasQuintuplet = loopUntil(j =>
+          j > 1000 ? false : quintupletReg.test(getHash(`${str}${i + j + 1}`, hashFn)) ? true : null
+        )
+        if (hasQuintuplet == true) {
+          return [i, found + 1]
         }
-        return { triplets, confirmedTriplets }
-      },
-      pipe(pluck('confirmedTriplets'), length, gte(64)),
-      { triplets: [], confirmedTriplets: [] } as Result
-    ),
-    pluck('confirmedTriplets'),
-    slice(60, 64)
-  )
+      }
+      return [i, found]
+    },
+    ([_, found]) => found == 64,
+    [0, 0]
+  )[0]
+}
 
-console.log('Part 1: probably one of these:', doTheHashing('qzyelonm', md5))
-console.log('Part 2: probably one of these:', doTheHashing('qzyelonm', repeat(2017, md5)))
+console.log('Part 1:', doTheHashing3('qzyelonm', md5))
+console.log('Part 2:', doTheHashing3('qzyelonm', repeat(2017, md5)))
