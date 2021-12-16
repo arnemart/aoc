@@ -201,7 +201,7 @@ export const filter =
   <T>(fn: MapFn<T, boolean>) =>
   (arr: T[]): T[] =>
     arr.filter(fn)
-export const takeUntil =
+export const takeUntilInclusive =
   <T>(fn: MapFn<T, boolean>) =>
   (arr: T[]): T[] =>
     $(

@@ -23,7 +23,7 @@ import {
   split,
   substr,
   sum,
-  takeUntil,
+  takeUntilInclusive,
   tee,
   test,
   toString
@@ -50,7 +50,7 @@ const readPacket = (bin: string): [Packet, string] => {
       substr(6),
       split(),
       chop(5),
-      takeUntil(([l]) => $(l, is('0'))),
+      takeUntilInclusive(([l]) => $(l, is('0'))),
       map(pipe(slice(1), join())),
       tee(pipe(join(), number(2)), pipe(length, mult(5), add(6)))
     )
