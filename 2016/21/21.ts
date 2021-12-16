@@ -111,7 +111,7 @@ const performOppositeOperation =
         [
           'rotateLetter',
           () => {
-            const shifts = { 0: 7, 1: -1, 2: 2, 3: -2, 4: 1, 5: -3, 6: 0, 7: -4 }
+            const shifts = [7, 7, 2, 6, 1, 5, 0, 0]
             return $(str, shift(shifts[$(str, indexOf(v1))]))
           }
         ],
