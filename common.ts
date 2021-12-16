@@ -201,6 +201,22 @@ export const filter =
   <T>(fn: MapFn<T, boolean>) =>
   (arr: T[]): T[] =>
     arr.filter(fn)
+export const takeUntil =
+  <T>(fn: MapFn<T, boolean>) =>
+  (arr: T[]): T[] =>
+    $(
+      arr,
+      reduce(
+        ({ res, done }, v, i, arr) => {
+          if (done) {
+            return { res, done }
+          }
+          res.push(v)
+          return { res, done: fn(v, i, arr) }
+        },
+        { res: [], done: false }
+      )
+    ).res
 export const some =
   <T>(fn: MapFn<T, boolean>) =>
   (arr: T[]): boolean =>
