@@ -92,13 +92,18 @@ Welcome to the hot garbage zone
 
 */
 
-const aStupidImplementationOfASlightlyMoreSensibleGame = (elves: number[]) => {
+const thisIsStupid = (elves: number[]) => {
   while (elves.length > 1) {
-    elves.splice(Math.floor((elves.length / 2) % elves.length), 1)
-    elves.push(elves[0])
-    elves.splice(0, 1)
+    let i = 0
+    let toRemove = Math.floor(elves.length / 2) + i
+    while (elves.length > toRemove) {
+      elves.splice(toRemove, 1)
+      i++
+      toRemove = Math.floor(elves.length / 2) + i
+    }
+    elves = $(elves, shift(-i))
   }
   return elves[0]
 }
 
-console.log('Part 2:', aStupidImplementationOfASlightlyMoreSensibleGame(elves))
+console.log('Part 2:', thisIsStupid(elves))
