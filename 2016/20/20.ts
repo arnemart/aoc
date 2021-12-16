@@ -66,6 +66,7 @@ console.log(
     tee(slice(0, -1), slice(1)),
     zip,
     map(([a, b]) => b[0] - a[1] - 1),
-    sum
+    sum,
+    add(4294967295 - $(rules, last, last))
   )
 )
