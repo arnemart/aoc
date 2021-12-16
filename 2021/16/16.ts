@@ -39,10 +39,12 @@ type Packet = {
   size: number
 }
 
+const num = (bin: string, start: number, end: number) => $(bin, substr(start, end), number(2))
+
 const readPacket = (bin: string): [Packet, string] => {
   const basePacket: Partial<Packet> = {
-    version: $(bin, substr(0, 3), number(2)),
-    type: $(bin, substr(3, 6), number(2))
+    version: num(bin, 0, 3),
+    type: num(bin, 3, 6)
   }
   if (basePacket.type == 4) {
     const [value, size] = $(
@@ -58,12 +60,12 @@ const readPacket = (bin: string): [Packet, string] => {
   } else {
     const lengthType = $(bin, substr(6, 7))
     if (lengthType == '0') {
-      const subSize = $(bin, substr(7, 22), number(2))
+      const subSize = num(bin, 7, 22)
       const subpackets = readSubPackets($(bin, substr(22, 22 + subSize)))
       const size = 22 + subSize
       return [{ ...basePacket, value: 0, size, subpackets } as Packet, $(bin, substr(size))]
     } else {
-      const packetCount = $(bin, substr(7, 18), number(2))
+      const packetCount = num(bin, 7, 18)
       const subpackets = readSubPackets($(bin, substr(18)), packetCount)
       const size = $(subpackets, map(pluck('size')), sum, add(18))
       return [{ ...basePacket, value: 0, size, subpackets } as Packet, $(bin, substr(size))]
