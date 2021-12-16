@@ -100,22 +100,24 @@ console.log(
   )
 )
 
-const performOppositeOperation = (op: Operation) => (str: string[]) =>
-  $(
-    op.type,
-    cond([
-      [['swapPosition', 'swapLetter', 'move'], () => $(str, performOperation({ type: op.type, v1: op.v2, v2: op.v1 }))],
-      ['rotate', () => $(str, shift(-op.v1 as number))],
-      [
-        'rotateLetter',
-        () => {
-          const is = { 0: 7, 1: -1, 2: 2, 3: -2, 4: 1, 5: -3, 6: 0, 7: -4 }
-          return $(str, shift(is[$(str, indexOf(op.v1))]))
-        }
-      ],
-      ['reverse', () => $(str, performOperation(op))]
-    ])
-  )
+const performOppositeOperation =
+  ({ type, v1, v2 }: Operation) =>
+  (str: string[]) =>
+    $(
+      type,
+      cond([
+        [['swapPosition', 'swapLetter', 'move'], () => $(str, performOperation({ type, v1: v2, v2: v1 }))],
+        ['rotate', () => $(str, shift(-v1 as number))],
+        [
+          'rotateLetter',
+          () => {
+            const shifts = { 0: 7, 1: -1, 2: 2, 3: -2, 4: 1, 5: -3, 6: 0, 7: -4 }
+            return $(str, shift(shifts[$(str, indexOf(v1))]))
+          }
+        ],
+        ['reverse', () => $(str, performOperation({ type, v1, v2 }))]
+      ])
+    )
 
 console.log(
   'Part 2:',
