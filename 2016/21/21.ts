@@ -6,21 +6,17 @@ import {
   indexOf,
   int,
   join,
-  last,
   map,
   parse,
-  pluck,
+  push,
   range,
   readInput,
   reduce,
-  repeat,
   reverse,
   shift,
   slice,
   sortBy,
-  split,
-  spy,
-  spyWith
+  split
 } from '../../common'
 
 const reg = new RegExp(
@@ -112,7 +108,7 @@ console.log(
 const inverseShifts = $(
   range(8),
   map(n =>
-    $('aooooooo', split(), shift(n), performOperation({ type: 'rotateLetter', v1: 'a' }), indexOf('a'), a => [a, n])
+    $('aooooooo', split(), shift(n), performOperation({ type: 'rotateLetter', v1: 'a' }), indexOf('a'), push(n))
   ),
   sortBy(first),
   map(([a, n]) => n - a)
