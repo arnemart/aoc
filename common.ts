@@ -177,11 +177,13 @@ export function tee<T>(...cmds: ((v: T) => unknown)[]): (v: T) => unknown[] {
     )
 }
 
-export const isNull = <T>(v: T): boolean => v == null
 export const not =
   <T>(fn: (v: T) => boolean) =>
   (v: T): boolean =>
     !fn(v)
+
+export const isNull = <T>(v: T): boolean => v == null
+export const nonNull = not(isNull)
 
 // ARRAY STUFF
 type MapFn<T, U> = (v: T, i: number, arr: T[]) => U
@@ -764,12 +766,12 @@ export const repeat =
     )
 
 export const spyWith =
-  <T>(fn: (v: T) => unknown) =>
+  <T>(fn: (v: T) => any) =>
   (v: T): T => {
-    fn(v)
+    console.log(fn(v))
     return v
   }
-export const spy: <T>(v: T) => T = spyWith(console.log)
+export const spy: <T>(v: T) => T = spyWith(id)
 
 export const printGrid = (d: any[][]) =>
   $(d, map(pipe(map(pipe(Boolean, cond([[true, '0']], ' '))), join())), join('\n'), spy)

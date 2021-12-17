@@ -51,7 +51,7 @@ const findValue = (wire: string): number => {
             ['LSHIFT', () => sixteenbit(findValue(input[wire].op1) << findValue(input[wire].op2))],
             ['RSHIFT', () => sixteenbit(findValue(input[wire].op1) >> findValue(input[wire].op2))]
           ]),
-          spyWith(val => (input[wire].memo = val))
+          val => (input[wire].memo = val)
         )
 }
 
