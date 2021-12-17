@@ -1,17 +1,26 @@
 import {
   $,
   cond,
+  first,
   flatten,
   indexOf,
   int,
   join,
+  last,
+  map,
   parse,
+  pluck,
+  range,
   readInput,
   reduce,
+  repeat,
   reverse,
   shift,
   slice,
-  split
+  sortBy,
+  split,
+  spy,
+  spyWith
 } from '../../common'
 
 const reg = new RegExp(
@@ -100,6 +109,15 @@ console.log(
   )
 )
 
+const inverseShifts = $(
+  range(8),
+  map(n =>
+    $('aooooooo', split(), shift(n), performOperation({ type: 'rotateLetter', v1: 'a' }), indexOf('a'), a => [a, n])
+  ),
+  sortBy(first),
+  map(([a, n]) => n - a)
+)
+
 const performOppositeOperation =
   ({ type, v1, v2 }: Operation) =>
   (str: string[]) =>
@@ -108,13 +126,7 @@ const performOppositeOperation =
       cond([
         [['swapPosition', 'swapLetter', 'move'], () => $(str, performOperation({ type, v1: v2, v2: v1 }))],
         ['rotate', () => $(str, shift(-v1 as number))],
-        [
-          'rotateLetter',
-          () => {
-            const shifts = [7, 7, 2, 6, 1, 5, 0, 0]
-            return $(str, shift(shifts[$(str, indexOf(v1))]))
-          }
-        ],
+        ['rotateLetter', () => $(str, shift(inverseShifts[$(str, indexOf(v1))]))],
         ['reverse', () => $(str, performOperation({ type, v1, v2 }))]
       ])
     )
