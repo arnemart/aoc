@@ -264,6 +264,10 @@ export const indexOf =
   <T>(v: T) =>
   (arr: T[]): number =>
     arr.indexOf(v)
+export const lastIndexOf =
+  <T>(v: T) =>
+  (arr: T[]): number =>
+    arr.lastIndexOf(v)
 export const shift =
   <T>(distance: number) =>
   (arr: T[]) => {
@@ -495,6 +499,7 @@ export const toString =
 export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
 export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
 export const floor = (num: number): number => Math.floor(num)
+export const ceil = (num: number): number => Math.ceil(num)
 export const round = (num: number): number => Math.round(num)
 export const sqrt = (num: number): number => Math.sqrt(num)
 export const max: (nums: number[]) => number = pipe(sortNumeric(), last)
