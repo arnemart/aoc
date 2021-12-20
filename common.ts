@@ -561,6 +561,8 @@ export function pluck<T, K extends keyof T>(keys: K | K[]) {
   }
 }
 
+type Nested<T> = T[] | Nested<T>[] | { [key: string]: T } | { [key: string]: Nested<T> }
+
 export const getIn =
   (...keys: (string | number)[]) =>
   (o: any[] | { [key: string]: any }): any =>
@@ -570,6 +572,13 @@ export const getIn =
       }
       return null
     }, o)
+
+export const getInDefault =
+  <T>(keys: (string | number)[], def: T) =>
+  (o: Nested<T>): T => {
+    const v = $(o, getIn(...keys))
+    return v == null ? def : v
+  }
 
 export const get =
   <T>(key: string | number, defaultValue?: T) =>
@@ -717,6 +726,15 @@ export const next =
 
 export const intoSet = <T>(val: T[]): Set<T> => new Set(val)
 export const unique = pipe(intoSet, values)
+export const uniqueBy =
+  <T, U>(fn: (v: T) => U) =>
+  (arr: T[]): T[] =>
+    $(
+      arr,
+      map(v => [fn(v), v] as [U, T]),
+      e => new Map(e),
+      values
+    )
 export const union = <T>(sets: Set<T>[]): Set<T> =>
   $(
     sets,
@@ -778,8 +796,10 @@ export const spyWith =
   }
 export const spy: <T>(v: T) => T = spyWith(id)
 
-export const printGrid = (d: any[][]) =>
+export const printGrid = <T>(d: T[][]): T[][] => {
   $(d, map(pipe(map(pipe(Boolean, cond([[true, '0']], ' '))), join())), join('\n'), spy)
+  return d
+}
 
 import crypto = require('crypto')
 export const md5 = (val: string) => crypto.createHash('md5').update(val).digest('hex')
