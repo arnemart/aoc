@@ -497,6 +497,7 @@ export const toString =
   (v: number) =>
     v.toString(radix)
 export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
+export const difference = ([a, b]: number[]): number => a - b
 export const product = (nums: number[]): number => nums.reduce((p, n) => p * n, 1)
 export const floor = (num: number): number => Math.floor(num)
 export const ceil = (num: number): number => Math.ceil(num)
