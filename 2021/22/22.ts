@@ -27,4 +27,4 @@ const centralArea = primitives.cuboid({
 
 console.log('Part 1:', round(measurements.measureVolume(booleans.intersect(geom, centralArea))))
 
-console.log('Part 2 is in the vicinity of:', round(measurements.measureAggregateVolume(geom)))
+console.log('Part 2 is in the vicinity of:', round(measurements.measureVolume(geom)))
