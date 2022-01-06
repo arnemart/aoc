@@ -139,24 +139,6 @@ const buildValidMoves = (part: Part): number[][] =>
 
 const validMoves = { 1: buildValidMoves(1), 2: buildValidMoves(2) }
 
-const inTheCorrectSpot = (p: number, rooms: string[], part: Part) =>
-  $(
-    p,
-    cond(
-      [
-        [
-          siderooms[part],
-          $(
-            inclusiveRange(bottom(p, part), p),
-            map(p => rooms[p]),
-            every(is(homes[part][p]))
-          )
-        ]
-      ],
-      false
-    )
-  )
-
 const allowedToMoveHere = (from: number, to: number, rooms: string[], part: Part) =>
   $(
     to,
@@ -177,6 +159,24 @@ const allowedToMoveHere = (from: number, to: number, rooms: string[], part: Part
     )
   )
 
+const inTheCorrectSpot = (p: number, rooms: string[], part: Part) =>
+  $(
+    p,
+    cond(
+      [
+        [
+          siderooms[part],
+          $(
+            inclusiveRange(bottom(p, part), p),
+            map(p => rooms[p]),
+            every(is(homes[part][p]))
+          )
+        ]
+      ],
+      false
+    )
+  )
+
 type State = {
   cost: number
   rooms: string[]
@@ -191,8 +191,7 @@ const whereGo =
         and(
           // Move an amphipod to an empty space
           ([p1, p2]) => rooms[p1] != '.' && rooms[p2] == '.',
-          // Only move into the correct rooms, and don't move
-          // into an upper room if the lower is empty
+          // Only move into the correct rooms, and don't move into an upper room if the lower is empty
           ([p1, p2]) => allowedToMoveHere(p1, p2, rooms, part),
           // Don't move out of the correct room
           ([p1]) => !inTheCorrectSpot(p1, rooms, part),
