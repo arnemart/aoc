@@ -166,20 +166,16 @@ const whereGo =
     $(
       validMoves[part],
       filter(
-        ([p1, p2]) =>
-          // Move an amphipod to an empty space
-          rooms[p1] != '.' &&
-          rooms[p2] == '.' &&
-          // Only move into the correct rooms, and don't move into an upper room if the lower is empty
-          allowedToMoveHere(p1, p2, rooms, part) &&
+        ([from, to]) =>
+          // Only move an amphipod into an empty space
+          rooms[from] != '.' &&
+          rooms[to] == '.' &&
+          // Only move into the correct rooms, and don't move into an upper room if a lower room is empty
+          allowedToMoveHere(from, to, rooms, part) &&
           // Don't move out of the correct room
-          !inTheCorrectSpot(p1, rooms, part) &&
+          !inTheCorrectSpot(from, rooms, part) &&
           // Don't move if something is in the way
-          $(
-            route(p1, p2, part),
-            slice(1, -1),
-            every(pos => rooms[pos] == '.')
-          )
+          $(route(from, to, part), slice(1, -1), map(pluckFrom(rooms)), every(is('.')))
       ),
       map(([p1, p2]) => ({
         cost: calculateCost(p1, p2, rooms[p1], part),
