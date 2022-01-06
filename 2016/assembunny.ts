@@ -1,4 +1,4 @@
-import { $, cond, getIn, int, loopUntil, parse, set, test } from '../common'
+import { $, cond, getIn, int, loopUntil, parse, set, numeric } from '../common'
 
 export type CmdType = 'cpy' | 'inc' | 'dec' | 'jnz'
 export type Cmd = {
@@ -14,8 +14,6 @@ export type Machine = {
   pc: number
   program: Cmd[]
 }
-
-const numeric = test(/^-?\d+/)
 
 const v = (state: Machine, v: string): number => (numeric(v) ? int(v) : state[v])
 

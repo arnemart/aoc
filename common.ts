@@ -10,7 +10,11 @@ export const id = <T>(v: T) => v
 
 export const xor = (a: boolean, b: boolean) => (a && !b) || (!a && b)
 export const range = (n1: number, n2?: number) =>
-  n2 == undefined ? Array.from(Array(n1)).map((_, i) => i) : Array.from(Array(n2 - n1)).map((_, i) => i + n1)
+  n2 == undefined
+    ? Array.from(Array(n1)).map((_, i) => i)
+    : n1 >= n2
+    ? []
+    : Array.from(Array(n2 - n1)).map((_, i) => i + n1)
 
 export const inclusiveRange = (n1: number, n2: number) => (n2 > n1 ? range(n1, n2 + 1) : range(n2, n1 + 1).reverse())
 
@@ -493,7 +497,7 @@ export const uniqueCombinations =
 
 // NUMBER STUFF
 export const toString =
-  (radix = 2) =>
+  (radix = 10) =>
   (v: number) =>
     v.toString(radix)
 export const sum = (nums: number[]): number => nums.reduce((s, n) => s + n, 0)
@@ -673,6 +677,7 @@ export const test =
   (reg: RegExp) =>
   (s: string): boolean =>
     reg.test(s)
+export const numeric = test(/^-?\d+(\.\d+)?/)
 export const charAt =
   (n: number) =>
   (s: string): string =>
