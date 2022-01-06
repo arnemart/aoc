@@ -49,6 +49,7 @@ const buildHomes = (count: number) =>
     flatmap(a => fillArray(count, a))
   )
 const homes = { 1: buildHomes(2), 2: buildHomes(4) }
+const bottomHome = { 1: { A: 0, B: 2, C: 4, D: 6 }, 2: { A: 0, B: 4, C: 8, D: 12 } }
 
 const siderooms = { 1: range(8), 2: range(16) }
 const crossroads = { 1: [10, 12, 14, 16], 2: [18, 20, 22, 24] }
@@ -199,7 +200,7 @@ const heuristic =
   ({ rooms }: State) =>
     $(
       rooms,
-      map((a, i) => calculateCost(i, 0, a, part)),
+      map((a, i) => calculateCost(i, bottomHome[part][a], a, part)),
       sum
     )
 
