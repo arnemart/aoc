@@ -1,6 +1,5 @@
 import {
   $,
-  and,
   cond,
   every,
   fillArray,
@@ -13,6 +12,7 @@ import {
   length,
   map,
   mult,
+  pluckFrom,
   range,
   set,
   slice,
@@ -42,12 +42,12 @@ type Part = 1 | 2
 
 const costs = { A: 1, B: 10, C: 100, D: 1000 }
 
-const buildHomes = (count: number) => [
-  ...fillArray(count, 'A'),
-  ...fillArray(count, 'B'),
-  ...fillArray(count, 'C'),
-  ...fillArray(count, 'D')
-]
+const buildHomes = (count: number) =>
+  $(
+    'ABCD',
+    split(),
+    flatmap(a => fillArray(count, a))
+  )
 const homes = { 1: buildHomes(2), 2: buildHomes(4) }
 
 const siderooms = {
@@ -147,12 +147,7 @@ const allowedToMoveHere = (from: number, to: number, rooms: string[], part: Part
         [
           siderooms[part],
           rooms[from] == homes[part][to] &&
-            $(
-              inclusiveRange(to, bottom(to, part)),
-              slice(1),
-              map(p => rooms[p]),
-              every(is(homes[part][to]))
-            )
+            $(inclusiveRange(to, bottom(to, part)), slice(1), map(pluckFrom(rooms)), every(is(homes[part][to])))
         ]
       ],
       true
@@ -163,16 +158,7 @@ const inTheCorrectSpot = (p: number, rooms: string[], part: Part) =>
   $(
     p,
     cond(
-      [
-        [
-          siderooms[part],
-          $(
-            inclusiveRange(bottom(p, part), p),
-            map(p => rooms[p]),
-            every(is(homes[part][p]))
-          )
-        ]
-      ],
+      [[siderooms[part], $(inclusiveRange(bottom(p, part), p), map(pluckFrom(rooms)), every(is(homes[part][p])))]],
       false
     )
   )
@@ -188,21 +174,20 @@ const whereGo =
     $(
       validMoves[part],
       filter(
-        and(
+        ([p1, p2]) =>
           // Move an amphipod to an empty space
-          ([p1, p2]) => rooms[p1] != '.' && rooms[p2] == '.',
+          rooms[p1] != '.' &&
+          rooms[p2] == '.' &&
           // Only move into the correct rooms, and don't move into an upper room if the lower is empty
-          ([p1, p2]) => allowedToMoveHere(p1, p2, rooms, part),
+          allowedToMoveHere(p1, p2, rooms, part) &&
           // Don't move out of the correct room
-          ([p1]) => !inTheCorrectSpot(p1, rooms, part),
+          !inTheCorrectSpot(p1, rooms, part) &&
           // Don't move if something is in the way
-          ([p1, p2]) =>
-            $(
-              route(p1, p2, part),
-              slice(1, -1),
-              every(pos => rooms[pos] == '.')
-            )
-        )
+          $(
+            route(p1, p2, part),
+            slice(1, -1),
+            every(pos => rooms[pos] == '.')
+          )
       ),
       map(([p1, p2]) => ({
         cost: calculateCost(p1, p2, rooms[p1], part),

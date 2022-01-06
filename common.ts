@@ -566,6 +566,11 @@ export function pluck<T, K extends keyof T>(keys: K | K[]) {
   }
 }
 
+export const pluckFrom =
+  <T, K extends keyof T>(o: T) =>
+  (key: K) =>
+    o[key]
+
 type Nested<T> = T[] | Nested<T>[] | { [key: string]: T } | { [key: string]: Nested<T> }
 
 export const getIn =
