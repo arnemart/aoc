@@ -50,18 +50,9 @@ const buildHomes = (count: number) =>
   )
 const homes = { 1: buildHomes(2), 2: buildHomes(4) }
 
-const siderooms = {
-  1: range(8),
-  2: range(16)
-}
-const crossroads = {
-  1: [10, 12, 14, 16],
-  2: [18, 20, 22, 24]
-}
-const hallways = {
-  1: [8, 9, 11, 13, 15, 17, 18],
-  2: [16, 17, 19, 21, 23, 25, 26]
-}
+const siderooms = { 1: range(8), 2: range(16) }
+const crossroads = { 1: [10, 12, 14, 16], 2: [18, 20, 22, 24] }
+const hallways = { 1: [8, 9, 11, 13, 15, 17, 18], 2: [16, 17, 19, 21, 23, 25, 26] }
 
 const bottom = (room: number, part: Part) => floor(room / (part * 2)) * part * 2
 const top = (room: number, part: Part) => bottom(room, part) + (part == 1 ? 1 : 3)
