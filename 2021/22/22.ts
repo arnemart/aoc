@@ -13,7 +13,7 @@ const geom = $(
   cubes,
   reduce((g, { v, cs }) => {
     const cub = primitives.cuboid({
-      center: [(cs[0] + cs[1]) / 2, (cs[2] + cs[3]) / 2, (cs[4] + cs[5]) / 2],
+      center: [(cs[0] + cs[1] + 1) / 2, (cs[2] + cs[3] + 1) / 2, (cs[4] + cs[5] + 1) / 2],
       size: [cs[1] + 1 - cs[0], cs[3] + 1 - cs[2], cs[5] + 1 - cs[4]]
     })
     return v ? booleans.union(g, cub) : booleans.subtract(g, cub)
