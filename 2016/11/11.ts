@@ -3,7 +3,6 @@ import {
   clone,
   every,
   filter,
-  first,
   flatten,
   includes,
   is,
@@ -11,9 +10,9 @@ import {
   join,
   length,
   lines,
-  loopUntil,
   map,
   matchAll,
+  mult,
   not,
   nth,
   overlap,
@@ -22,14 +21,15 @@ import {
   push,
   readInput,
   slice,
-  some,
   sort,
-  sortBy,
+  sum,
   tee,
   uniquePermutations,
   within,
   without
 } from '../../common'
+
+import aStar = require('a-star')
 
 type Loadout = {
   chips: string[]
@@ -104,13 +104,16 @@ const removeLoadout =
     rtgs: $(from.rtgs, without(remove.rtgs), sort())
   })
 
-const seenStates = new Set<string>()
-const notSeenYet = (lab: ChipLab) => {
-  const labstr = `${lab.elevator}-${$(
+const hash = (lab: ChipLab) =>
+  `${lab.elevator}-${$(
     lab.floors,
     map(floor => `${$(floor.chips, join(','))};${$(floor.rtgs, join(','))}`),
     join('|')
   )}`
+
+const seenStates = new Set<string>()
+const notSeenYet = (lab: ChipLab) => {
+  const labstr = hash(lab)
   const seen = seenStates.has(labstr)
   if (!seen) {
     seenStates.add(labstr)
@@ -163,17 +166,25 @@ const validMoves = (lab: ChipLab) =>
     )
   ) as ChipLab[]
 
-const moveAllTheThings = (input: string): ChipLab =>
-  $(
-    loopUntil((_, labs) => $(labs, map(validMoves), flatten()), some(done), [getChipLab(input)]),
-    filter(done),
-    sortBy(pluck('moves')),
-    first
-  )
-
-console.log('Part 1:', $(moveAllTheThings(readInput()), pluck('moves')))
+const moveAllTheThings = (input: string) =>
+  aStar({
+    start: getChipLab(input),
+    isEnd: done,
+    neighbor: validMoves,
+    distance: () => 1,
+    heuristic: ({ floors }: ChipLab) =>
+      $(
+        floors,
+        slice(0, -1),
+        map((f, i) => $(f, pluck(['chips', 'rtgs']), map(length), sum, mult(6 - i))),
+        sum
+      ),
+    hash: hash
+  })
 
 const weFoundSomeMoreStuff =
   'An elerium generator, an elerium-compatible microchip, a dilithium generator, a dilithium-compatible microchip'
 
-console.log('Part 2:', $(moveAllTheThings(weFoundSomeMoreStuff + readInput()), pluck('moves')))
+console.log('Part 1:', $(moveAllTheThings(readInput()), pluck('cost')))
+
+console.log('Part 2:', $(moveAllTheThings(weFoundSomeMoreStuff + readInput()), pluck('cost')))

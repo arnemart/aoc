@@ -682,7 +682,7 @@ export const test =
   (reg: RegExp) =>
   (s: string): boolean =>
     reg.test(s)
-export const numeric = test(/^-?\d+(\.\d+)?/)
+export const numeric = (v: any) => (v == null ? false : $(v.toString(), test(/^-?\d+(\.\d+)?/)))
 export const charAt =
   (n: number) =>
   (s: string): string =>
