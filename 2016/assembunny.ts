@@ -1,4 +1,4 @@
-import { $, cond, getIn, int, loopUntil, parse, set, numeric } from '../common'
+import { $, cond, getIn, int, loopUntil, parse, set, numeric, push, add } from '../common'
 
 export type CmdType = 'cpy' | 'inc' | 'dec' | 'jnz'
 export type Cmd = {
@@ -12,6 +12,8 @@ export type Machine = {
   c: number
   d: number
   pc: number
+  steps: number
+  output: number[]
   program: Cmd[]
 }
 
@@ -65,23 +67,34 @@ export const step = (state: Machine): Machine =>
               return { ...state, pc: state.pc + 1 }
             }
           }
+        ],
+        [
+          'out',
+          () => ({
+            ...state,
+            pc: state.pc + 1,
+            output: $(state.output, push(v(state, cmd.v1)))
+          })
         ]
-      ])
+      ]),
+      set('steps', add(1))
     )
   )
 
-export const run = (state: Machine): Machine =>
-  loopUntil(
-    (_, state) => $(state, step),
-    state => state.pc < 0 || state.pc >= state.program.length,
-    state
-  )
+export const run =
+  (howLongToRun = Infinity) =>
+  (state: Machine): Machine =>
+    loopUntil(
+      (_, state) => $(state, step),
+      state => state.pc < 0 || state.pc >= state.program.length || state.steps > howLongToRun,
+      state
+    )
 
 export const initialize =
   (extraVals = {}) =>
-  (program: Cmd[]): Machine => ({ a: 0, b: 0, c: 0, d: 0, ...extraVals, pc: 0, program })
+  (program: Cmd[]): Machine => ({ a: 0, b: 0, c: 0, d: 0, ...extraVals, pc: 0, steps: 0, output: [], program })
 
 export const parseAndRun =
-  (extraVals = {}) =>
+  (extraVals = {}, howLongToRun = Infinity) =>
   (input: string) =>
-    $(input, parseProgram, initialize(extraVals), run)
+    $(input, parseProgram, initialize(extraVals), run(howLongToRun))
