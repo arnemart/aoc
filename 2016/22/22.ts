@@ -8,6 +8,7 @@ import {
   ints,
   is,
   join,
+  length,
   lines,
   map,
   match,
@@ -59,17 +60,18 @@ const grid: Grid = $(
     if (!g[y]) {
       g[y] = []
     }
-    g[y][x] = x == 29 && y == 0 ? 'G' : s.size > 200 ? '#' : s.used == 0 ? '_' : '.'
+    g[y][x] = s.size > 200 ? '#' : s.used == 0 ? '_' : '.'
     return g
   }, [])
 )
 
+const maxX = $(grid[0], length) - 1
 const startY = $(grid, findIndex(some(is('_'))))
 const startX = $(grid[startY], findIndex(is('_')))
 
 const distanceToMoveTheEmptyOneUpToTheDataWeWant = aStar({
   start: [startY, startX],
-  isEnd: arrEqual([0, 29]),
+  isEnd: arrEqual([0, maxX]),
   neighbor: ([y, x]) =>
     $(
       [
@@ -81,8 +83,8 @@ const distanceToMoveTheEmptyOneUpToTheDataWeWant = aStar({
       filter(([y, x]) => grid[y]?.[x] == '.')
     ),
   distance: () => 1,
-  heuristic: ([y, x]) => y + (29 - x),
+  heuristic: ([y, x]) => y + (maxX - x),
   hash: join(',')
 }).cost
 
-console.log('Part 2:', distanceToMoveTheEmptyOneUpToTheDataWeWant + 1 + 28 * 5)
+console.log('Part 2:', distanceToMoveTheEmptyOneUpToTheDataWeWant + (maxX - 1) * 5)
