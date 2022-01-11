@@ -346,7 +346,7 @@ export const last = <T>(arr: T[]): T => arr[arr.length - 1]
 export const nth =
   <T>(n: number) =>
   (arr: T[]): T =>
-    arr[n]
+    n < 0 ? arr[arr.length + n] : arr[n]
 export const length = <T>(arr: T[] | string): number => arr.length
 export const count =
   <T>(fn: (v: T) => boolean) =>
