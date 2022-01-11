@@ -133,7 +133,4 @@ const merged = $(scanners, mergeAllScanners)
 
 console.log('Part 1:', $(merged, pluck('beacons'), length))
 
-console.log(
-  'Part 2:',
-  $(merged, pluck('offsets'), uniquePermutations(2), map(pipe(zip, map(pipe(difference, abs)), sum)), max)
-)
+console.log('Part 2:', $(merged, pluck('offsets'), uniquePermutations(2), map(pipe(zip, map(difference), sum)), max))
