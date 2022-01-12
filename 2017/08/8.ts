@@ -18,8 +18,9 @@ const maxes = $(
   map(line => {
     eval(line)
     return $(registers, values, max)
-  })
+  }),
+  filter(nonNull)
 )
 
 console.log('Part 1:', $(maxes, last))
-console.log('Part 2:', $(maxes, filter(nonNull), max))
+console.log('Part 2:', $(maxes, max))
