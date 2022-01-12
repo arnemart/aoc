@@ -792,11 +792,11 @@ export const or =
     )
 
 export const repeat =
-  <T>(n: number, fn: (v: T) => T) =>
+  <T>(n: number, fn: (v: T, i?: number) => T) =>
   (v: T): T =>
     $(
       range(n),
-      reduce(v => fn(v), v)
+      reduce((v, i) => fn(v, i), v)
     )
 
 export const spyWith =
