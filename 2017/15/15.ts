@@ -1,9 +1,11 @@
-import { $, allEqual, is, loopUntil, map, mod, mult, pipe, pluck, repeat, substr, toString } from '../../common'
+import { $, allEqual, is, loopUntil, map, mod, mult, pipe, pluck, repeat } from '../../common'
+
+const sixteenBits = Math.pow(2, 16)
 
 const genA = (n: number) => $(n, mult(16807), mod(2147483647))
 const genB = (n: number) => $(n, mult(48271), mod(2147483647))
 
-const match = (n1: number, n2: number) => $([n1, n2], map(pipe(toString(2), substr(-16))), allEqual)
+const match = (n1: number, n2: number) => $([n1, n2], map(mod(sixteenBits)), allEqual)
 
 type State = { a: number; b: number; matches: number }
 const step = ({ a, b, matches }: State): State =>
