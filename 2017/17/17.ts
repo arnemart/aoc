@@ -1,4 +1,4 @@
-import { $, add, filter, inclusiveRange, map, mod, pluck, push, reduce, shift, spy, zipWith } from '../../common'
+import { $, add, inclusiveRange, mod, pluck, push, reduce, shift } from '../../common'
 
 const input = 369
 
