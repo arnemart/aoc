@@ -1,4 +1,4 @@
-import { $, filter, inclusiveRange, map, pluck, push, reduce, shift, spy, zipWith } from '../../common'
+import { $, add, filter, inclusiveRange, map, mod, pluck, push, reduce, shift, spy, zipWith } from '../../common'
 
 const input = 369
 
@@ -14,10 +14,11 @@ console.log(
   $(
     inclusiveRange(1, 50000000),
     reduce(
-      ({ pos, found }, i) => {
-        const newPos = ((pos + input) % i) + 1
-        return { pos: newPos, found: newPos == 1 ? i : found }
-      },
+      ({ pos, found }, i) =>
+        $(pos, add(input), mod(i), add(1), pos => ({
+          pos,
+          found: pos == 1 ? i : found
+        })),
       { pos: 0, found: 0 }
     ),
     pluck('found')
