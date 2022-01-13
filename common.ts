@@ -112,6 +112,19 @@ export function $<A, B, C, D, E, F, G, H, I, J>(
   fn8: CF<H, I>,
   fn9: CF<I, J>
 ): J
+export function $<A, B, C, D, E, F, G, H, I, J, K>(
+  v: A,
+  fn1: CF<A, B>,
+  fn2: CF<B, C>,
+  fn3: CF<C, D>,
+  fn4: CF<D, E>,
+  fn5: CF<E, F>,
+  fn6: CF<F, G>,
+  fn7: CF<G, H>,
+  fn8: CF<H, I>,
+  fn9: CF<I, J>,
+  fn10: CF<J, K>
+): K
 export function $(v: any, ...fns: CF<any, any>[]) {
   return fns.filter(fn => fn != null).reduce((v, fn) => fn(v), v)
 }
