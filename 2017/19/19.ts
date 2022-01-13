@@ -1,4 +1,4 @@
-import { $, find, findIndex, is, lines, loopUntil, map, pluck, readInput, split, test } from '../../common'
+import { $, find, findIndex, is, lines, loopUntil, map, readInput, split, test } from '../../common'
 
 const grid = $(readInput(), lines, map(split()))
 
@@ -36,6 +36,6 @@ const done = $(
   )
 )
 
-console.log('Part 1:', $(done, pluck('letters')))
+console.log('Part 1:', done.letters)
 
-console.log('Part 2:', $(done, pluck('steps')))
+console.log('Part 2:', done.steps)
