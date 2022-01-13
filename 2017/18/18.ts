@@ -111,9 +111,6 @@ const step2 = step(
       : { ...state, waiting: true }
 )
 
-const state0 = initialize(0)
-const state1 = initialize(1)
-
 console.log(
   'Part 2:',
   loopUntil(
@@ -123,6 +120,6 @@ console.log(
         state1: { ...s1, sent: null, queue: s0.sent != null ? [...s1.queue, s0.sent] : s1.queue }
       })),
     ({ state0, state1 }) => state0.waiting && state1.waiting,
-    { state0, state1 }
+    { state0: initialize(0), state1: initialize(1) }
   ).state1.sndCount
 )
