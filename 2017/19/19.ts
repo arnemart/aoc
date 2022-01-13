@@ -38,4 +38,4 @@ const done = $(
 
 console.log('Part 1:', $(done, pluck('letters')))
 
-console.log('Part 1:', $(done, pluck('steps')))
+console.log('Part 2:', $(done, pluck('steps')))
