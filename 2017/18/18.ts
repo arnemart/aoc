@@ -1,4 +1,4 @@
-import { $, cond, int, loopUntil, numeric, parse, readInput, slice } from '../../common'
+import { $, cond, int, loopUntil, numeric, parse, readInput, slice, sqrt } from '../../common'
 
 type Cmd = { cmd: string; v1: string | number; v2: string | number }
 
@@ -99,19 +99,16 @@ console.log(
 
 const step2 = step(
   (state, cmd) => () => ({ ...state, pc: state.pc + 1, sent: v(state, cmd.v1), sndCount: state.sndCount + 1 }),
-  (state, cmd) => () => {
-    if (state.queue.length > 0) {
-      return {
-        ...state,
-        waiting: false,
-        pc: state.pc + 1,
-        reg: { ...state.reg, [cmd.v1]: state.queue[0] },
-        queue: $(state.queue, slice(1))
-      }
-    } else {
-      return { ...state, waiting: true }
-    }
-  }
+  (state, cmd) => () =>
+    state.queue.length > 0
+      ? {
+          ...state,
+          waiting: false,
+          pc: state.pc + 1,
+          reg: { ...state.reg, [cmd.v1]: state.queue[0] },
+          queue: $(state.queue, slice(1))
+        }
+      : { ...state, waiting: true }
 )
 
 const state0 = initialize(0)
@@ -120,19 +117,11 @@ const state1 = initialize(1)
 console.log(
   'Part 2:',
   loopUntil(
-    (_, { state0, state1 }) => {
-      const s0 = step2(state0)
-      const s1 = step2(state1)
-      if (s0.sent != null) {
-        s1.queue = [...s1.queue, s0.sent]
-        s0.sent = null
-      }
-      if (s1.sent != null) {
-        s0.queue = [...s0.queue, s1.sent]
-        s1.sent = null
-      }
-      return { state0: s0, state1: s1 }
-    },
+    (_, { state0, state1 }) =>
+      $([step2(state0), step2(state1)], ([s0, s1]) => ({
+        state0: { ...s0, sent: null, queue: s1.sent != null ? [...s0.queue, s1.sent] : s0.queue },
+        state1: { ...s1, sent: null, queue: s0.sent != null ? [...s1.queue, s0.sent] : s1.queue }
+      })),
     ({ state0, state1 }) => state0.waiting && state1.waiting,
     { state0, state1 }
   ).state1.sndCount
