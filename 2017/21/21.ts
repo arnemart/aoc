@@ -55,7 +55,8 @@ const findReplacement = (s: Square): Square =>
     pluckFrom(replacements)
   )
 
-const conquer = (ss: Square[]) => $(ss.length, sqrt, n => $(ss, chop(n), map(pipe(zip, map(flatten()))), flatten()))
+const conquer = (ss: Square[]) =>
+  $(ss.length, sqrt, n => $(ss, chop(n), map(pipe(zip, map(flatten()))), flatten())) as Square
 
 const step = pipe(divide, map(findReplacement), conquer)
 
