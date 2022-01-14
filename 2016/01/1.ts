@@ -49,42 +49,38 @@ const dirDeltas = {
 }
 
 const step = (state: State, { dir, dist }: Direction): State =>
-  $(
-    cardinalDirections,
-    next($(cardinalDirections, indexOf(state.pointing)), $(dir, cond([['R', 1]], -1))),
-    pointing => {
-      const newX = state.x + dist * dirDeltas[pointing][0]
-      const newY = state.y + dist * dirDeltas[pointing][1]
-      const newTrail =
-        state.x == newX
-          ? newY > state.y
-            ? $(
-                range(state.y, newY),
-                map(y => [newX, y])
-              )
-            : $(
-                range(newY + 1, state.y + 1),
-                reverse,
-                map(y => [newX, y])
-              )
-          : newX > state.x
+  $(cardinalDirections, next(state.pointing, $(dir, cond([['R', 1]], -1))), pointing => {
+    const newX = state.x + dist * dirDeltas[pointing][0]
+    const newY = state.y + dist * dirDeltas[pointing][1]
+    const newTrail =
+      state.x == newX
+        ? newY > state.y
           ? $(
-              range(state.x, newX),
-              map(x => [x, newY])
+              range(state.y, newY),
+              map(y => [newX, y])
             )
           : $(
-              range(newX + 1, state.x + 1),
+              range(newY + 1, state.y + 1),
               reverse,
-              map(x => [x, newY])
+              map(y => [newX, y])
             )
-      return {
-        x: newX,
-        y: newY,
-        pointing: pointing,
-        trail: [...state.trail, ...newTrail]
-      }
+        : newX > state.x
+        ? $(
+            range(state.x, newX),
+            map(x => [x, newY])
+          )
+        : $(
+            range(newX + 1, state.x + 1),
+            reverse,
+            map(x => [x, newY])
+          )
+    return {
+      x: newX,
+      y: newY,
+      pointing: pointing,
+      trail: [...state.trail, ...newTrail]
     }
-  )
+  })
 
 const initialState: State = { x: 0, y: 0, pointing: 'N', trail: [] }
 const endState = $(directions, reduce(step, initialState))

@@ -759,9 +759,9 @@ export const parse =
     )
 
 export const next =
-  <T>(i: number, amt: number = 1) =>
+  <T>(e: T, amt: number = 1) =>
   (arr: T[]): T =>
-    arr[(i + arr.length + (amt % arr.length)) % arr.length]
+    arr[(arr.indexOf(e) + arr.length + (amt % arr.length)) % arr.length]
 
 export const intoSet = <T>(val: T[]): Set<T> => new Set(val)
 export const unique = pipe(intoSet, values)
