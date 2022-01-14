@@ -39,9 +39,7 @@ const [[startState, steps], states] = $(
       slice(1),
       map(
         pipe(
-          match(
-            /In state (\w).+ is 0.+value (\d).+the (right|left).+state (\w).+is 1.+value (\d).+the (right|left).+state (\w)/ms
-          ),
+          match(/In state (\w).+value (\d).+the (right|left).+state (\w).+value (\d).+the (right|left).+state (\w)/ms),
           ([_, name, v0, d0, s0, v1, d1, s1]) =>
             ({
               name,
