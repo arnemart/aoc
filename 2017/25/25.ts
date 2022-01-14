@@ -80,7 +80,7 @@ const step = ({ tape, pos, state }: Machine): Machine =>
 const initialState: Machine = {
   tape: new Map(),
   pos: 0,
-  state: 'A'
+  state: startState
 }
 
 const finalState = $(initialState, repeat(steps, step))
