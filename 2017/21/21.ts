@@ -1,6 +1,7 @@
 import {
   $,
   chop,
+  cond,
   count,
   fillArray,
   find,
@@ -9,7 +10,9 @@ import {
   id,
   is,
   join,
+  length,
   map,
+  mod,
   parse,
   pipe,
   pluck,
@@ -38,7 +41,10 @@ const rotateAndFlip: (s: Square) => Square[] = pipe(
 
 const divide = (s: Square): Square[] =>
   $(
-    s.length % 2 == 0 ? 2 : 3,
+    s,
+    length,
+    mod(2),
+    cond([[0, 2]], 3),
     n =>
       $(s, map(chop(n)), chop(n), chopped =>
         $(fillArray([chopped.length, chopped.length], (y, x) => $(chopped[y], map(pluck(x)))))
@@ -56,7 +62,7 @@ const findReplacement = (s: Square): Square =>
   )
 
 const conquer = (ss: Square[]) =>
-  $(ss.length, sqrt, n => $(ss, chop(n), map(pipe(zip, map(flatten()))), flatten())) as Square
+  $(ss, length, sqrt, n => $(ss, chop(n), map(pipe(zip, map(flatten()))), flatten())) as Square
 
 const step = pipe(divide, map(findReplacement), conquer)
 
