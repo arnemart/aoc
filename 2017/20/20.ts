@@ -45,12 +45,11 @@ const step = (particles: Particle[]) =>
     }))
   ) as Particle[]
 
-const afterAWhile = $(particles, repeat(500, step))
-
 console.log(
   'Part 1:',
   $(
-    afterAWhile,
+    particles,
+    repeat(500, step),
     map((p, i) => [$(p.p, map(abs), sum), i]),
     sortBy(first),
     first,
@@ -66,6 +65,4 @@ const step2 = pipe(
   map(pipe(last, first))
 )
 
-const afterAWhile2 = $(particles, repeat(500, step2))
-
-console.log('Part 2:', afterAWhile2.length)
+console.log('Part 2:', $(particles, repeat(500, step2), length))
