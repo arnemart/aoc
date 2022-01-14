@@ -369,8 +369,23 @@ export const count =
 export const frequencies = <T>(arr: T[]): Map<T, number> =>
   $(
     arr,
-    reduce((freqs: Map<T, number>, e: T) => freqs.set(e, (freqs.get(e) || 0) + 1), new Map<T, number>())
+    reduce((freqs, e) => freqs.set(e, (freqs.get(e) || 0) + 1), new Map<T, number>())
   )
+
+export const groupBy =
+  <T, U>(fn: (v: T) => U) =>
+  (arr: T[]): Map<U, T[]> =>
+    $(
+      arr,
+      reduce((groups, v) => {
+        const key = fn(v)
+        if (!groups.has(key)) {
+          groups.set(key, [])
+        }
+        groups.set(key, [...groups.get(key), v])
+        return groups
+      }, new Map<U, T[]>())
+    )
 
 export const mostCommon = <T>(arr: T[]): T =>
   Array.from(frequencies(arr).entries()).sort((a: [T, number], b: [T, number]) => b[1] - a[1])[0][0]
