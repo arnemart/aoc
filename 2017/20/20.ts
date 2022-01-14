@@ -32,18 +32,18 @@ const particles: Particle[] = $(
   )
 )
 
-const step = (particles: Particle[]) =>
-  $(
-    particles,
-    map(p => ({
+const step: (particles: Particle[]) => Particle[] = map(
+  pipe(
+    p => ({
       ...p,
       v: $(p.v, zipWith(p.a), map(sum))
-    })),
-    map(p => ({
+    }),
+    p => ({
       ...p,
       p: $(p.p, zipWith(p.v), map(sum))
-    }))
-  ) as Particle[]
+    })
+  )
+)
 
 console.log(
   'Part 1:',
