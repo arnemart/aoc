@@ -19,15 +19,15 @@ export const range = (n1: number, n2?: number) =>
 export const inclusiveRange = (n1: number, n2: number) => (n2 > n1 ? range(n1, n2 + 1) : range(n2, n1 + 1).reverse())
 
 export function fillArray<T>(n: number, v?: T | ((i: number) => T)): T[]
-export function fillArray<T>(n: [number, number], v?: T | ((i: number) => T)): T[][]
-export function fillArray<T>(n: number | [number, number], v: T | ((i: number) => T) = null): T[] | T[][] {
+export function fillArray<T>(n: [number, number], v?: T | ((x: number, y: number) => T)): T[][]
+export function fillArray<T>(n: number | [number, number], v: T | ((x: number, y?: number) => T) = null): T[] | T[][] {
   return n instanceof Array
     ? $(
         range(n[1]),
-        map(i =>
+        map(y =>
           $(
             range(n[0]),
-            map(i => (v instanceof Function ? v(i) : v))
+            map(x => (v instanceof Function ? v(y, x) : v))
           )
         )
       )
