@@ -1,10 +1,10 @@
 import {
   $,
   add,
-  ceil,
   cond,
   count,
   int,
+  intdiv,
   is,
   loopUntil,
   map,
@@ -15,8 +15,7 @@ import {
   pipe,
   range,
   readInput,
-  some,
-  spy
+  some
 } from '../../common'
 
 type Cmd = { cmd: string; v1: string | number; v2: string | number }
@@ -88,10 +87,9 @@ console.log(
     map(pipe(mult(17), add(108100))),
     count(i =>
       $(
-        range(2, ceil(i / 2)),
+        range(2, $(i, intdiv(2))),
         some(n => $(i, mod(n), is(0)))
       )
-    ),
-    spy
+    )
   )
 )
