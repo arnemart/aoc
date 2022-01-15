@@ -1,4 +1,25 @@
-import { $, cond, int, loopUntil, numeric, parse, readInput, sqrt } from '../../common'
+import {
+  $,
+  add,
+  ceil,
+  cond,
+  count,
+  filter,
+  int,
+  is,
+  loopUntil,
+  map,
+  mod,
+  mult,
+  numeric,
+  parse,
+  pipe,
+  range,
+  readInput,
+  some,
+  spy,
+  sqrt
+} from '../../common'
 
 type Cmd = { cmd: string; v1: string | number; v2: string | number }
 
@@ -62,22 +83,17 @@ console.log(
   ).mulCount
 )
 
-let b = 81 * 100 + 100000
-let c = b + 17000
-let h = 0
-while (true) {
-  outer: for (let d = 2; d <= sqrt(b); d++) {
-    for (let e = 2; e <= b / 2; e++) {
-      if (d * e == b) {
-        h++
-        break outer
-      }
-    }
-  }
-  if (b == c) {
-    break
-  }
-  b += 17
-}
-
-console.log('Part 2:', h)
+console.log(
+  'Part 2:',
+  $(
+    range(1001),
+    map(pipe(mult(17), add(108100))),
+    count(i =>
+      $(
+        range(2, ceil(i / 2)),
+        some(n => $(i, mod(n), is(0)))
+      )
+    ),
+    spy
+  )
+)
