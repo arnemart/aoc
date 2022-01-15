@@ -4,7 +4,6 @@ import {
   ceil,
   cond,
   count,
-  filter,
   int,
   is,
   loopUntil,
@@ -17,8 +16,7 @@ import {
   range,
   readInput,
   some,
-  spy,
-  sqrt
+  spy
 } from '../../common'
 
 type Cmd = { cmd: string; v1: string | number; v2: string | number }
