@@ -15,7 +15,6 @@ import {
   pipe,
   pluck,
   reduce,
-  spy,
   sum,
   tee
 } from '../../common'
@@ -33,14 +32,11 @@ console.log(
       (i, ps) =>
         $(
           ps,
-          map((p, j) => {
-            if (i % 2 == j % 2) {
-              const newPos = (p.p + roll1() + roll1() + roll1()) % 10
-              return { p: newPos, s: p.s + newPos + 1 }
-            } else {
-              return p
-            }
-          })
+          map((p, j) =>
+            i % 2 == j % 2
+              ? $((p.p + roll1() + roll1() + roll1()) % 10, newPos => ({ p: newPos, s: p.s + newPos + 1 }))
+              : p
+          )
         ),
       ([p1, p2]) => p1.s >= 1000 || p2.s >= 1000,
       [
@@ -55,32 +51,31 @@ console.log(
 )
 
 const rolls = $([1, 2, 3], combinations(3), map(sum), frequencies)
-const rollValues = $(rolls, r => Array.from(r.keys()))
+const rollValues = Array.from(rolls.keys())
 
 const initialState = {
   p1score: 0,
   p2score: 0,
   p1LastRoll: 0,
   p2LastRoll: 0,
-  p1pos: 4 - 1,
-  p2pos: 8 - 1
+  p1pos: p1start - 1,
+  p2pos: p2start - 1
 }
 
 const cache = createCache<string, number[]>()
 const playRecursive = (state: typeof initialState, whosTurn = 0): number[] =>
-  cache(`${state.p1score},${state.p2score},${state.p1pos},${state.p2pos}`, () =>
+  cache(`${state.p1score},${state.p2score},${state.p1pos},${state.p2pos},${whosTurn}`, () =>
     whosTurn == 0
       ? $(
           rollValues,
-          map(roll => {
-            const newPos = (state.p1pos + roll) % 10
-            return {
+          map(roll =>
+            $((state.p1pos + roll) % 10, newPos => ({
               ...state,
               p1LastRoll: roll,
               p1pos: newPos,
               p1score: state.p1score + newPos + 1
-            }
-          }),
+            }))
+          ),
           reduce(
             ([p1wins, p2wins], state) =>
               $(state, pluck('p1score'), gte(21))
@@ -95,15 +90,14 @@ const playRecursive = (state: typeof initialState, whosTurn = 0): number[] =>
         )
       : $(
           rollValues,
-          map(roll => {
-            const newPos = (state.p2pos + roll) % 10
-            return {
+          map(roll =>
+            $((state.p2pos + roll) % 10, newPos => ({
               ...state,
               p2LastRoll: roll,
               p2pos: newPos,
               p2score: state.p2score + newPos + 1
-            }
-          }),
+            }))
+          ),
           reduce(
             ([p1wins, p2wins], state) =>
               $(state, pluck('p2score'), gte(21))
@@ -119,9 +113,3 @@ const playRecursive = (state: typeof initialState, whosTurn = 0): number[] =>
   )
 
 console.log('Part 2:', $(initialState, playRecursive, max))
-
-/*
-444356092776315 
-341960390180808
-307571216519574
-*/
