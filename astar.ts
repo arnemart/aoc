@@ -49,7 +49,8 @@ function aStar<T>(params: Params<T>): Result<T> {
 
   while (openHeap.size()) {
     const node = openHeap.pop()
-    openDataMap.delete(hash(node.data))
+    const nodeHash = hash(node.data)
+    openDataMap.delete(nodeHash)
     if (params.isEnd(node.data)) {
       // done
       return {
@@ -59,15 +60,16 @@ function aStar<T>(params: Params<T>): Result<T> {
       }
     }
     // not done yet
-    closedDataSet.add(hash(node.data))
+    closedDataSet.add(nodeHash)
     const neighbors = params.neighbors(node.data)
     for (const neighborData of neighbors) {
-      if (closedDataSet.has(hash(neighborData))) {
+      const neighborHash = hash(neighborData)
+      if (closedDataSet.has(neighborHash)) {
         // skip closed neighbors
         continue
       }
       const gFromThisNode = node.g + cost(node.data, neighborData)
-      let neighborNode = openDataMap.get(hash(neighborData))
+      let neighborNode = openDataMap.get(neighborHash)
       let update = false
       if (neighborNode === undefined) {
         // add neighbor to the open set
@@ -75,7 +77,7 @@ function aStar<T>(params: Params<T>): Result<T> {
           data: neighborData
         }
         // other properties will be set later
-        openDataMap.set(hash(neighborData), neighborNode)
+        openDataMap.set(neighborHash, neighborNode)
       } else {
         if (neighborNode.g < gFromThisNode) {
           // skip this one because another route is faster
