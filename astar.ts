@@ -43,7 +43,7 @@ function aStar<T>(params: Params<T>): Result<T> {
   // leave .parent undefined
   const closedDataSet = new Set<string>()
   const openHeap = new Heap<Node<T>>(heapComparator)
-  const openDataMap = new Map()
+  const openDataMap = new Map<string, Partial<Node<T>>>()
   openHeap.push(startNode)
   openDataMap.set(hash(startNode.data), startNode)
 
@@ -89,11 +89,11 @@ function aStar<T>(params: Params<T>): Result<T> {
       neighborNode.g = gFromThisNode
       neighborNode.h = heuristic(neighborData)
       neighborNode.f = gFromThisNode + neighborNode.h
-      if (neighborNode.h < bestNode.h) bestNode = neighborNode
+      if (neighborNode.h < bestNode.h) bestNode = neighborNode as Node<T>
       if (update) {
         openHeap.heapify()
       } else {
-        openHeap.push(neighborNode)
+        openHeap.push(neighborNode as Node<T>)
       }
     }
   }
