@@ -37,23 +37,13 @@ export function fillArray<T>(n: number | [number, number], v: T | ((x: number, y
       )
 }
 
-export const createCache = <T, U>() => {
-  const m = new Map<T, U>()
+export const createCache = <T, U>(initialValues: [T, U][] = []) => {
+  const m = new Map<T, U>(initialValues)
   return (k: T, fn: () => U) => {
     if (!m.has(k)) {
       m.set(k, fn())
     }
     return m.get(k)
-  }
-}
-
-export const memoize = <A, B>(fn: (v: A) => B) => {
-  const memos = new Map<A, B>()
-  return (v: A): B => {
-    if (!memos.has(v)) {
-      memos.set(v, fn(v))
-    }
-    return memos.get(v)
   }
 }
 

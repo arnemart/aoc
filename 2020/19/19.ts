@@ -14,7 +14,7 @@ const rules: Rules = $(
 )
 
 const buildReg = (r: string, startedWith: string = r, seen = new Map<string, number>()): string => {
-  seen.set(r, seen.has(r) ? seen.get(r) + 1 : 1)
+  seen.set(r, (seen.get(r) || 0) + 1)
   if (r == startedWith && seen.get(r) > 10) return ''
 
   const rule = rules.get(r)

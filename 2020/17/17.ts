@@ -3,6 +3,7 @@ import {
   add,
   cond,
   count,
+  createCache,
   fillArray,
   filter,
   flatten,
@@ -11,7 +12,6 @@ import {
   length,
   lines,
   map,
-  memoize,
   pipe,
   pluck,
   range,
@@ -46,9 +46,11 @@ const generateNeighbours = (dims: number): number[][] =>
         flatten()
       )
 
-const neighbours: (dims: number) => number[][] = memoize(
-  pipe(generateNeighbours, filter(reduce((allNonZero: boolean, n) => allNonZero || n != 0, false)))
-)
+const neighbourCache = createCache<number, number[][]>()
+const neighbours = (dims: number): number[][] =>
+  neighbourCache(dims, () =>
+    $(dims, generateNeighbours, filter(reduce((allNonZero: boolean, n) => allNonZero || n != 0, false)))
+  )
 
 const countDimensions = (grid: Grid | string): number => (Array.isArray(grid) ? 1 + countDimensions(grid[0]) : 0)
 
