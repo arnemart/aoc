@@ -1,7 +1,5 @@
 import Heap = require('heap')
 
-export default aStar
-
 type Node<T> = {
   data: T
   g: number
@@ -20,12 +18,11 @@ type Params<T> = {
 }
 
 type Result<T> = {
-  status: 'success' | 'noPath'
   cost: number
   path: T[]
 }
 
-function aStar<T>(params: Params<T>): Result<T> {
+export default function aStar<T>(params: Params<T>): Result<T> {
   const hash = params.hash || defaultHash
   const cost = params.cost || defaultCost
   const heuristic = params.heuristic || defaultHeuristic
@@ -37,13 +34,14 @@ function aStar<T>(params: Params<T>): Result<T> {
     f: 0,
     parent: null
   }
+  startNode.f = startNode.h
 
   let bestNode = startNode
-  startNode.f = startNode.h
-  // leave .parent undefined
+
   const closedDataSet = new Set<string>()
   const openHeap = new Heap<Node<T>>(heapComparator)
   const openDataMap = new Map<string, Partial<Node<T>>>()
+
   openHeap.push(startNode)
   openDataMap.set(hash(startNode.data), startNode)
 
@@ -51,18 +49,19 @@ function aStar<T>(params: Params<T>): Result<T> {
     const node = openHeap.pop()
     const nodeHash = hash(node.data)
     openDataMap.delete(nodeHash)
+
     if (params.isEnd(node.data)) {
       // done
       return {
-        status: 'success',
         cost: node.g,
         path: reconstructPath(node)
       }
     }
+
     // not done yet
     closedDataSet.add(nodeHash)
-    const neighbors = params.neighbors(node.data)
-    for (const neighborData of neighbors) {
+
+    for (const neighborData of params.neighbors(node.data)) {
       const neighborHash = hash(neighborData)
       if (closedDataSet.has(neighborHash)) {
         // skip closed neighbors
@@ -71,12 +70,13 @@ function aStar<T>(params: Params<T>): Result<T> {
       const gFromThisNode = node.g + cost(node.data, neighborData)
       let neighborNode = openDataMap.get(neighborHash)
       let update = false
-      if (neighborNode === undefined) {
-        // add neighbor to the open set
+
+      if (!neighborNode) {
         neighborNode = {
           data: neighborData
+          // other properties will be set later
         }
-        // other properties will be set later
+        // add neighbor to the open set
         openDataMap.set(neighborHash, neighborNode)
       } else {
         if (neighborNode.g < gFromThisNode) {
@@ -85,13 +85,18 @@ function aStar<T>(params: Params<T>): Result<T> {
         }
         update = true
       }
+
       // found a new or better route.
       // update this neighbor with this node as its new parent
       neighborNode.parent = node
       neighborNode.g = gFromThisNode
       neighborNode.h = heuristic(neighborData)
       neighborNode.f = gFromThisNode + neighborNode.h
-      if (neighborNode.h < bestNode.h) bestNode = neighborNode as Node<T>
+
+      if (neighborNode.h < bestNode.h) {
+        bestNode = neighborNode as Node<T>
+      }
+
       if (update) {
         openHeap.heapify()
       } else {
@@ -100,11 +105,7 @@ function aStar<T>(params: Params<T>): Result<T> {
     }
   }
   // all the neighbors of every accessible node have been exhausted
-  return {
-    status: 'noPath',
-    cost: bestNode.g,
-    path: reconstructPath(bestNode)
-  }
+  throw new Error('No path found')
 }
 
 const reconstructPath = <T>(node: Node<T>): T[] =>
