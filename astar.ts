@@ -47,7 +47,7 @@ export default function aStar<T>(params: Params<T>): Result<T> {
   openHeap.push(startNode)
   openDataMap.set(hash(startNode.data), startNode)
 
-  while (openHeap.size()) {
+  while (!openHeap.empty()) {
     const node = openHeap.pop()
     const nodeHash = hash(node.data)
     openDataMap.delete(nodeHash)
