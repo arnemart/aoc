@@ -1,3 +1,4 @@
+import aStar from '../../astar'
 import {
   $,
   cond,
@@ -19,8 +20,6 @@ import {
   split,
   sum
 } from '../../common'
-
-import aStar = require('a-star')
 
 /*
 
@@ -207,8 +206,8 @@ const findLowestCost = (part: Part, initialRooms: string) =>
       rooms: $(initialRooms, split())
     },
     isEnd: done(part),
-    neighbor: whereGo(part),
-    distance: (_, { cost }) => cost,
+    neighbors: whereGo(part),
+    cost: (_, { cost }) => cost,
     heuristic: heuristic(part),
     hash: ({ rooms }) => $(rooms, join(','))
   }).cost

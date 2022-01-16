@@ -1,3 +1,4 @@
+import aStar from '../../astar'
 import {
   $,
   clone,
@@ -28,8 +29,6 @@ import {
   within,
   without
 } from '../../common'
-
-import aStar = require('a-star')
 
 type Loadout = {
   chips: string[]
@@ -170,8 +169,7 @@ const moveAllTheThings = (input: string) =>
   aStar({
     start: getChipLab(input),
     isEnd: done,
-    neighbor: validMoves,
-    distance: () => 1,
+    neighbors: validMoves,
     heuristic: ({ floors }: ChipLab) =>
       $(
         floors,

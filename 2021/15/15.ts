@@ -1,3 +1,4 @@
+import aStar from '../../astar'
 import {
   $,
   and,
@@ -15,8 +16,6 @@ import {
   readInput,
   split
 } from '../../common'
-
-import aStar = require('a-star')
 
 type Grid = number[][]
 const ceiling: Grid = $(readInput(), lines, map(pipe(split(), ints)))
@@ -37,11 +36,11 @@ const findNeighbors =
 const findPath = (grid: Grid) => {
   const maxX = grid[0].length - 1
   const maxY = grid.length - 1
-  return aStar({
+  return aStar<number[]>({
     start: [0, 0],
     isEnd: arrEqual([maxX, maxY]),
-    neighbor: findNeighbors(maxX, maxY),
-    distance: (_, [x, y]) => grid[y][x],
+    neighbors: findNeighbors(maxX, maxY),
+    cost: (_, [x, y]) => grid[y][x],
     heuristic: ([x, y]) => maxX - x + (maxY - y),
     hash: join(',')
   }).cost

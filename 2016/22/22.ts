@@ -1,3 +1,4 @@
+import aStar from '../../astar'
 import {
   $,
   arrEqual,
@@ -19,8 +20,6 @@ import {
   some,
   split
 } from '../../common'
-
-import aStar = require('a-star')
 
 type Server = { name: string; size: number; used: number; avail: number }
 const servers: Server[] = $(
@@ -72,7 +71,7 @@ const startX = $(grid[startY], findIndex(is('_')))
 const distanceToMoveTheEmptyOneUpToTheDataWeWant = aStar({
   start: [startY, startX],
   isEnd: arrEqual([0, maxX]),
-  neighbor: ([y, x]) =>
+  neighbors: ([y, x]) =>
     $(
       [
         [y + 1, x],
@@ -82,7 +81,6 @@ const distanceToMoveTheEmptyOneUpToTheDataWeWant = aStar({
       ],
       filter(([y, x]) => grid[y]?.[x] == '.')
     ),
-  distance: () => 1,
   heuristic: ([y, x]) => y + (maxX - x),
   hash: join(',')
 }).cost

@@ -1,7 +1,9 @@
+import aStar from '../../astar'
 import {
   $,
   abs,
   arrEqual,
+  createCache,
   filter,
   forEach,
   id,
@@ -24,7 +26,6 @@ import {
   unshift,
   zip
 } from '../../common'
-import aStar = require('a-star')
 
 const ducts = $(readInput(), lines, map(split()))
 
@@ -54,24 +55,19 @@ const findNeighbors = ([y, x]) =>
     filter(([y, x]) => ducts[y][x] != '#')
   )
 
-const distanceCache: Map<string, number> = new Map()
-const distance = ([p1, p2]: number[]) => {
-  const key = `${min([p1, p2])},${max([p1, p2])}`
-  if (!distanceCache.has(key)) {
-    distanceCache.set(
-      key,
+const distanceCache = createCache<string, number>()
+const distance = ([p1, p2]: number[]) =>
+  distanceCache(
+    `${min([p1, p2])},${max([p1, p2])}`,
+    () =>
       aStar({
         start: locations[p1],
         isEnd: arrEqual(locations[p2]),
-        neighbor: findNeighbors,
-        distance: () => 1,
+        neighbors: findNeighbors,
         heuristic: ([x, y]) => abs(locations[p2][0] - x) + abs(locations[p2][1] - y),
         hash: join(',')
       }).cost
-    )
-  }
-  return distanceCache.get(key)
-}
+  )
 
 console.log(
   'Part 1:',
