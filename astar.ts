@@ -1,3 +1,5 @@
+// Typescriptified version of https://github.com/superjoe30/node-astar
+
 import Heap = require('heap')
 
 type Node<T> = {
@@ -39,7 +41,7 @@ export default function aStar<T>(params: Params<T>): Result<T> {
   let bestNode = startNode
 
   const closedDataSet = new Set<string>()
-  const openHeap = new Heap<Node<T>>(heapComparator)
+  const openHeap = new Heap<Node<T>>((a, b) => a.f - b.f)
   const openDataMap = new Map<string, Partial<Node<T>>>()
 
   openHeap.push(startNode)
@@ -114,5 +116,3 @@ const reconstructPath = <T>(node: Node<T>): T[] =>
 const defaultHash = <T>(node: T) => JSON.stringify(node)
 const defaultCost = () => 1
 const defaultHeuristic = () => 1
-
-const heapComparator = <T>(a: Node<T>, b: Node<T>) => a.f - b.f
