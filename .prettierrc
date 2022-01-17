@@ -3,7 +3,7 @@
   "useTabs": false,
   "semi": false,
   "arrowParens": "avoid",
-  "printWidth": 120,
+  "printWidth": 122,
   "singleQuote": true,
   "trailingComma": "none"
 }

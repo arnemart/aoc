@@ -6,6 +6,7 @@ import {
   indexOf,
   join,
   length,
+  letters,
   loopUntil,
   map,
   match,
@@ -20,8 +21,6 @@ import {
 } from '../../common'
 
 const input = 'cqjxjnds'
-
-const letters = $('abcdefghijklmnopqrstuvwxyz', split())
 
 const incrementLetter = (letter: string) => letters[$(letters, indexOf(letter), add(1), mod($(letters, length)))]
 const incrementString = (str: string, which: number = -1) => {

@@ -856,5 +856,7 @@ export const printGrid = <T>(d: T[][]): T[][] => {
   return d
 }
 
+export const letters = $('abcdefghijklmnopqrstuvwxyz', split())
+
 import crypto = require('crypto')
 export const md5 = (val: string) => crypto.createHash('md5').update(val).digest('hex')
