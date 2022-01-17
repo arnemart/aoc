@@ -1,20 +1,4 @@
-import {
-  $,
-  first,
-  int,
-  map,
-  match,
-  nth,
-  pipe,
-  readInput,
-  reduce,
-  repeat,
-  slice,
-  split,
-  sum,
-  tee,
-  values
-} from '../../common'
+import { $, first, int, map, match, nth, pipe, readInput, reduce, repeat, slice, split, tee } from '../../common'
 
 type State = {
   name: string
@@ -64,25 +48,21 @@ const [[startState, steps], states] = $(
   )
 )
 
-type Machine = {
-  tape: Map<number, number>
-  pos: number
-  state: string
-}
-
-const step = ({ tape, pos, state }: Machine): Machine =>
-  $(tape.get(pos) || 0, val => ({
-    tape: tape.set(pos, states[state][val].v),
-    pos: pos + states[state][val].d,
-    state: states[state][val].s
-  }))
-
-const initialState: Machine = {
-  tape: new Map(),
+const initialState = {
+  tape: new Set<number>(),
   pos: 0,
   state: startState
 }
 
+type Machine = typeof initialState
+
+const step = ({ tape, pos, state }: Machine): Machine =>
+  $(states[state][tape.has(pos) ? 1 : 0], ({ v, d, s }) => ({
+    tape: v == 1 ? tape.add(pos) : (tape.delete(pos), tape),
+    pos: pos + d,
+    state: s
+  }))
+
 const finalState = $(initialState, repeat(steps, step))
 
-console.log('Part 1:', $(finalState.tape, values, sum))
+console.log('Part 1:', finalState.tape.size)
