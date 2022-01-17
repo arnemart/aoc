@@ -1,6 +1,7 @@
 import aStar from '../../astar'
 import {
   $,
+  combine,
   cond,
   every,
   fillArray,
@@ -116,16 +117,12 @@ const calculateCost = (from: number, to: number, type: string, part: Part) =>
 
 const buildValidMoves = (part: Part): number[][] =>
   $(
-    siderooms[part],
-    flatmap(p1 =>
-      $(
-        hallways[part],
-        flatmap(p2 => [
-          [p1, p2],
-          [p2, p1]
-        ])
-      )
-    )
+    [siderooms[part], hallways[part]],
+    combine,
+    flatmap(([p1, p2]) => [
+      [p1, p2],
+      [p2, p1]
+    ])
   )
 
 const validMoves = { 1: buildValidMoves(1), 2: buildValidMoves(2) }

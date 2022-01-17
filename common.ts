@@ -523,16 +523,21 @@ export const uniqueCombinations =
           push([fillArray(count, vals[0])])
         )
 
-export const combine = <T>([a, b]: T[][]) =>
-  $(
-    a,
-    flatmap(v1 =>
-      $(
-        b,
-        map(v2 => [v1, v2])
+export const combine = <T>([frst, ...rest]: T[][]): T[][] =>
+  rest.length == 0
+    ? $(
+        frst,
+        map(v => [v])
       )
-    )
-  )
+    : $(
+        frst,
+        flatmap(v1 =>
+          $(
+            combine(rest),
+            map(v2s => [v1, ...v2s])
+          )
+        )
+      )
 
 // NUMBER STUFF
 export const toString =

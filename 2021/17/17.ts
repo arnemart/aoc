@@ -1,7 +1,7 @@
 import {
   $,
+  combine,
   filter,
-  flatmap,
   inclusiveRange,
   last,
   length,
@@ -42,13 +42,9 @@ const fire = (probe: Probe) =>
   )
 
 const allTheseHitTheTargetArea = $(
-  inclusiveRange(1, targetX[1]),
-  flatmap(x =>
-    $(
-      inclusiveRange(-1000, 1000),
-      map(y => fire(probe(x, y)))
-    )
-  ),
+  [inclusiveRange(1, targetX[1]), inclusiveRange(-1000, 1000)],
+  combine,
+  map(([x, y]) => fire(probe(x, y))),
   filter(pluck('hit')),
   sortBy(pluck('h'))
 )

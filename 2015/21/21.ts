@@ -1,7 +1,7 @@
 import {
   $,
+  combine,
   find,
-  flatmap,
   last,
   loopUntil,
   lte,
@@ -54,27 +54,18 @@ const rings = [
 ]
 
 const players = $(
-  weapons,
-  flatmap(weapon =>
-    $(
-      armors,
-      flatmap(armor =>
-        $(
-          rings,
-          uniquePermutations(2),
-          map(
-            ([ring1, ring2]) =>
-              ({
-                hp: 100,
-                damage: weapon[1] + ring1[1] + ring2[1],
-                armor: armor[1] + ring1[2] + ring2[2],
-                gold: weapon[0] + armor[0] + ring1[0] + ring2[0]
-              } as Player)
-          )
-        )
-      )
-    )
+  [weapons, armors, $(rings, uniquePermutations(2))],
+  combine,
+  map(
+    ([weapon, armor, [ring1, ring2]]) =>
+      ({
+        hp: 100,
+        damage: weapon[1] + ring1[1] + ring2[1],
+        armor: armor[1] + ring1[2] + ring2[2],
+        gold: weapon[0] + armor[0] + ring1[0] + ring2[0]
+      } as Player)
   ),
+
   sort((p1, p2) => p1.gold - p2.gold)
 )
 

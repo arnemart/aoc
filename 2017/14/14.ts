@@ -1,8 +1,8 @@
 import {
   $,
+  combine,
   count,
   filter,
-  flatmap,
   getIn,
   is,
   join,
@@ -62,13 +62,8 @@ const findNeighborsRecursive = (p: number[], found: Set<string> = new Set()): Se
 }
 
 const allCoords = $(
-  range(128),
-  flatmap(y =>
-    $(
-      range(128),
-      map(x => [y, x])
-    )
-  ),
+  [range(128), range(128)],
+  combine,
   filter(([y, x]) => $(disk, getIn(y, x), is('1')))
 )
 
