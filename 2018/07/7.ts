@@ -44,10 +44,7 @@ const serialElves = loopUntil(
       remaining: $(remaining, without(nextTask))
     })),
   pipe(pluck('remaining'), length, is(0)),
-  {
-    finished: [],
-    remaining: tasks
-  }
+  { finished: [], remaining: tasks }
 ).finished
 
 console.log('Part 1:', $(serialElves, join()))
