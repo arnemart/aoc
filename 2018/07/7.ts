@@ -24,20 +24,20 @@ import {
   without
 } from '../../common'
 
-const allDeps = $(
+const deps = $(
   readInput(),
   parse(/Step (\w) .+ step (\w)/, ([_, a, b]) => [a, b])
 )
 
-const allTasks = $(allDeps, flatten(), unique, sort())
+const tasks = $(deps, flatten(), unique, sort())
 
 const findNextTask = (remaining: string[], finished: string[]) =>
   $(
     remaining,
-    find(s => $(allDeps, filter(pipe(first, not(isIn(finished)))), not(some(pipe(last, is(s))))))
+    find(s => $(deps, filter(pipe(first, not(isIn(finished)))), not(some(pipe(last, is(s))))))
   )
 
-const serialTasks = loopUntil(
+const serialElves = loopUntil(
   (_, { finished, remaining }) =>
     $(findNextTask(remaining, finished), nextTask => ({
       finished: $(finished, push(nextTask)),
@@ -46,65 +46,54 @@ const serialTasks = loopUntil(
   pipe(pluck('remaining'), length, is(0)),
   {
     finished: [],
-    remaining: allTasks
+    remaining: tasks
   }
 ).finished
 
-console.log('Part 1:', $(serialTasks, join()))
+console.log('Part 1:', $(serialElves, join()))
 
 const time = (task: string) => task.charCodeAt(0) - 4
+const elf = (currentTask: string = null, remainingTime = 0) => ({ currentTask, remainingTime })
 
-const parallellTasks = loopUntil(
-  (_, state) => ({
-    elapsedTime: state.elapsedTime + 1,
+const parallellElves = loopUntil(
+  (_, { elves, elapsedTime, finished, remaining }) => ({
+    elapsedTime: elapsedTime + 1,
     ...$(
-      state.elves,
+      elves,
       reduce(
-        ({ elves, finished }, elf) =>
-          elf.remainingTime == 1
-            ? {
-                elves: [...elves, { currentTask: null, remainingTime: 0 }],
-                finished: [...finished, elf.currentTask]
-              }
-            : {
-                elves: [...elves, { ...elf, remainingTime: elf.remainingTime - 1 }],
-                finished
-              },
-        { elves: [], finished: state.finished }
+        ({ elves, finished }, e) =>
+          e.remainingTime == 1
+            ? { elves: [...elves, elf()], finished: [...finished, e.currentTask] }
+            : { elves: [...elves, elf(e.currentTask, e.remainingTime - 1)], finished },
+        { elves: [], finished: finished }
       ),
       ({ elves, finished }) =>
         $(
           elves,
           reduce(
-            ({ elves, remaining }, elf) =>
-              elf.currentTask == null
+            ({ elves, remaining }, e) =>
+              e.currentTask == null
                 ? $(findNextTask(remaining, finished), nextTask =>
                     nextTask
-                      ? {
-                          elves: [...elves, { currentTask: nextTask, remainingTime: time(nextTask) }],
-                          remaining: $(remaining, without(nextTask))
-                        }
-                      : { elves: [...elves, elf], remaining }
+                      ? { elves: [...elves, elf(nextTask, time(nextTask))], remaining: $(remaining, without(nextTask)) }
+                      : { elves: [...elves, e], remaining }
                   )
-                : { elves: [...elves, elf], remaining },
-            { elves: [], remaining: state.remaining }
+                : { elves: [...elves, e], remaining },
+            { elves: [], remaining: remaining }
           ),
           ({ elves, remaining }) => ({ elves, finished, remaining })
         )
     )
   }),
 
-  pipe(pluck('finished'), length, is(allTasks.length)),
+  pipe(pluck('finished'), length, is(tasks.length)),
 
   {
-    elves: fillArray(5, {
-      currentTask: null,
-      remainingTime: 0
-    }),
+    elves: fillArray(5, elf()),
     elapsedTime: -1,
     finished: [],
-    remaining: allTasks
+    remaining: tasks
   }
 )
 
-console.log('Part 2:', parallellTasks.elapsedTime)
+console.log('Part 2:', parallellElves.elapsedTime)
