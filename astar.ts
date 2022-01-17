@@ -25,9 +25,9 @@ type Result<T> = {
 }
 
 export default function aStar<T>(params: Params<T>): Result<T> {
-  const hash = params.hash || defaultHash
-  const cost = params.cost || defaultCost
-  const heuristic = params.heuristic || defaultHeuristic
+  const hash = params.hash || JSON.stringify
+  const cost = params.cost || (() => 1)
+  const heuristic = params.heuristic || (() => 1)
 
   const startNode: Node<T> = {
     data: params.start,
@@ -112,7 +112,3 @@ export default function aStar<T>(params: Params<T>): Result<T> {
 
 const reconstructPath = <T>(node: Node<T>): T[] =>
   node.parent ? reconstructPath(node.parent).concat(node.data) : [node.data]
-
-const defaultHash = <T>(node: T) => JSON.stringify(node)
-const defaultCost = () => 1
-const defaultHeuristic = () => 1
