@@ -59,7 +59,7 @@ const guards: Guard[] = $(
   map(([id, shifts]) => ({ id, asleep: $(shifts, map(pluck('asleep')), flatten(), frequencies) }))
 )
 
-const mostAsleepGuard = $(guards, sortBy(pipe(pluck('asleep'), values, sum)), last) as Guard
+const mostAsleepGuard = $(guards, sortBy(pipe(pluck('asleep'), values, sum)), last)
 
 console.log(
   'Part 1:',
