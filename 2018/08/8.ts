@@ -40,13 +40,13 @@ const parseTree = ([childCount, metadataCount, ...rest]: number[]): { node: Node
     })
   )
 
-const sumMetadata = ({ children, metadata }: Node) => $(metadata, sum, add($(children, map(sumMetadata), sum)))
-
 const tree = parseTree(input).node
+
+const sumMetadata = ({ children, metadata }: Node): number => $(metadata, sum, add($(children, map(sumMetadata), sum)))
 
 console.log('Part 1:', $(tree, sumMetadata))
 
-const value = ({ children, metadata }: Node) =>
+const value = ({ children, metadata }: Node): number =>
   children.length == 0
     ? $(metadata, sum)
     : $(metadata, map(pipe(subtract(1), pluckFrom(children))), filter(nonNull), map(value), sum)
