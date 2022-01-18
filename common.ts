@@ -817,6 +817,11 @@ export const cond =
   }
 export const is = <T>(...v: T[]) => cond([[v, true]], false)
 
+export const ife =
+  <U>(t: U | (() => U), f: U | (() => U)) =>
+  (v1: boolean) =>
+    $(v1, cond([[true, t]], f))
+
 export const and =
   <T>(...fns: ((v: T) => boolean)[]) =>
   (v: T) =>
