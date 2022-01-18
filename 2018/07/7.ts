@@ -50,26 +50,30 @@ const serialElves = loopUntil(
 console.log('Part 1:', $(serialElves, join()))
 
 const time = (task: string) => task.charCodeAt(0) - 4
-const elf = (currentTask: string = null, remainingTime = 0) => ({ currentTask, remainingTime })
+const elf = (task: string = null, remainingTime = 0) => ({ task, remainingTime })
 
 const parallellElves = loopUntil(
-  (_, { elves, elapsedTime, finished, remaining }) => ({
-    elapsedTime: elapsedTime + 1,
+  (elapsedTime, { elves, finished, remaining }) => ({
+    elapsedTime,
     ...$(
       elves,
+
+      // Finish completed tasks
       reduce(
         ({ elves, finished }, e) =>
           e.remainingTime == 1
-            ? { elves: [...elves, elf()], finished: [...finished, e.currentTask] }
-            : { elves: [...elves, elf(e.currentTask, e.remainingTime - 1)], finished },
-        { elves: [], finished: finished }
+            ? { elves: [...elves, elf()], finished: [...finished, e.task] }
+            : { elves: [...elves, elf(e.task, e.remainingTime - 1)], finished },
+        { elves: [], finished }
       ),
+
+      // Assign new tasks
       ({ elves, finished }) =>
         $(
           elves,
           reduce(
             ({ elves, remaining }, e) =>
-              e.currentTask == null
+              e.task == null
                 ? $(findNextTask(remaining, finished), nextTask =>
                     nextTask
                       ? { elves: [...elves, elf(nextTask, time(nextTask))], remaining: $(remaining, without(nextTask)) }
@@ -78,6 +82,7 @@ const parallellElves = loopUntil(
                 : { elves: [...elves, e], remaining },
             { elves: [], remaining: remaining }
           ),
+
           ({ elves, remaining }) => ({ elves, finished, remaining })
         )
     )
@@ -87,7 +92,7 @@ const parallellElves = loopUntil(
 
   {
     elves: fillArray(5, elf()),
-    elapsedTime: -1,
+    elapsedTime: 0,
     finished: [],
     remaining: tasks
   }
