@@ -26,33 +26,22 @@ const grid = fillArray([300, 300], powerLevel)
 
 type Sum = { x: number; y: number; size: number; sum: number }
 
-const gridSumCache = createCache<number, Sum>()
+const gridSumCache = createCache<number, number>()
 const gridSum =
   (size: number) =>
-  ([y, x]: number[]): Sum => {
-    const key = y * 1000000 + x * 1000 + size
-    return gridSumCache(key, () =>
-      $(
-        gridSumCache(key - 1, () =>
-          $(grid, slice(y, y + size - 1), flatmap(slice(x, x + size - 1)), sum, s => ({
-            x: x + 1,
-            y: y + 1,
-            size: size - 1,
-            sum: s
-          }))
-        ),
-        oneSmaller => ({
-          x: oneSmaller.x,
-          y: oneSmaller.y,
-          size,
-          sum:
-            oneSmaller.sum +
-            $(grid, nth(y + size - 1), slice(x, x + size), sum) +
-            $(grid, slice(y, y + size - 1), map(nth(x + size - 1)), sum)
-        })
+  ([y, x]: number[]): Sum =>
+    $(y * 1000000 + x * 1000 + size, cacheKey => ({
+      x: x + 1,
+      y: y + 1,
+      size,
+      sum: gridSumCache(
+        cacheKey,
+        () =>
+          gridSumCache(cacheKey - 1, () => $(grid, slice(y, y + size - 1), flatmap(slice(x, x + size - 1)), sum)) +
+          $(grid, nth(y + size - 1), slice(x, x + size), sum) +
+          $(grid, slice(y, y + size - 1), map(nth(x + size - 1)), sum)
       )
-    )
-  }
+    }))
 
 const findSums = (sizes: number[]) =>
   $(
