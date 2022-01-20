@@ -8,7 +8,6 @@ import {
   first,
   floor,
   getIn,
-  last,
   lastIndexOf,
   lines,
   loopUntil,
@@ -24,7 +23,8 @@ import {
   setIn,
   slice,
   sum,
-  tee
+  tee,
+  unroll
 } from '../../common'
 
 type SN = number | [SN, SN]
@@ -103,7 +103,7 @@ const snReduce = (sn: SN): SN =>
   )
 
 const magnitude = (sn: SN): number =>
-  sn instanceof Array ? $(sn, tee(pipe(first, magnitude, mult(3)), pipe(last, magnitude, mult(2))), sum) : sn
+  sn instanceof Array ? $(sn, unroll(pipe(magnitude, mult(3)), pipe(magnitude, mult(2))), sum) : sn
 
 const addSn = (n1: SN, n2: SN) => $([n1, n2], snReduce)
 const addAllSns = (sns: SN[]) => $(sns, slice(1), reduce(addSn, $(sns, first)), magnitude)

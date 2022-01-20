@@ -3,7 +3,6 @@ import {
   add,
   cond,
   difference,
-  first,
   join,
   last,
   lines,
@@ -20,13 +19,13 @@ import {
   split,
   substr,
   sum,
-  tee
+  unroll
 } from '../../common'
 
 const [startingPots, patterns] = $(
   readInput(),
   split('\n\n'),
-  tee(pipe(first, replace('initial state: ', '')), pipe(last, lines, map(split(' => ')), Object.fromEntries))
+  unroll(replace('initial state: ', ''), pipe(lines, map(split(' => ')), Object.fromEntries))
 )
 
 const step = (plants: string) =>

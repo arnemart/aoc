@@ -220,6 +220,10 @@ export const filter =
   <T>(fn: MapFn<T, boolean>) =>
   (arr: T[]): T[] =>
     arr.filter(fn)
+export const partition =
+  <T>(fn: MapFn<T, boolean>) =>
+  (arr: T[]): [T[], T[]] =>
+    arr.reduce(([yep, nope], v, i, arr) => (fn(v, i, arr) ? [[...yep, v], nope] : [yep, [...nope, v]]), [[], []])
 export const takeUntilInclusive =
   <T>(fn: MapFn<T, boolean>) =>
   (arr: T[]): T[] =>
@@ -437,6 +441,24 @@ export const overlap =
       a1,
       filter(v => $(a2, includes(v)))
     )
+
+export function unroll<T, A, B>(fn1: CF<T, A>, fn2: CF<T, B>): (arr: T[]) => [A, B]
+export function unroll<T, A, B, C>(fn1: CF<T, A>, fn2: CF<T, B>, fn3: CF<T, C>): (arr: T[]) => [A, B, C]
+export function unroll<T, A, B, C, D>(
+  fn1: CF<T, A>,
+  fn2: CF<T, B>,
+  fn3: CF<T, C>,
+  fn4: CF<T, D>
+): (arr: T[]) => [A, B, C, D]
+export function unroll<T, U>(...cmds: ((v: T) => U)[]): (arr: T[]) => U[]
+export function unroll<T>(...cmds: ((v: T) => unknown)[]): (arr: T[]) => unknown[] {
+  return (arr: T[]) =>
+    $(
+      arr,
+      slice(0, cmds.length),
+      map((v, i) => cmds[i](v))
+    )
+}
 
 export const permutations =
   <T>(n: number = null) =>
@@ -775,9 +797,9 @@ export const parse =
     )
 
 export const next =
-  <T>(e: T, amt: number = 1) =>
-  (arr: T[]): T =>
-    arr[(arr.indexOf(e) + arr.length + (amt % arr.length)) % arr.length]
+  <T>(arr: T[], amt: number = 1) =>
+  (v: T): T =>
+    amt == 0 ? v : arr[(arr.indexOf(v) + arr.length + (amt % arr.length)) % arr.length]
 
 export const intoSet = <T>(val: T[]): Set<T> => new Set(val)
 export const unique = pipe(intoSet, values)
@@ -818,9 +840,14 @@ export const cond =
 export const is = <T>(...v: T[]) => cond([[v, true]], false)
 
 export const ife =
-  <U>(t: U | (() => U), f: U | (() => U)) =>
-  (v1: boolean) =>
-    $(v1, cond([[true, t]], f))
+  <T, U>(t: U | ((v: T) => U), f: U | ((v: T) => U) = null) =>
+  (v: T) => {
+    if (Boolean(v)) {
+      return t instanceof Function ? t(v) : t
+    } else {
+      return f instanceof Function ? f(v) : f
+    }
+  }
 
 export const and =
   <T>(...fns: ((v: T) => boolean)[]) =>

@@ -3,20 +3,17 @@ import {
   add,
   combinations,
   createCache,
-  first,
   frequencies,
   gte,
-  last,
   loopUntil,
   map,
   max,
   min,
   mult,
-  pipe,
   pluck,
   reduce,
   sum,
-  tee
+  unroll
 } from '../../common'
 
 const p1start = 3
@@ -80,11 +77,7 @@ const playRecursive = (state: typeof initialState, whosTurn = 0): number[] =>
             ([p1wins, p2wins], state) =>
               $(state, pluck('p1score'), gte(21))
                 ? [p1wins + rolls.get(state.p1LastRoll), p2wins]
-                : $(
-                    playRecursive(state, 1),
-                    map(mult(rolls.get(state.p1LastRoll))),
-                    tee(pipe(first, add(p1wins)), pipe(last, add(p2wins)))
-                  ),
+                : $(playRecursive(state, 1), map(mult(rolls.get(state.p1LastRoll))), unroll(add(p1wins), add(p2wins))),
             [0, 0]
           )
         )
@@ -102,11 +95,7 @@ const playRecursive = (state: typeof initialState, whosTurn = 0): number[] =>
             ([p1wins, p2wins], state) =>
               $(state, pluck('p2score'), gte(21))
                 ? [p1wins, p2wins + rolls.get(state.p2LastRoll)]
-                : $(
-                    playRecursive(state, 0),
-                    map(mult(rolls.get(state.p2LastRoll))),
-                    tee(pipe(first, add(p1wins)), pipe(last, add(p2wins)))
-                  ),
+                : $(playRecursive(state, 0), map(mult(rolls.get(state.p2LastRoll))), unroll(add(p1wins), add(p2wins))),
             [0, 0]
           )
         )

@@ -4,12 +4,10 @@ import {
   cond,
   count,
   fillArray,
-  first,
   flatten,
   getInDefault,
   is,
   join,
-  last,
   lines,
   map,
   number,
@@ -19,7 +17,7 @@ import {
   reduce,
   reverse,
   split,
-  tee
+  unroll
 } from '../../common'
 
 type Image = number[][]
@@ -27,7 +25,7 @@ type Image = number[][]
 const [algorithm, image] = $(
   readInput(),
   split('\n\n'),
-  tee(pipe(first, split(), map(cond([['#', 1]], 0))), pipe(last, lines, map(pipe(split(), map(cond([['#', 1]], 0))))))
+  unroll(pipe(split(), map(cond([['#', 1]], 0))), pipe(lines, map(pipe(split(), map(cond([['#', 1]], 0))))))
 ) as [number[], Image]
 
 const enhancePixel = (y: number, x: number, def: number) => (img: Image) =>

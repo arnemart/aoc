@@ -62,8 +62,8 @@ const step =
       v =>
         ({
           ...s,
-          dir: $(dirs, next(s.dir, nextDir[v])),
-          grid: $(s.grid, setIn([s.y, s.x], $(infectionStates, next(v)))),
+          dir: $(s.dir, next(dirs, nextDir[v])),
+          grid: $(s.grid, setIn([s.y, s.x], $(v, next(infectionStates)))),
           infs: $(s.infs, add($(v, cond([[toCount, 1]], 0))))
         } as State),
       s => ({ ...s, y: s.y + deltas[s.dir][0], x: s.x + deltas[s.dir][1] } as State),

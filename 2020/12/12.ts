@@ -29,7 +29,7 @@ const move =
 
 const turnShip = (state: Ship, times: number) => (): Ship => ({
   ...state,
-  heading: $(dirs, next(state.heading, times))
+  heading: $(state.heading, next(dirs, times))
 })
 
 const travel1 = (state: Ship, command: Command): Ship =>

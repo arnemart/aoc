@@ -49,7 +49,7 @@ const dirDeltas = {
 }
 
 const step = (state: State, { dir, dist }: Direction): State =>
-  $(cardinalDirections, next(state.pointing, $(dir, cond([['R', 1]], -1))), pointing => {
+  $(state.pointing, next(cardinalDirections, $(dir, cond([['R', 1]], -1))), pointing => {
     const newX = state.x + dist * dirDeltas[pointing][0]
     const newY = state.y + dist * dirDeltas[pointing][1]
     const newTrail =
