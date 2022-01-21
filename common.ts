@@ -720,6 +720,7 @@ export const join =
   (arr: T[]): string =>
     arr.join(joinWith)
 export const lines = split('\n')
+export const digits = (s: string | number) => $(s.toString(), split(), ints)
 export const match =
   (reg: RegExp) =>
   (s: string): RegExpMatchArray =>
