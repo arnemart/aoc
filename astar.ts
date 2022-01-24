@@ -107,8 +107,8 @@ export default function aStar<T>(params: Params<T>): Result<T> {
     }
   }
   // all the neighbors of every accessible node have been exhausted
-  throw new Error('No path found')
+  return null
 }
 
 const reconstructPath = <T>(node: Node<T>): T[] =>
-  node.parent ? reconstructPath(node.parent).concat(node.data) : [node.data]
+  node.parent ? [...reconstructPath(node.parent), node.data] : [node.data]
