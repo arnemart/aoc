@@ -224,6 +224,22 @@ export const partition =
   <T>(fn: MapFn<T, boolean>) =>
   (arr: T[]): [T[], T[]] =>
     arr.reduce(([yep, nope], v, i, arr) => (fn(v, i, arr) ? [[...yep, v], nope] : [yep, [...nope, v]]), [[], []])
+export const takeWhile =
+  <T>(fn: MapFn<T, boolean>) =>
+  (arr: T[]): T[] =>
+    $(
+      arr,
+      reduce(
+        ({ res, done }, v, i, arr) => {
+          if (done || !fn(v, i, arr)) {
+            return { res, done: true }
+          }
+          res.push(v)
+          return { res, done }
+        },
+        { res: [], done: false }
+      )
+    ).res
 export const takeUntilInclusive =
   <T>(fn: MapFn<T, boolean>) =>
   (arr: T[]): T[] =>
