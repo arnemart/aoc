@@ -1,13 +1,12 @@
 import {
   $,
   filter,
-  flatten,
+  flatmap,
   ints,
   is,
   length,
   lines,
   loopUntil,
-  map,
   pipe,
   range,
   readInput,
@@ -21,8 +20,7 @@ console.log(
   'Part 1:',
   $(
     range(7),
-    map(n => $(containers, uniquePermutations(n + 2))),
-    flatten(),
+    flatmap(n => $(containers, uniquePermutations(n + 2))),
     filter(pipe(sum, is(150))),
     length
   )

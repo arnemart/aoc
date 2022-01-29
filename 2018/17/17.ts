@@ -154,19 +154,13 @@ const fillWater = (grid: Grid, [y, x]: number[]): Grid => {
   }
 }
 
-const colors = {
-  '~': 0x0000ffff,
-  '|': 0x00aaffff,
-  '#': 0x000000ff
-}
-
 const countWater =
   (...whichWater: string[]) =>
   (grid: Grid) =>
     $(grid, map(count(is(...whichWater))), sum)
 
 const finalGrid = loopUntil(
-  (i, { grid, gridstr }) =>
+  (_, { grid, gridstr }) =>
     $(grid, findWaters, reduce(fillWater, grid), grid => ({
       grid,
       gridstr: $(grid, map(join()), join()),
