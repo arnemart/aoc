@@ -1,22 +1,24 @@
 import {
   $,
+  add,
+  cond,
+  filter,
   first,
+  floor,
   int,
   lines,
-  slice,
+  loopUntil,
+  map,
   match,
   nth,
   pipe,
+  range,
   readInput,
-  tee,
-  map,
-  spy,
   set,
-  cond,
-  loopUntil,
-  pluck,
-  gt,
-  add
+  slice,
+  sqrt,
+  sum,
+  tee
 } from '../../common'
 
 type Op = { op: string; A: number; B: number; C: number }
@@ -74,4 +76,18 @@ const runProgram = (initialState: number[]) =>
 
 console.log('Part 1:', runProgram([0, 0, 0, 0, 0, 0])[0])
 
-console.log('Part 2:', runProgram([1, 0, 0, 0, 0, 0])[0])
+const r = loopUntil(
+  (_, reg) => step(reg),
+  reg => reg[0] == 0,
+  [1, 0, 0, 0, 0, 0]
+)
+
+const sumFactors = (num: number) =>
+  $(
+    range(1, floor(sqrt(num))),
+    filter(i => num % i == 0),
+    map(n => n + num / n),
+    sum
+  )
+
+console.log('Part 2:', r, sumFactors(r[2]))
