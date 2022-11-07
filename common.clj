@@ -17,5 +17,4 @@
 
 (defn parse [s] (edn/read-string s))
 
-
 (defn spy [v] (pprint v) v)
