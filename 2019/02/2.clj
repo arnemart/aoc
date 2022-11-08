@@ -7,8 +7,10 @@
 (defn run-verb-noun [[verb noun] program]
   (-> program
       (assoc 1 verb 2 noun)
-      (init-state)
-      (run)))
+      init-state
+      run
+      :mem
+      first))
 
 (defn -main []
   (let [program
