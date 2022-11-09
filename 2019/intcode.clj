@@ -1,19 +1,10 @@
 (ns aoc.2019.intcode
-  (:require [clojure.math.numeric-tower :as math :refer [expt]]))
+  (:require [clojure.core.async :refer [<! <!! >! go]]
+            [clojure.math.numeric-tower :as math :refer [expt]]))
 
-(defn init-state 
-  ([program]
-   (init-state [] program))
-  ([input program]
-   {:mem program
-    :output []
-    :input input
-    :ip 0
-    :halted false}))
-
-(defn read-param-from-mem [mem oc ip param]
+(defn read-param-from-mem [mem op ip param]
   (case (quot
-         (mod oc (* 100 (expt 10 param)))
+         (mod op (* 100 (expt 10 param)))
          (expt 10 (inc param)))
     0 (nth mem (nth mem (+ ip param)))
     1 (nth mem (+ ip param))))
@@ -23,7 +14,7 @@
         mem (:mem state)
         op (nth mem ip)
         opcode (mod op 100)
-        read-param #(read-param-from-mem mem op ip %)]
+        read-param #(read-param-from-mem mem op ip %)] 
 
     (case opcode
       ;; add
@@ -38,15 +29,23 @@
             (assoc-in [:mem (nth mem (+ ip 3))]
                       (* (read-param 1)
                          (read-param 2))))
-      ;; read
-      3 (-> state
-            (update :ip #(+ 2 %))
-            (assoc-in [:mem (nth mem (+ ip 1))] (first (:input state)))
-            (update :input #(drop 1 %)))
-      ;; write
-      4 (-> state
-            (update :ip #(+ 2 %))
-            (update :output #(conj % (read-param 1))))
+      ;; read input
+      3 (let [s (-> state
+                    (update :ip #(+ 2 %))
+                    (assoc-in [:mem (nth mem (+ ip 1))]
+                              (if (some? (:in-chan state))
+                                (<!! (go (<! (:in-chan state))))
+                                (first (:input state)))))]
+          (if (nil? (:in-chan s))
+            (update s :input #(drop 1 %))
+            s))
+      ;; write output
+      4 (let [v (read-param 1)]
+          (when (some? (:out-chan state))
+            (go (>! (:out-chan state) v)))
+          (-> state
+              (update :ip #(+ 2 %))
+              (update :output #(conj % v))))
       ;; jump-if-true
       5 (update state :ip #(if (not= 0 (read-param 1))
                              (read-param 2)
@@ -68,7 +67,26 @@
       ;; halt
       99 (assoc state :halted true))))
 
-(defn run [state]
+(defn init-state [program]
+  {:mem program
+   :output []
+   :ip 0
+   :halted false})
+
+(defn just-run [state]
   (if (:halted state)
-    {:mem (:mem state) :output (:output state)}
-    (run (step state))))
+    (do
+      (when (some? (:finally state))
+        ((:finally state)))
+      {:mem (:mem state) :output (:output state)})
+    (just-run (step state))))
+
+(defn run
+  ([program]
+   (just-run (init-state program)))
+  ([input program]
+   (just-run (assoc (init-state program) :input input)))
+  ([in-chan out-chan program]
+   (just-run (assoc (init-state program) :in-chan in-chan :out-chan out-chan)))
+  ([in-chan out-chan program finally]
+   (just-run (assoc (init-state program) :finally finally :in-chan in-chan :out-chan out-chan))))

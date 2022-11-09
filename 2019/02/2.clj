@@ -1,13 +1,12 @@
 (ns aoc.2019.02.2
   (:require [aoc.common :refer [read-input]]
-            [aoc.2019.intcode :refer [init-state run]]
+            [aoc.2019.intcode :refer [run]]
             [clojure.math.combinatorics :as combo]
             [clojure.string :as str]))
 
 (defn run-verb-noun [[verb noun] program]
   (-> program
       (assoc 1 verb 2 noun)
-      init-state
       run
       :mem
       first))
@@ -26,3 +25,6 @@
          first
          str/join
          (println "Part 2:"))))
+
+;; Part 1: 3850704
+;; Part 2: 6718

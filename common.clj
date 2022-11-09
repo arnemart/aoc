@@ -1,8 +1,8 @@
 (ns aoc.common
-  (:require [clojure.java.io :refer (file)]
-            [clojure.string :as str]
-            [clojure.edn :as edn]
-            [clojure.pprint :refer [pprint]]))
+  (:require [clojure.edn :as edn]
+            [clojure.java.io :refer (file)]
+            [clojure.pprint :refer [pprint]]
+            [clojure.string :as str]))
 
 (defn read-input [& {:keys [split-with default use-default] :or {split-with #"\n" default nil use-default true}}]
   (->
