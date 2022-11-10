@@ -26,17 +26,17 @@
     (case opcode
       ;; add
       1 (-> state
-            (update :ip #(+ 4 %))
+            (update :ip + 4)
             (assoc-in [:mem (addr 3)]
                       (+ (param 1) (param 2))))
       ;; multiply
       2 (-> state
-            (update :ip #(+ 4 %))
+            (update :ip + 4)
             (assoc-in [:mem (addr 3)]
                       (* (param 1) (param 2))))
       ;; read input
       3 (let [s (-> state
-                    (update :ip #(+ 2 %))
+                    (update :ip + 2)
                     (assoc-in [:mem (addr 1)]
                               (if (some? (:in-chan state))
                                 (<!! (go (<! (:in-chan state))))
@@ -49,7 +49,7 @@
           (when (some? (:out-chan state))
             (go (>! (:out-chan state) v)))
           (-> state
-              (update :ip #(+ 2 %))
+              (update :ip + 2)
               (update :output #(conj % v))))
       ;; jump-if-true
       5 (update state :ip #(if (not= 0 (param 1))
@@ -61,18 +61,18 @@
                              (+ 3 %)))
       ;; less than
       7 (-> state
-            (update :ip #(+ 4 %))
+            (update :ip + 4)
             (assoc-in [:mem (addr 3)]
                       (if (< (param 1) (param 2)) 1 0)))
       ;; equals
       8 (-> state
-            (update :ip #(+ 4 %))
+            (update :ip + 4)
             (assoc-in [:mem (addr 3)]
                       (if (= (param 1) (param 2)) 1 0)))
       ;; adjust relative base
       9 (-> state
-            (update :ip #(+ 2 %))
-            (update :rel-base #(+ (param 1) %)))
+            (update :ip + 2)
+            (update :rel-base + (param 1)))
       ;; halt
       99 (assoc state :halted true))))
 
