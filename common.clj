@@ -19,7 +19,7 @@
   (count (filter fn coll)))
 
 (defn pick [keys coll]
-  (map #(get coll %) keys))
+  (map coll keys))
 
 (defn zip [lists]
   (apply (partial mapv vector) lists))
