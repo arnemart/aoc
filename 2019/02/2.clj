@@ -9,7 +9,7 @@
       (assoc 1 verb 2 noun)
       run
       :mem
-      first))
+      (get 0)))
 
 (defn -main []
   (let [program
