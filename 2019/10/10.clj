@@ -19,8 +19,9 @@
                :dist (+ (abs (- ay y)) (abs (- ax x)))}))
        set))
 
-(defn vaporize-200 [asteroid-angles]
-  (let [distinct-angles (->> asteroid-angles
+(defn vaporize-200 [pos asteroids]
+  (let [asteroid-angles (get-angles pos asteroids)
+        distinct-angles (->> asteroid-angles
                              (map :angle)
                              set)]
     (loop [seen-angles #{}
@@ -52,8 +53,7 @@
         most-visible (->> asteroids
                           (map (partial count-visible-asteroids asteroids))
                           (apply max-key :visible))
-        asteroid-angles (get-angles (:pos most-visible) asteroids)
-        twohundredth (vaporize-200 asteroid-angles)]
+        twohundredth (vaporize-200 (:pos most-visible) asteroids)]
 
     (println "Part 1:" (:visible most-visible))
 
