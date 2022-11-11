@@ -1,6 +1,5 @@
 (ns aoc.common
-  (:require [clojure.edn :as edn]
-            [clojure.java.io :refer (file)]
+  (:require [clojure.java.io :refer (file)]
             [clojure.pprint :refer [pprint]]
             [clojure.string :as str]))
 
@@ -23,7 +22,5 @@
 
 (defn zip [lists]
   (apply (partial mapv vector) lists))
-
-(defn parse [s] (edn/read-string s))
 
 (defn spy [v] (pprint v) v)
