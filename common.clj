@@ -3,10 +3,10 @@
             [clojure.pprint :refer [pprint]]
             [clojure.string :as str]))
 
-(defn read-input [& {:keys [split-with default use-default] :or {split-with #"\n" default nil use-default true}}]
+(defn read-input [& {:keys [split-with test use-test] :or {split-with #"\n" test nil use-test true}}]
   (->
-   (if (and (= true use-default) (some? default))
-     default
+   (if (and (= true use-test) (some? test))
+     test
      (-> *file*
          file
          .getParent

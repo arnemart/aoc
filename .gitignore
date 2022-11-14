@@ -1,1 +1,7 @@
 node_modules
+.calva
+.cpcache
+.lsp
+.vscode
+.clj-kondo
+.nrepl-port

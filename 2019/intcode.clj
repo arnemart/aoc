@@ -1,8 +1,8 @@
 (ns aoc.2019.intcode
-  (:require [clojure.core.async :refer [<! <!! >!! go]]
+  (:require [clojure.core.async :refer [<!! >!!]]
             [clojure.math.numeric-tower :as math :refer [expt]]))
 
-;; intcode days: 2, 5, 7, 9
+;; intcode days: 2, 5, 7, 9, 11, 13
 
 (defn get-param-addr [mem op ip rel-base param]
   (case (quot
