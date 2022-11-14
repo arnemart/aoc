@@ -1,7 +1,8 @@
 (ns aoc.2019.12.12
-  (:require [aoc.common :refer [read-input spy]]
+  (:require [aoc.common :refer [read-input]]
             [clojure.edn :as edn]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.math.numeric-tower :refer [lcm]]))
 
 (defn gravity [moons]
   (->> moons
@@ -11,6 +12,7 @@
                                            [(+ vx (compare x2 x1))
                                             (+ vy (compare y2 y1))
                                             (+ vz (compare z2 z1))]) % (disj moons moon))))))))
+
 (defn velocity [moons]
   (->> moons
        (map (fn [moon]
@@ -26,10 +28,7 @@
        (apply +)))
 
 (defn -main []
-  (let [moons (->> (read-input :test "<x=-1, y=0, z=2>
-<x=2, y=-10, z=-7>
-<x=4, y=-8, z=8>
-<x=3, y=5, z=-1>" :use-test false)
+  (let [moons (->> (read-input)
                    (map #(str/replace % #"[^\d -]" ""))
                    (map #(edn/read-string (str "[" % "]")))
                    (map-indexed (fn [i p] {:i i :p p :v [0 0 0]})))]
@@ -41,10 +40,15 @@
          energy
          (println "Part 1:"))
 
-    (loop [state moons i 1]
-      (when (= 0 (mod i 1000000))
-        (println i))
-      (let [next-state (sort-by :i (step state))]
-        (if (= next-state moons)
-          (println "Part 2:" i)
-          (recur next-state (inc i)))))))
+    (loop [state moons seen {} seen-x #{} seen-y #{} seen-z #{} i 0]
+      (let [next-state (sort-by :i (step state))
+            xs (->> next-state (map (fn [{[px] :p [vx] :v}] [px vx])))
+            ys (->> next-state (map (fn [{[_ py] :p [_ vy] :v}] [py vy])))
+            zs (->> next-state (map (fn [{[_ _ pz] :p [_ _ vz] :v}] [pz vz])))
+            seen (if (and (contains? seen-x xs) (nil? (:x seen))) (assoc seen :x i) seen)
+            seen (if (and (contains? seen-y ys) (nil? (:y seen))) (assoc seen :y i) seen)
+            seen (if (and (contains? seen-z zs) (nil? (:z seen))) (assoc seen :z i) seen)]
+        (if (and (some? (:x seen)) (some? (:y seen)) (some? (:z seen)))
+          (let [[x y z] (vals seen)]
+            (println "Part 2:" (lcm x (lcm y z))))
+          (recur next-state seen (conj seen-x xs) (conj seen-y ys) (conj seen-z zs) (inc i)))))))
