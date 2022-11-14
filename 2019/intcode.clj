@@ -1,5 +1,5 @@
 (ns aoc.2019.intcode
-  (:require [clojure.core.async :refer [<! <!! >! go]]
+  (:require [clojure.core.async :refer [<! <!! >!! go]]
             [clojure.math.numeric-tower :as math :refer [expt]]))
 
 ;; intcode days: 2, 5, 7, 9
@@ -39,7 +39,7 @@
                     (update :ip + 2)
                     (assoc-in [:mem (addr 1)]
                               (if (some? (:in-chan state))
-                                (<!! (go (<! (:in-chan state))))
+                                (<!! (:in-chan state))
                                 (first (:input state)))))]
           (if (nil? (:in-chan s))
             (update s :input #(drop 1 %))
@@ -47,7 +47,7 @@
       ;; write output
       4 (let [v (param 1)]
           (when (some? (:out-chan state))
-            (go (>! (:out-chan state) v)))
+            (>!! (:out-chan state) v))
           (-> state
               (update :ip + 2)
               (update :output #(conj % v))))
@@ -99,4 +99,4 @@
   ([in-chan out-chan program]
    (just-run (assoc (init-state program) :in-chan in-chan :out-chan out-chan)))
   ([in-chan out-chan program finally]
-   (just-run (assoc (init-state program) :finally finally :in-chan in-chan :out-chan out-chan))))
+   (just-run (assoc (init-state program) :in-chan in-chan :out-chan out-chan :finally finally))))
