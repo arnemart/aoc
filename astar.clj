@@ -1,10 +1,12 @@
 (ns aoc.astar
   (:require [clojure.data.priority-map :refer [priority-map]]))
 
-(defn reconstruct-path [node]
-  (if (nil? (:parent node))
-    [(:data node)]
-    (conj (reconstruct-path (:parent node)) (:data node))))
+(defn reconstruct-path 
+  ([node] (reconstruct-path node []))
+  ([node path]
+   (if (nil? (:parent node))
+     [(:data node)]
+     (recur (:parent node) (conj path (:data node))))))
 
 (defn astar [& {:keys [start is-end get-neighbors calculate-cost heuristic] :or {calculate-cost (fn [_ _] 1) heuristic (fn [_] 1)}}]
   (let [start-h (heuristic start)
