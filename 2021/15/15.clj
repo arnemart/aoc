@@ -18,11 +18,11 @@
 (defn find-path [grid]
   (let [max-x (dec (count (first grid)))
         max-y (dec (count grid))]
-    (:cost (astar {:start [0 0]
-                   :is-end #(= [max-x max-y] %)
-                   :get-neighbors (find-neighbors max-x max-y)
-                   :calculate-cost (fn [_ [x y]] (get-in grid [y x]))
-                   :heuristic (fn [[x y]] (+ (- max-x x) (- max-y y)))}))))
+    (:cost (astar :start [0 0]
+                  :is-end #(= [max-x max-y] %)
+                  :get-neighbors (find-neighbors max-x max-y)
+                  :calculate-cost (fn [_ [x y]] (get-in grid [y x]))
+                  :heuristic (fn [[x y]] (+ (- max-x x) (- max-y y)))))))
 
 (defn -main []
   (let [ceiling (->> (read-input)
