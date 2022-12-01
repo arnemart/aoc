@@ -1,2 +1,2 @@
-const { readFileSync } = require('fs')
-console.log(eval(`Math.max(${readFileSync('input.txt').toString().replace(/\n\n/g, ',').replace(/\n/g, '+')})`))
+console.log("Part 1:", eval(`Math.max(${require('fs').readFileSync('input.txt').toString().replace(/\n\n/g,',').replace(/\n/g,'+')})`))
+console.log("Part 2:", eval(eval(`[${require('fs').readFileSync('input.txt').toString().replace(/\n\n/g,',').replace(/\n/g,'+')}]`).sort((a,b)=>b-a).slice(0,3).join('+')))
