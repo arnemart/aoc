@@ -20,7 +20,7 @@
 (defn pick [keys coll]
   (map coll keys))
 
-(defn zip [lists]
+(defn zipv [& lists]
   (apply (partial mapv vector) lists))
 
 (defn spy [v] (pprint v) v)
