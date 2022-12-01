@@ -7,7 +7,7 @@
                    (map #(str/split % #"\n"))
                    (map #(map parse-long %))
                    (map #(apply + %))
-                   (sort <))]
+                   (sort >))]
 
     (println "Part 1:" (first elves))
     
