@@ -6,13 +6,9 @@
   (let [elves (->> (read-input :split-with #"\n\n")
                    (map #(str/split % #"\n"))
                    (map #(map parse-long %))
-                   (map #(apply + %)))]
-    (->> elves
-         (apply max)
-         (println "Part 1:"))
+                   (map #(apply + %))
+                   (sort <))]
+
+    (println "Part 1:" (first elves))
     
-    (->> elves
-         (sort >)
-         (take 3)
-         (apply +)
-         (println "Part 2:"))))
+    (println "Part 2:" (apply + (take 3 elves)))))
