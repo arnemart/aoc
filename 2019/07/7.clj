@@ -35,22 +35,21 @@
 
     out))
 
-(defn -main []
-  (let [program (->>
-                 (read-input :split-with #",")
-                 (mapv parse-long))]
+(let [program (->>
+               (read-input :split-with #",")
+               (mapv parse-long))]
 
-    (->> (combo/permutations (range 5))
-         (map #(run-part1 program %))
-         (apply max)
-         (println "Part 1:"))
+  (->> (combo/permutations (range 5))
+       (map #(run-part1 program %))
+       (apply max)
+       (println "Part 1:"))
 
-    (->> (combo/permutations (range 5 10))
-         (map #(run-part2 program %))
-         (map (fn [ch] (<!! (async/into [] ch))))
-         (map last)
-         (apply max)
-         (println "Part 2:"))))
+  (->> (combo/permutations (range 5 10))
+       (map #(run-part2 program %))
+       (map (fn [ch] (<!! (async/into [] ch))))
+       (map last)
+       (apply max)
+       (println "Part 2:")))
 
 ;; Part 1: 338603
 ;; Part 2: 63103596

@@ -44,17 +44,16 @@
                  (inc i)
                  (disj asts to-remove)))))))
 
-(defn -main []
-  (let [field (->> (read-input)
-                   (mapv #(str/split % #"")))
-        asteroids (->> (combo/cartesian-product (range (count field)) (range (count (first field))))
-                       (filter #(= "#" (get-in field %)))
-                       set)
-        most-visible (->> asteroids
-                          (map (partial count-visible-asteroids asteroids))
-                          (apply max-key :visible))
-        twohundredth (vaporize-200 (:pos most-visible) asteroids)]
+(let [field (->> (read-input)
+                 (mapv #(str/split % #"")))
+      asteroids (->> (combo/cartesian-product (range (count field)) (range (count (first field))))
+                     (filter #(= "#" (get-in field %)))
+                     set)
+      most-visible (->> asteroids
+                        (map (partial count-visible-asteroids asteroids))
+                        (apply max-key :visible))
+      twohundredth (vaporize-200 (:pos most-visible) asteroids)]
 
-    (println "Part 1:" (:visible most-visible))
+  (println "Part 1:" (:visible most-visible))
 
-    (println "Part 2:" (+ (first twohundredth) (* 100 (last twohundredth))))))
+  (println "Part 2:" (+ (first twohundredth) (* 100 (last twohundredth)))))

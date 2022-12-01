@@ -7,17 +7,16 @@
   (let [newmass (calculate-fuel mass)]
     (+ mass (if (> newmass 0) (rocket-equation newmass) 0))))
 
-(defn -main []
-  (let [fuel
-        (->> (read-input)
-             (map parse-long)
-             (map calculate-fuel))]
+(let [fuel
+      (->> (read-input)
+           (map parse-long)
+           (map calculate-fuel))]
 
-    (->> fuel
-         (apply +)
-         (println "Part 1:"))
+  (->> fuel
+       (apply +)
+       (println "Part 1:"))
 
-    (->> fuel
-         (map rocket-equation)
-         (apply +)
-         (println "Part 2:"))))
+  (->> fuel
+       (map rocket-equation)
+       (apply +)
+       (println "Part 2:")))

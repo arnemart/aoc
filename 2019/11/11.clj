@@ -33,27 +33,26 @@
            (recur next-state))
          (:painted state))))))
 
-(defn -main []
-  (let [program (->> (read-input :split-with #",")
-                     (map parse-long))
-        coords-part2 (->> program
-                          (run-program 1)
-                          (filter #(= 1 (last %)))
-                          keys
-                          set)
-        max-x (->> coords-part2 (map first) (apply max) inc)
-        max-y (->> coords-part2 (map last) (apply max) inc)]
+(let [program (->> (read-input :split-with #",")
+                   (map parse-long))
+      coords-part2 (->> program
+                        (run-program 1)
+                        (filter #(= 1 (last %)))
+                        keys
+                        set)
+      max-x (->> coords-part2 (map first) (apply max) inc)
+      max-y (->> coords-part2 (map last) (apply max) inc)]
 
-    (->> program
-         (run-program 0)
-         count
-         (println "Part 1:"))
+  (->> program
+       (run-program 0)
+       count
+       (println "Part 1:"))
 
-    (println "Part 2:")
-    (->> (range max-y)
-         (map (fn [y]
-                (->> (range max-x)
-                     (map #(if (contains? coords-part2 [% y]) "#" " "))
-                     (str/join))))
-         (str/join "\n")
-         println)))
+  (println "Part 2:")
+  (->> (range max-y)
+       (map (fn [y]
+              (->> (range max-x)
+                   (map #(if (contains? coords-part2 [% y]) "#" " "))
+                   (str/join))))
+       (str/join "\n")
+       println))

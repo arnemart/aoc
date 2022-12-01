@@ -35,26 +35,25 @@
         orbiting
         (+ i 1))))))
 
-(defn -main []
-  (let [planet-list (->> (read-input)
-                         (map #(str/split % #"\)")))
-        orbits (->> planet-list
-                    (map reverse)
-                    (map vec)
+(let [planet-list (->> (read-input)
+                       (map #(str/split % #"\)")))
+      orbits (->> planet-list
+                  (map reverse)
+                  (map vec)
+                  (into {}))
+      planets (keys orbits)
+      orbiting (->> planets
+                    (map (fn [p]
+                           [p (->> planet-list
+                                   (filter #(= p (first %)))
+                                   (mapv last))]))
                     (into {}))
-        planets (keys orbits)
-        orbiting (->> planets
-                      (map (fn [p]
-                             [p (->> planet-list
-                                     (filter #(= p (first %)))
-                                     (mapv last))]))
-                      (into {}))
-        [common-root distance-up] (go-up (get orbits "YOU") orbits orbiting)
-        distance-down (go-down common-root orbiting)]
+      [common-root distance-up] (go-up (get orbits "YOU") orbits orbiting)
+      distance-down (go-down common-root orbiting)]
 
-    (->> planets
-         (map #(depth % orbits))
-         (apply +)
-         (println "Part 1:"))
+  (->> planets
+       (map #(depth % orbits))
+       (apply +)
+       (println "Part 1:"))
 
-    (println "Part 2:" (+ distance-up distance-down))))
+  (println "Part 2:" (+ distance-up distance-down)))

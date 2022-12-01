@@ -11,20 +11,19 @@
       :mem
       (get 0)))
 
-(defn -main []
-  (let [program
-        (->> (read-input :split-with #",")
-             (mapv parse-long))]
+(let [program
+      (->> (read-input :split-with #",")
+           (mapv parse-long))]
 
-    (->> program
-         (run-verb-noun [12 2])
-         (println "Part 1:"))
+  (->> program
+       (run-verb-noun [12 2])
+       (println "Part 1:"))
 
-    (->> (combo/permuted-combinations (range 100) 2)
-         (filter #(= 19690720 (run-verb-noun % program)))
-         first
-         str/join
-         (println "Part 2:"))))
+  (->> (combo/permuted-combinations (range 100) 2)
+       (filter #(= 19690720 (run-verb-noun % program)))
+       first
+       str/join
+       (println "Part 2:")))
 
 ;; Part 1: 3850704
 ;; Part 2: 6718
