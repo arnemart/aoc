@@ -1,5 +1,5 @@
 with open("input.txt") as f:
-  strategy = list(map(lambda s: s.split(" "), f.read().split("\n")))
+  strategy = [s.split(" ") for s in f.read().split("\n")]
 
 scores1 = {
   "A": { "X": 4, "Y": 8, "Z": 3 },
@@ -13,5 +13,5 @@ scores2 = {
   "C": { "X": 2, "Y": 6, "Z": 7 }
 }
 
-print("Part 1:", sum(map(lambda x: scores1[x[0]][x[1]], strategy)))
-print("Part 2:", sum(map(lambda x: scores2[x[0]][x[1]], strategy)))
+print("Part 1:", sum([scores1[x[0]][x[1]] for x in strategy]))
+print("Part 2:", sum([scores2[x[0]][x[1]] for x in strategy]))
