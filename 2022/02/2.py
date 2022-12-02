@@ -1,5 +1,4 @@
-with open("input.txt") as f:
-  strategy = [s.split(" ") for s in f.read().split("\n")]
+strategy = [s.split(" ") for s in open("input.txt").read().split("\n")]
 
 scores1 = {
   "A": { "X": 4, "Y": 8, "Z": 3 },
