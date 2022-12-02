@@ -1,3 +1,1 @@
-i=open("input.txt").read().replace(" ","").split()
-print(sum("  BXCYAZAXBYCZCXAYBZ".find(x)/2 for x in i),
-sum("  BXCXAXAYBYCYCZAZBZ".find(x)/2 for x in i))
+[print(sum(m.find(x[:3:2])+2 for x in open("input.txt"))/2) for m in ["BXCYAZAXBYCZCXAYBZ","BXCXAXAYBYCYCZAZBZ"]]
