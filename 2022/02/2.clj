@@ -10,8 +10,7 @@
                    "B" {"X" 1 "Y" 5 "Z" 9}
                    "C" {"X" 2 "Y" 6 "Z" 7}})
 
-(let [strategy (->> (read-input)
-                    (map #(str/split % #" ")))]
+(let [strategy (map #(str/split % #" ") (read-input))]
   (->> strategy
        (map #(get-in scores-part1 %))
        (apply +)
