@@ -13,5 +13,5 @@ scores2 = {
   "C": { "X": 2, "Y": 6, "Z": 7 }
 }
 
-print("Part 1:", sum([scores1[x[0]][x[1]] for x in strategy]))
-print("Part 2:", sum([scores2[x[0]][x[1]] for x in strategy]))
+print("Part 1:", sum([scores1[x][y] for [x, y] in strategy]))
+print("Part 2:", sum([scores2[x][y] for [x, y] in strategy]))
