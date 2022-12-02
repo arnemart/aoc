@@ -672,6 +672,11 @@ export const getInDefault =
     return v == null ? def : v
   }
 
+export const getInFrom =
+  (o: any[] | { [key: string]: any }): any =>
+  (keys: (string | number)[]) =>
+    getIn(...keys)(o)
+
 export const get =
   <T>(key: string | number, defaultValue?: T) =>
   (o: any[] | { [key: string]: any }): any => {

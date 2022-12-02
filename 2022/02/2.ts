@@ -1,4 +1,4 @@
-import { $, map, readInput, split, sum } from '../../common'
+import { $, getInFrom, map, readInput, split, sum } from '../../common'
 
 const scores1 = {
   A: { X: 4, Y: 8, Z: 3 },
@@ -14,5 +14,5 @@ const scores2 = {
 
 const strategy = $(readInput(), split('\n'), map(split(' ')))
 
-console.log("Part 1:", $(strategy, map(([a, b]) => scores1[a][b]), sum))
-console.log("Part 2:", $(strategy, map(([a, b]) => scores2[a][b]), sum))
+console.log('Part 1:', $(strategy, map(getInFrom(scores1)), sum))
+console.log('Part 2:', $(strategy, map(getInFrom(scores2)), sum))
