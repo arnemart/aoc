@@ -14,8 +14,7 @@
        (map priority)
        sum))
 
-(let [backpacks (->> (read-input)
-                     (map #(str/split % #"")))]
+(let [backpacks (map #(str/split % #"") (read-input))]
   (->> backpacks
        (map #(partition (/ (count %) 2) %))
        (map #(map set %))
