@@ -2,7 +2,7 @@ def priority(s):
   i = ord(s)
   return i - (96 if (i > 96) else 38)
 
-backpacks = [list(line) for line in open("input.txt").read().split("\n")]
+backpacks = [list(line.strip()) for line in open("input.txt")]
 
 compartments = [[set(bp[0:len(bp) // 2]), set(bp[len(bp) // 2:])] for bp in backpacks]
 overlaps = [list(a.intersection(b))[0] for [a, b] in compartments]
