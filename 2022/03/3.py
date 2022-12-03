@@ -10,5 +10,5 @@ backpacks = [list(line.strip()) for line in open("input.txt")]
 compartments = [[set(bp[0:len(bp) // 2]), set(bp[len(bp) // 2:])] for bp in backpacks]
 print("Part 1:", sum(priority(x) for x in overlaps(compartments)))
 
-groups = [list(map(set, backpacks[i * 3:i * 3 + 3])) for i in range(len(backpacks) // 3)]
+groups = [map(set, backpacks[i * 3:i * 3 + 3]) for i in range(len(backpacks) // 3)]
 print("Part 2:", sum(priority(x) for x in overlaps(groups)))
