@@ -1,7 +1,7 @@
 (ns aoc.2022.03.3
-  (:require [aoc.common :refer [read-input]]
-            [clojure.string :as str]
-            [clojure.set :as set]))
+  (:require [aoc.common :refer [read-input sum]]
+            [clojure.set :as set]
+            [clojure.string :as str]))
 
 (defn priority [s]
   (let [i (int (.charAt s 0))]
@@ -12,7 +12,7 @@
        (map #(apply set/intersection %))
        (map first)
        (map priority)
-       (apply +)))
+       sum))
 
 (let [backpacks (->> (read-input)
                      (map #(str/split % #"")))]

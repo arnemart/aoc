@@ -1,5 +1,5 @@
 (ns aoc.2019.01.1
-  (:require [aoc.common :refer [read-input]]))
+  (:require [aoc.common :refer [read-input sum]]))
 
 (defn calculate-fuel [mass] (-> mass (quot 3) (- 2)))
 
@@ -13,10 +13,10 @@
            (map calculate-fuel))]
 
   (->> fuel
-       (apply +)
+       sum
        (println "Part 1:"))
 
   (->> fuel
        (map rocket-equation)
-       (apply +)
+       sum
        (println "Part 2:")))

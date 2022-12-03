@@ -1,8 +1,8 @@
 (ns aoc.2019.12.12
-  (:require [aoc.common :refer [read-input]]
+  (:require [aoc.common :refer [read-input sum]]
             [clojure.edn :as edn]
-            [clojure.string :as str]
-            [clojure.math.numeric-tower :refer [lcm]]))
+            [clojure.math.numeric-tower :refer [lcm]]
+            [clojure.string :as str]))
 
 (defn gravity [moons]
   (->> moons
@@ -24,8 +24,8 @@
 (defn energy [moons]
   (->> moons
        (map (fn [{p :p v :v}]
-              (* (apply + (map abs p)) (apply + (map abs v)))))
-       (apply +)))
+              (* (sum (map abs p)) (sum (map abs v)))))
+       sum))
 
 (let [moons (->> (read-input)
                  (map #(str/replace % #"[^\d -]" ""))

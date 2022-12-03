@@ -1,5 +1,5 @@
 (ns aoc.2022.02.2
-  (:require [aoc.common :refer [read-input]]
+  (:require [aoc.common :refer [read-input sum]]
             [clojure.string :as str]))
 
 (def scores-part1 {"A" {"X" 4 "Y" 8 "Z" 3}
@@ -13,10 +13,10 @@
 (let [strategy (map #(str/split % #" ") (read-input))]
   (->> strategy
        (map #(get-in scores-part1 %))
-       (apply +)
+       sum
        (println "Part 1:"))
 
   (->> strategy
        (map #(get-in scores-part2 %))
-       (apply +)
+       sum
        (println "Part 1:")))

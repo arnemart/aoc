@@ -1,5 +1,5 @@
 (ns aoc.2019.06.6
-  (:require [aoc.common :refer [read-input]]
+  (:require [aoc.common :refer [read-input sum]]
             [clojure.string :as str]))
 
 (defn depth
@@ -53,7 +53,7 @@
 
   (->> planets
        (map #(depth % orbits))
-       (apply +)
+       sum
        (println "Part 1:"))
 
   (println "Part 2:" (+ distance-up distance-down)))

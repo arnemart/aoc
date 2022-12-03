@@ -23,4 +23,7 @@
 (defn zipv [& lists]
   (apply (partial mapv vector) lists))
 
+(defn sum [& lists]
+  (apply + (flatten lists)))
+
 (defn spy [v] (pprint v) v)
