@@ -7,7 +7,7 @@
   (let [i (int (.charAt s 0))]
     (- i (if (> i 96) 96 38))))
 
-(defn find-priorities [sets]
+(defn sum-priorities [sets]
   (->> sets
        (map #(apply set/intersection %))
        (map first)
@@ -19,11 +19,11 @@
   (->> backpacks
        (map #(partition (/ (count %) 2) %))
        (map #(map set %))
-       find-priorities
-       (println "Part 1:")) 
+       sum-priorities
+       (println "Part 1:"))
 
   (->> backpacks
        (map set)
        (partition 3)
-       find-priorities
+       sum-priorities
        (println "Part 2:")))
