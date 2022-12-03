@@ -7,14 +7,11 @@
   (let [newmass (calculate-fuel mass)]
     (+ mass (if (> newmass 0) (rocket-equation newmass) 0))))
 
-(let [fuel
-      (->> (read-input)
-           (map parse-long)
-           (map calculate-fuel))]
+(let [fuel (->> (read-input)
+                (map parse-long)
+                (map calculate-fuel))]
 
-  (->> fuel
-       sum
-       (println "Part 1:"))
+  (println "Part 1:" (sum fuel))
 
   (->> fuel
        (map rocket-equation)
