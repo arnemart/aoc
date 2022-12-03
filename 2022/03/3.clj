@@ -1,7 +1,7 @@
 (ns aoc.2022.03.3
-(:require [aoc.common :refer [read-input]]
-          [clojure.string :as str]
-          [clojure.set :as set]))
+  (:require [aoc.common :refer [read-input]]
+            [clojure.string :as str]
+            [clojure.set :as set]))
 
 (defn priority [s]
   (let [i (int (.charAt s 0))]
