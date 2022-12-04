@@ -13,8 +13,8 @@
 
   (->> assignments
        (count-where (fn [[a b c d]]
-                      (or (and (>= a c) (<= a d))
-                          (and (>= b c) (<= b d))
-                          (and (>= c a) (<= c b))
-                          (and (>= d a) (<= d b)))))
+                      (or (<= c a d)
+                          (<= c b d)
+                          (<= a c b)
+                          (<= a d b))))
        (println "Part 2:")))
