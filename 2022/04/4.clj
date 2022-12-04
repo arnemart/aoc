@@ -7,8 +7,8 @@
                        (map #(map parse-long %)))]
   (->> assignments
        (count-where (fn [[a b c d]]
-                      (or (and (<= a c) (>= b d))
-                          (and (<= c a) (>= d b)))))
+                      (or (<= a c d b)
+                          (<= c a b d))))
        (println "Part 1:"))
 
   (->> assignments
