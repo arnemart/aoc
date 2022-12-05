@@ -4,7 +4,7 @@
 
 (let [w 25 h 6
       layers (->> (read-input :split-with #"")
-                  (mapv parse-long)
+                  (map parse-long)
                   (partition (* w h)))]
 
   (->> layers
