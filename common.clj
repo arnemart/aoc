@@ -5,7 +5,7 @@
 
 (defn read-input [& {:keys [split-with test use-test] :or {split-with #"\n" test nil use-test true}}]
   (->
-   (if (and (= true use-test) (some? test))
+   (if (and use-test (some? test))
      test
      (-> *file*
          file
