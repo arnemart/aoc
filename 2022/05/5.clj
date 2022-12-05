@@ -2,10 +2,10 @@
   (:require [aoc.common :refer [re-seq-indices read-input zip]]
             [clojure.string :as str]))
 
-(defn move [rev]
+(defn move [& {:keys [reverse]}]
   (fn [stacks [num from to]]
     (let [where (- (count (get stacks from)) num)
-          to-add ((if rev reverse identity) (subvec (get stacks from) where))]
+          to-add ((if reverse rseq identity) (subvec (get stacks from) where))]
       (-> stacks
           (update to #(reduce conj % to-add))
           (update from subvec 0 where)))))
@@ -31,5 +31,5 @@
                (map #(map parse-long %))
                (map (fn [[a b c]] [a (dec b) (dec c)])))]
 
-  (println "Part 1:" (solve stacks ops (move true)))
-  (println "Part 2:" (solve stacks ops (move false))))
+  (println "Part 1:" (solve stacks ops (move :reverse true)))
+  (println "Part 2:" (solve stacks ops (move :reverse false))))
