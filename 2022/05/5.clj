@@ -2,20 +2,13 @@
   (:require [aoc.common :refer [read-input zipv]]
             [clojure.string :as str]))
 
-(defn move-1 [stacks [num from to]]
-  (if (zero? num)
-    stacks
-    (recur
-     (-> stacks
-         (update to conj (-> stacks (get from) last))
-         (update from pop))
-     [(dec num) from to])))
-
-(defn move-2 [stacks [num from to]]
-  (let [where (- (count (get stacks from)) num)]
-    (-> stacks
-        (update to #(reduce conj % (subvec (get stacks from) where)))
-        (update from subvec 0 where))))
+(defn move [rev]
+  (fn [stacks [num from to]]
+    (let [where (- (count (get stacks from)) num)
+          to-add ((if rev reverse identity) (subvec (get stacks from) where))]
+      (-> stacks
+          (update to #(reduce conj % to-add))
+          (update from subvec 0 where)))))
 
 (let [[part1 part2] (->> (read-input :split-with #"\n\n")
                          (map #(str/split % #"\n")))
@@ -34,13 +27,13 @@
                (map (fn [[a b c]] [a (dec b) (dec c)])))]
 
   (->> ops
-       (reduce move-1 stacks)
+       (reduce (move true) stacks)
        (map last)
        str/join
        (println "Part 1:"))
 
   (->> ops
-       (reduce move-2 stacks)
+       (reduce (move false) stacks)
        (map last)
        str/join
        (println "Part 2:")))
