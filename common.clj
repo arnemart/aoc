@@ -27,3 +27,9 @@
   (apply + (flatten lists)))
 
 (defn spy [v] (pprint v) v)
+
+(defn re-seq-indices [pattern string]
+  (let [m (re-matcher pattern string)]
+    ((fn step []
+       (when (. m find)
+         (cons (. m start) (lazy-seq (step))))))))

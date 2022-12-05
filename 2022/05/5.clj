@@ -1,5 +1,5 @@
 (ns aoc.2022.05.5
-  (:require [aoc.common :refer [read-input zipv]]
+  (:require [aoc.common :refer [re-seq-indices read-input zipv]]
             [clojure.string :as str]))
 
 (defn move [rev]
@@ -22,7 +22,7 @@
                   drop-last
                   (map #(str/split % #""))
                   (map (fn [stack]
-                         (->> (range 1 34 4)
+                         (->> (re-seq-indices #"\d" (last part1))
                               (map #(nth stack %)))))
                   (apply zipv)
                   (map reverse)
