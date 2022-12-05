@@ -17,7 +17,7 @@
        str/join))
 
 (let [[stacks-input ops-input] (->> (read-input :split-with #"\n\n")
-                                    (map #(str/split % #"\n")))
+                                    (map str/split-lines))
       crate-indices (re-seq-indices #"\d" (last stacks-input))
       stacks (->> stacks-input
                   drop-last

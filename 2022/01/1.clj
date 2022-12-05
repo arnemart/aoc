@@ -3,7 +3,7 @@
             [clojure.string :as str]))
 
 (let [elves (->> (read-input :split-with #"\n\n")
-                 (map #(str/split % #"\n"))
+                 (map str/split-lines)
                  (map #(map parse-long %))
                  (map sum)
                  (sort >))]
