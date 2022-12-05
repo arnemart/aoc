@@ -21,11 +21,10 @@
       crate-indices (re-seq-indices #"\d" (last stacks-input))
       stacks (->> stacks-input
                   drop-last
-                  (map #(str/split % #""))
-                  (map (fn [stack] (map #(nth stack %) crate-indices)))
+                  (map (fn [stack] (map #(.charAt stack %) crate-indices)))
                   (apply zip)
                   (map reverse)
-                  (mapv (fn [l] (vec (take-while #(not (str/blank? %)) l)))))
+                  (mapv (fn [l] (vec (take-while #(not= \space %) l)))))
       ops (->> ops-input
                (map #(re-seq #"\d+" %))
                (map #(map parse-long %))
