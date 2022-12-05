@@ -18,12 +18,11 @@
 
 (let [[part1 part2] (->> (read-input :split-with #"\n\n")
                          (map #(str/split % #"\n")))
+      crate-indices (re-seq-indices #"\d" (last part1))
       stacks (->> part1
                   drop-last
                   (map #(str/split % #""))
-                  (map (fn [stack]
-                         (->> (re-seq-indices #"\d" (last part1))
-                              (map #(nth stack %)))))
+                  (map (fn [stack] (map #(nth stack %) crate-indices)))
                   (apply zip)
                   (map reverse)
                   (mapv (fn [l] (vec (take-while #(not (str/blank? %)) l)))))
