@@ -3,7 +3,7 @@ import re
 [stacksinput, opsinput] = [s.split("\n") for s in open("input.txt").read().split("\n\n")]
 crate_indices = [match.span()[0] for match in re.finditer(r"\d", stacksinput[-1])]
 
-stacks = [list(filter(lambda s: s != ' ', stack)) 
+stacks = [list(filter(lambda s: s != " ", stack)) 
   for stack in zip(*[list(map(lambda i: row[i], crate_indices)) 
   for row in stacksinput[:-1]])]
 
