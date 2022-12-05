@@ -19,7 +19,7 @@
   (->> layers
        (apply zip)
        (map (fn [px] (first (filter #(<= % 1) px))))
-       (map #(get {0 " " 1 "#"} %))
+       (map #(get [" " "#"] %))
        (partition w)
        (map #(str/join "" %))
        (str/join "\n")
