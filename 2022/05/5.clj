@@ -14,8 +14,8 @@
 (defn move-2 [stacks [num from to]]
   (let [where (- (count (get stacks from)) num)]
     (-> stacks
-        (update to #(vec (concat % (subvec (get stacks from) where))))
-        (update from #(subvec % 0 where)))))
+        (update to #(reduce conj % (subvec (get stacks from) where)))
+        (update from subvec 0 where))))
 
 (let [[part1 part2] (->> (read-input :split-with #"\n\n")
                          (map #(str/split % #"\n")))
