@@ -20,8 +20,10 @@
 (defn pick [keys coll]
   (map coll keys))
 
-(defn zipv [& lists]
-  (apply (partial mapv vector) lists))
+(defn zip [& lists]
+  ((fn step [lists]
+     (when (every? not-empty lists)
+       (cons (map first lists) (lazy-seq (step (map rest lists)))))) lists))
 
 (defn sum [& lists]
   (apply + (flatten lists)))

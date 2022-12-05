@@ -1,5 +1,5 @@
 (ns aoc.2019.08.8
-  (:require [aoc.common :refer [count-where pick read-input zipv]]
+  (:require [aoc.common :refer [count-where pick read-input zip]]
             [clojure.string :as str]))
 
 (let [w 25 h 6
@@ -17,7 +17,7 @@
 
   (println "Part 2:")
   (->> layers
-       (apply zipv)
+       (apply zip)
        (map (fn [px] (first (filter #(<= % 1) px))))
        (map #(get {0 " " 1 "#"} %))
        (partition w)
