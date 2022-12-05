@@ -16,17 +16,17 @@
        (map last)
        str/join))
 
-(let [[part1 part2] (->> (read-input :split-with #"\n\n")
-                         (map #(str/split % #"\n")))
-      crate-indices (re-seq-indices #"\d" (last part1))
-      stacks (->> part1
+(let [[stacks-input ops-input] (->> (read-input :split-with #"\n\n")
+                                    (map #(str/split % #"\n")))
+      crate-indices (re-seq-indices #"\d" (last stacks-input))
+      stacks (->> stacks-input
                   drop-last
                   (map #(str/split % #""))
                   (map (fn [stack] (map #(nth stack %) crate-indices)))
                   (apply zip)
                   (map reverse)
                   (mapv (fn [l] (vec (take-while #(not (str/blank? %)) l)))))
-      ops (->> part2
+      ops (->> ops-input
                (map #(re-seq #"\d+" %))
                (map #(map parse-long %))
                (map (fn [[a b c]] [a (dec b) (dec c)])))]
