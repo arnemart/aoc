@@ -8,7 +8,8 @@ stacks = [list(filter(lambda s: s != " ", stack))
   for row in stacksinput[:-1]])]
 
 ops = [[int(n), int(f) - 1, int(t) - 1]
-  for n, f, t in [re.findall(r"\d+", op) for op in opsinput]]
+  for n, f, t in [re.findall(r"\d+", op)
+  for op in opsinput]]
 
 def move(stacks, op, reverse=True):
   to_add = stacks[op[1]][0:op[0]]

@@ -1,5 +1,5 @@
 (ns aoc.common
-  (:require [clojure.java.io :refer (file)]
+  (:require [clojure.java.io :refer [file]]
             [clojure.pprint :refer [pprint]]
             [clojure.string :as str]))
 
