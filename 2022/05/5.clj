@@ -10,6 +10,12 @@
           (update to #(reduce conj % to-add))
           (update from subvec 0 where)))))
 
+(defn solve [stacks ops move]
+  (->> ops
+       (reduce move stacks)
+       (map last)
+       str/join))
+
 (let [[part1 part2] (->> (read-input :split-with #"\n\n")
                          (map #(str/split % #"\n")))
       stacks (->> part1
@@ -26,14 +32,5 @@
                (map #(map parse-long %))
                (map (fn [[a b c]] [a (dec b) (dec c)])))]
 
-  (->> ops
-       (reduce (move true) stacks)
-       (map last)
-       str/join
-       (println "Part 1:"))
-
-  (->> ops
-       (reduce (move false) stacks)
-       (map last)
-       str/join
-       (println "Part 2:")))
+  (println "Part 1:" (solve stacks ops (move true)))
+  (println "Part 2:" (solve stacks ops (move false))))
