@@ -7,6 +7,6 @@
        first
        (+ distinct)))
 
-(time (let [signal (read-input :split-with #"")]
-        (println "Part 1:" (find-marker signal 4))
-        (println "Part 2:" (find-marker signal 14))))
+(let [signal (read-input :split-with #"")]
+  (println "Part 1:" (find-marker signal 4))
+  (println "Part 2:" (find-marker signal 14)))
