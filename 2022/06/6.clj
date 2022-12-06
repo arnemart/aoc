@@ -2,7 +2,7 @@
   (:require [aoc.common :refer [read-input]]))
 
 (defn find-marker [signal distinct]
-  (->> (range (count signal))
+  (->> (range)
        (filter #(-> signal (subvec % (+ % distinct)) set count (= distinct)))
        first
        (+ distinct)))
