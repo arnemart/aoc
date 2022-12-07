@@ -28,8 +28,8 @@
                   folders)))))
 
 (let [folders (->> (read-input)
-                       build-tree
-                       find-all-folder-sizes)
+                   build-tree
+                   find-all-folder-sizes)
       free-space (- 70000000 (get folders ["/"]))]
 
   (->> folders
