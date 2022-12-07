@@ -6,7 +6,8 @@
   ([cmds] (build-tree cmds {} []))
   ([cmds tree path]
    (if-let [cmd (first cmds)]
-     (let [cmds (rest cmds) parts (str/split cmd #" ")]
+     (let [cmds (rest cmds)
+           parts (str/split cmd #" ")]
        (condp re-matches cmd
          #"\$ cd \.\." (recur cmds tree (pop path))
          #"\$ cd .+"   (recur cmds tree (conj path (last parts)))
@@ -17,15 +18,15 @@
 (defn folder-sizes
   ([tree] (folder-sizes tree {} []))
   ([tree folders path]
-   (let [dirs (->> (get-in tree path) keys (filter #(not= :files %)))]
-     (->> dirs
-          (reduce (fn [folders f]
-                    (let [p (conj path f)
-                          filesize (sum (vals (get-in tree (conj p :files))))
-                          folders (folder-sizes tree folders p)
-                          subfolders (->> folders (filter #(= p (pop (first %)))) vals sum)]
-                      (assoc folders p (+ filesize subfolders))))
-                  folders)))))
+   (->> (get-in tree path)
+        keys
+        (filter #(not= :files %))
+        (reduce (fn [folders f]
+                  (let [p (conj path f)
+                        filesize (-> (get-in tree (conj p :files)) vals sum)
+                        folders (folder-sizes tree folders p)]
+                    (assoc folders p (+ filesize (->> folders (filter #(= p (pop (first %)))) vals sum)))))
+                folders))))
 
 (let [folders (->> (read-input)
                    build-tree
