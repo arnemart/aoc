@@ -1,19 +1,21 @@
 (ns aoc.2022.07.7
   (:require [aoc.common :refer [read-input sum]]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.core.match :refer [match]]))
 
 (defn build-folders
   ([cmds] (build-folders cmds {} []))
   ([cmds folders path]
    (if-let [[cmd & cmds] cmds]
-     (let [parts (str/split cmd #" ")]
-       (condp re-matches cmd
-         #"\$ cd \.\." (recur cmds folders (pop path))
-         #"\$ cd .+"   (recur cmds folders (conj path (last parts)))
-         #"\d+ .+"     (recur cmds (->> (range (count path))
-                                        (map #(take (inc %) path))
-                                        (reduce #(assoc %1 %2 (+ (get %1 %2 0) (parse-long (first parts)))) folders)) path)
-         (recur cmds folders path)))
+     (match (str/split cmd #" ")
+       ["$" "cd" ".."] (recur cmds folders (pop path))
+       ["$" "cd" dir] (recur cmds folders (conj path dir))
+       [(size :guard #(re-matches #"\d+" %)) _] (recur cmds
+                                                       (->> (range (count path))
+                                                            (map #(take (inc %) path))
+                                                            (reduce #(assoc %1 %2 (+ (get %1 %2 0) (parse-long size))) folders))
+                                                       path)
+       :else (recur cmds folders path))
      folders)))
 
 (let [folders (build-folders (read-input))
