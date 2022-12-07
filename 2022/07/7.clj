@@ -14,22 +14,22 @@
          (recur cmds tree path)))
      tree)))
 
-(defn find-all-folder-sizes
-  ([tree] (find-all-folder-sizes tree {} []))
+(defn folder-sizes
+  ([tree] (folder-sizes tree {} []))
   ([tree folders path]
    (let [dirs (->> (get-in tree path) keys (filter #(not= :files %)))]
      (->> dirs
           (reduce (fn [folders f]
                     (let [p (conj path f)
                           filesize (sum (vals (get-in tree (conj p :files))))
-                          folders (find-all-folder-sizes tree folders p)
+                          folders (folder-sizes tree folders p)
                           subfolders (->> folders (filter #(= p (pop (first %)))) vals sum)]
                       (assoc folders p (+ filesize subfolders))))
                   folders)))))
 
 (let [folders (->> (read-input)
                    build-tree
-                   find-all-folder-sizes)
+                   folder-sizes)
       free-space (- 70000000 (get folders ["/"]))]
 
   (->> folders
