@@ -16,7 +16,7 @@
          (recur cmds folders path)))
      folders)))
 
-(let [folders (-> (read-input) build-folders)
+(let [folders (build-folders (read-input))
       space-needed (- 30000000 (- 70000000 (get folders ["/"])))]
 
   (->> folders
