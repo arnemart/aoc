@@ -5,9 +5,8 @@
 (defn build-tree
   ([cmds] (build-tree cmds {} []))
   ([cmds tree path]
-   (if-let [cmd (first cmds)]
-     (let [cmds (rest cmds)
-           parts (str/split cmd #" ")]
+   (if-let [[cmd & cmds] cmds]
+     (let [parts (str/split cmd #" ")]
        (condp re-matches cmd
          #"\$ cd \.\." (recur cmds tree (pop path))
          #"\$ cd .+"   (recur cmds tree (conj path (last parts)))
