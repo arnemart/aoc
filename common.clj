@@ -26,7 +26,7 @@
        (cons (map first lists) (lazy-seq (step (map rest lists)))))) lists))
 
 (defn sum [& lists]
-  (apply + (flatten lists)))
+  (apply + 0 (filter some? (flatten lists))))
 
 (defn spy [v] (pprint v) v)
 
