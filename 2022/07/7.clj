@@ -28,10 +28,8 @@
                     (assoc folders p (+ filesize subfoldersize))))
                 folders))))
 
-(let [folders (->> (read-input)
-                   build-tree
-                   folder-sizes)
-      free-space (- 70000000 (get folders ["/"]))]
+(let [folders (-> (read-input) build-tree folder-sizes)
+      space-needed (- 30000000 (- 70000000 (get folders ["/"])))]
 
   (->> folders
        vals
@@ -41,6 +39,6 @@
 
   (->> folders
        vals
-       (filter #(>= % (- 30000000 free-space)))
+       (filter #(>= % space-needed))
        (apply min)
        (println "Part 2:")))
