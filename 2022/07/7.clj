@@ -22,9 +22,10 @@
         (filter #(not= :files %))
         (reduce (fn [folders f]
                   (let [p (conj path f)
+                        folders (folder-sizes tree folders p)
                         filesize (-> (get-in tree (conj p :files)) vals sum)
-                        folders (folder-sizes tree folders p)]
-                    (assoc folders p (+ filesize (->> folders (filter #(= p (pop (first %)))) vals sum)))))
+                        subfoldersize (->> folders (filter #(= p (pop (first %)))) vals sum)]
+                    (assoc folders p (+ filesize subfoldersize))))
                 folders))))
 
 (let [folders (->> (read-input)
