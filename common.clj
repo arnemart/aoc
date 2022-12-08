@@ -36,9 +36,9 @@
        (when (. m find)
          (cons (. m start) (lazy-seq (step))))))))
 
-(defn take-while+ [pred coll]
+(defn take-until [pred coll]
   (lazy-seq
    (when-let [[f & r] (seq coll)]
      (if (pred f)
-       (cons f (take-while+ pred r))
-       [f]))))
+       [f]
+       (cons f (take-until pred r))))))

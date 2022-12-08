@@ -1,5 +1,5 @@
 (ns aoc.2022.08.8
-  (:require [aoc.common :refer [count-where read-input take-while+]]
+  (:require [aoc.common :refer [count-where read-input take-until]]
             [clojure.math.combinatorics :as combo]
             [clojure.string :as str]))
 
@@ -13,9 +13,9 @@
   (->> (trees-in-all-directions y x h w forest)
        (map #(apply max %))))
 
-(defn scenic-score [y x h w forest]
+(defn scenic-score [[y x] h w forest]
   (->> (trees-in-all-directions y x h w forest)
-       (map (fn [trees] (take-while+ #(< % (get-in forest [y x])) trees)))
+       (map (fn [trees] (take-until #(>= % (get-in forest [y x])) trees)))
        (map count)
        (apply *)))
 
@@ -35,6 +35,6 @@
        (println "Part 1:"))
   
   (->> coords
-       (map (fn [[y x]] (scenic-score y x h w forest)))
+       (map #(scenic-score % h w forest))
        (apply max)
        (println "Part 2:")))
