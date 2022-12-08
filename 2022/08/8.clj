@@ -27,11 +27,10 @@
       coords (combo/cartesian-product (range h) (range w))]
 
   (->> coords
-       (map (fn [[y x]]
-              (or (zero? y) (zero? x)
-                  (= y (dec h)) (= x (dec w))
-                  (some #(< % (get-in forest [y x])) (max-in-all-directions y x h w forest)))))
-       (count-where true?)
+       (count-where (fn [[y x]]
+                      (or (zero? y) (zero? x)
+                          (= y (dec h)) (= x (dec w))
+                          (some #(< % (get-in forest [y x])) (max-in-all-directions y x h w forest)))))
        (println "Part 1:"))
   
   (->> coords
