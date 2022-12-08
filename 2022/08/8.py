@@ -13,7 +13,7 @@ def trees_in_all_directions(y, x):
   ]
 
 def max_in_all_directions(y, x):
-  return min([max(trees) for trees in trees_in_all_directions(y, x) if len(trees) > 0])
+  return min([max(trees) for trees in trees_in_all_directions(y, x)])
 
 def is_visible(y, x):
   return y == 0 or x == 0 or y == h-1 or x == w-1 or max_in_all_directions(y, x) < forest[y][x]
