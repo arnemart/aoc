@@ -35,3 +35,10 @@
     ((fn step []
        (when (. m find)
          (cons (. m start) (lazy-seq (step))))))))
+
+(defn take-while+ [pred coll]
+  (lazy-seq
+   (when-let [[f & r] (seq coll)]
+     (if (pred f)
+       (cons f (take-while+ pred r))
+       [f]))))
