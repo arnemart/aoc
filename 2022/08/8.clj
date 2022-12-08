@@ -11,7 +11,8 @@
 
 (defn max-in-all-directions [y x h w forest]
   (->> (trees-in-all-directions y x h w forest)
-       (map #(apply max %))))
+       (map #(apply max %))
+       (apply min)))
 
 (defn scenic-score [[y x] h w forest]
   (->> (trees-in-all-directions y x h w forest)
@@ -30,7 +31,7 @@
        (count-where (fn [[y x]]
                       (or (zero? y) (zero? x)
                           (= y (dec h)) (= x (dec w))
-                          (some #(< % (get-in forest [y x])) (max-in-all-directions y x h w forest)))))
+                          (< (max-in-all-directions y x h w forest) (get-in forest [y x])))))
        (println "Part 1:"))
   
   (->> coords
