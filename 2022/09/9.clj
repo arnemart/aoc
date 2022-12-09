@@ -10,25 +10,15 @@
     "R" [(inc hx) hy]))
 
 (defn move-tail [[hx hy] [tx ty]]
-  (let [[dx dy] (case [(- hx tx) (- hy ty)]
-                  [2 0] [1 0]
-                  [0 2] [0 1]
-                  [-2 0] [-1 0]
-                  [0 -2] [0 -1]
-                  [2 1] [1 1]
-                  [1 2] [1 1]
-                  [2 -1] [1 -1]
-                  [-1 2] [-1 1]
-                  [-2 1] [-1 1]
-                  [1 -2] [1 -1]
-                  [-2 -1] [-1 -1]
-                  [-1 -2] [-1 -1]
-                  [2 2] [1 1]
-                  [2 -2] [1 -1]
-                  [-2 2] [-1 1]
-                  [-2 -2] [-1 -1]
-                  [0 0])]
-    [(+ tx dx) (+ ty dy)]))
+  (let [dx (- hx tx) dy (- hy ty)
+        adx (abs dx) ady (abs dy)
+        nx (cond (= 2 adx) (/ 2 dx)
+                 (= 2 ady) dx
+                 :else 0)
+        ny (cond (= 2 ady) (/ 2 dy)
+                 (= 2 adx) dy
+                 :else 0)]
+    [(+ tx nx) (+ ty ny)]))
 
 (defn move [rope [dir dist]]
   (if (zero? dist)
