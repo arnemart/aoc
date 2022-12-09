@@ -26,11 +26,9 @@ def move(rope, dir, dist):
       prev = tail[-1]
   return rope
 
-r1 = [[(0, 0)], [(0, 0)]]
-r2 = [[(0, 0)] for _ in range(10)]
+rope = [[(0, 0)] for _ in range(10)]
 for m in moves:
-  r1 = move(r1, *m)
-  r2 = move(r2, *m)
+  rope = move(rope, *m)
 
-print("Part 1:", len(set(r1[-1])))
-print("Part 2:", len(set(r2[-1])))
+print("Part 1:", len(set(rope[1])))
+print("Part 2:", len(set(rope[-1])))

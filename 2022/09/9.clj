@@ -34,16 +34,10 @@
       (recur (apply conj [(conj head new-head)] new-tails)
             [dir (dec dist)]))))
 
-(defn solve [moves rope]
-  (->> moves
-       (reduce move rope)
-       peek
-       set
-       count))
-
 (let [moves (->> (read-input)
                  (map #(str/split % #" "))
-                 (map (fn [[d i]] [d (parse-long i)])))]
+                 (map (fn [[d i]] [d (parse-long i)])))
+      result (reduce move (repeat 10 [[0 0]]) moves)]
   
-  (println "Part 1:" (solve moves [[[0 0]] [[0 0]]]))
-  (println "Part 2:" (solve moves (repeat 10 [[0 0]]))))
+  (println "Part 1:" (count (set (nth result 1))))
+  (println "Part 2:" (count (set (peek result)))))
