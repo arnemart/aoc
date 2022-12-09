@@ -31,7 +31,7 @@
                                      [nt (conj tails (conj tail nt))]))
                                  [new-head []])
                          peek)]
-      (move (apply conj [(conj head new-head)] new-tails)
+      (recur (apply conj [(conj head new-head)] new-tails)
             [dir (dec dist)]))))
 
 (defn solve [moves rope]
