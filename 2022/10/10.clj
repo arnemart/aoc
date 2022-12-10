@@ -18,7 +18,7 @@
 
   (println "Part 2:")
   (->> cycles
-       (map-indexed #(if (<= (abs (- %2 (mod %1 40))) 1) "#" " "))
+       (map-indexed #(if (<= (abs (- %2 (mod %1 40))) 1) "█" " "))
        (partition 40)
        (map str/join)
        (str/join "\n")
