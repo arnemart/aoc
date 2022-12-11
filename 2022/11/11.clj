@@ -1,7 +1,7 @@
 (ns aoc.2022.11.11
-  (:require [aoc.common :refer [numeric? read-input]]
+  (:require [aoc.common :refer [read-input]]
             [clojure.string :as str]))
-
+ 
 (defn parse-monkey [s]
   {:items (as-> (re-find #"items: ([\d, ]+)" s) v
             (last v)
@@ -9,36 +9,32 @@
             (mapv parse-long v))
    :op (let [[_ o v] (re-find #"new = old ([\*\+]) (\w+)" s)
              op (get {"*" * "+" +} o)]
-         (if (numeric? v)
-           (let [v (parse-long v)]
-             (fn [i] (op i v)))
-           (fn [i] (op i i))))
+         (if-let [v (parse-long v)]
+           #(op % v)
+           #(op % %)))
    :test (-> (re-find #"divisible by (\d+)" s) last parse-long)
-   true (-> (re-find #"true: throw to monkey (\d+)" s) last parse-long)
+   true  (-> (re-find #"true: throw to monkey (\d+)" s) last parse-long)
    false (-> (re-find #"false: throw to monkey (\d+)" s) last parse-long)
    :inspections 0}) 
 
-(defn step [manage-worry]
-  (fn [monkeys i]
-    (let [monkey (nth monkeys i)]
-      (->> (:items monkey)
-           (reduce (fn [monkeys item]
-                     (let [w (-> item ((:op monkey)) manage-worry)
-                           pass-to (get monkey (= 0 (mod w (:test monkey))))]
-                       (-> monkeys
-                           (update-in [i :items] subvec 1)
-                           (update-in [i :inspections] inc)
-                           (update-in [pass-to :items] conj w))))
-                   monkeys)))))
+(defn step [manage-worry monkeys i]
+  (let [monkey (nth monkeys i)]
+    (->> (:items monkey)
+         (reduce #(let [w (-> %2 ((:op monkey)) manage-worry)
+                        pass-to (get monkey (= 0 (mod w (:test monkey))))]
+                    (-> %1
+                        (update-in [i :items] subvec 1)
+                        (update-in [i :inspections] inc)
+                        (update-in [pass-to :items] conj w)))
+                 monkeys))))
 
-(defn round [manage-worry]
-  (fn [monkeys]
-    (->> (range (count monkeys))
-         (reduce (step manage-worry) monkeys))))
+(defn round [manage-worry monkeys]
+  (->> (range (count monkeys))
+       (reduce (partial step manage-worry) monkeys)))
 
 (defn monkey-business [rounds manage-worry monkeys]
   (->> monkeys
-       (iterate (round manage-worry))
+       (iterate (partial round manage-worry))
        (take (inc rounds))
        last
        (map :inspections)
