@@ -42,3 +42,5 @@
      (if (pred f)
        [f]
        (cons f (take-until pred r))))))
+
+(defn numeric? [s] (re-matches #"\d+" s))

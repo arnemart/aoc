@@ -1,7 +1,7 @@
 (ns aoc.2022.07.7
-  (:require [aoc.common :refer [read-input sum]]
-            [clojure.string :as str]
-            [clojure.core.match :refer [match]]))
+  (:require [aoc.common :refer [numeric? read-input sum]]
+            [clojure.core.match :refer [match]]
+            [clojure.string :as str]))
 
 (defn build-folders
   ([cmds] (build-folders cmds {} []))
@@ -10,11 +10,11 @@
      (match (str/split cmd #" ")
        ["$" "cd" ".."] (recur cmds folders (pop path))
        ["$" "cd" dir] (recur cmds folders (conj path dir))
-       [(size :guard #(re-matches #"\d+" %)) _] (recur cmds
-                                                       (->> (range (count path))
-                                                            (map #(take (inc %) path))
-                                                            (reduce #(assoc %1 %2 (+ (get %1 %2 0) (parse-long size))) folders))
-                                                       path)
+       [(size :guard numeric?) _] (recur cmds
+                                         (->> (range (count path))
+                                              (map #(take (inc %) path))
+                                              (reduce #(assoc %1 %2 (+ (get %1 %2 0) (parse-long size))) folders))
+                                         path)
        :else (recur cmds folders path))
      folders)))
 
