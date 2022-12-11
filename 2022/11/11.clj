@@ -8,7 +8,7 @@
             (str/split v #", ")
             (mapv parse-long v))
    :op (let [[_ o v] (re-find #"new = old ([\*\+]) (\w+)" s)
-             op (if (= "*" o) * +)]
+             op (get {"*" * "+" +} o)]
          (if (numeric? v)
            (let [v (parse-long v)]
              (fn [i] (op i v)))
@@ -16,18 +16,19 @@
    :test (-> (re-find #"divisible by (\d+)" s) last parse-long)
    true (-> (re-find #"true: throw to monkey (\d+)" s) last parse-long)
    false (-> (re-find #"false: throw to monkey (\d+)" s) last parse-long)
-   :inspections 0})
+   :inspections 0}) 
 
 (defn step [manage-worry]
   (fn [monkeys i]
     (let [monkey (nth monkeys i)]
       (->> (:items monkey)
            (reduce (fn [monkeys item]
-                     (let [w (-> item ((:op monkey)) manage-worry)]
+                     (let [w (-> item ((:op monkey)) manage-worry)
+                           pass-to (get monkey (= 0 (mod w (:test monkey))))]
                        (-> monkeys
                            (update-in [i :items] subvec 1)
                            (update-in [i :inspections] inc)
-                           (update-in [(get monkey (= 0 (mod w (:test monkey)))) :items] conj w)))) 
+                           (update-in [pass-to :items] conj w))))
                    monkeys)))))
 
 (defn round [manage-worry]
