@@ -13,15 +13,15 @@
            #(op % v)
            #(op % %)))
    :test (-> (re-find #"divisible by (\d+)" s) last parse-long)
-   true  (-> (re-find #"true: throw to monkey (\d+)" s) last parse-long)
-   false (-> (re-find #"false: throw to monkey (\d+)" s) last parse-long)
+   :if {true (-> (re-find #"true: throw to monkey (\d+)" s) last parse-long)
+        false (-> (re-find #"false: throw to monkey (\d+)" s) last parse-long)}
    :inspections 0}) 
 
 (defn step [manage-worry monkeys i]
   (let [monkey (nth monkeys i)]
     (->> (:items monkey)
          (reduce #(let [w (-> %2 ((:op monkey)) manage-worry)
-                        pass-to (get monkey (= 0 (mod w (:test monkey))))]
+                        pass-to (get-in monkey [:if (= 0 (mod w (:test monkey)))])]
                     (-> %1
                         (update-in [i :items] subvec 1)
                         (update-in [i :inspections] inc)
