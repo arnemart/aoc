@@ -1,8 +1,7 @@
 (ns aoc.2022.12.12
   (:require [aoc.astar :refer [astar]]
-            [aoc.common :refer [read-input]]
-            [clojure.math.combinatorics :as combo]
-            [clojure.string :as str]))
+            [aoc.common :refer [find-index read-input]]
+            [clojure.math.combinatorics :as combo]))
 
 (defn neighbors [hm [y x]]
   (->> [[(dec y) x]
@@ -17,17 +16,15 @@
                       (<= (get-in hm [ny nx]) (inc (get-in hm [y x]))))))))
 
 (let [input (read-input)
-      start-y (->> input (keep-indexed #(when (re-matches #".*S.*" %2) %1)) first)
-      end-y (->> input (keep-indexed #(when (re-matches #".*E.*" %2) %1)) first)
-      start-x (as-> input v (nth v start-y) (str/split v #"") (keep-indexed #(when (= "S" %2) %1) v) (first v))
-      end-x (as-> input v (nth v start-y) (str/split v #"") (keep-indexed #(when (= "E" %2) %1) v) (first v))
-      heightmap (as-> input v
-                  (mapv #(mapv int %) v)
-                  (assoc-in v [start-y start-x] (int \a))
-                  (assoc-in v [end-y end-x] (int \z)))
+      start-y (->> input (find-index #(re-matches #".*S.*" %2)))
+      end-y   (->> input (find-index #(re-matches #".*E.*" %2)))
+      start-x (->> (nth input start-y) (keep-indexed #(when (= \S %2) %1)) first)
+      end-x   (->> (nth input end-y) (keep-indexed #(when (= \E %2) %1)) first)
+      heightmap (-> (mapv #(mapv int %) input)
+                    (assoc-in [start-y start-x] (int \a))
+                    (assoc-in [end-y end-x] (int \z)))
       all-low-points (->> (combo/cartesian-product (range (count heightmap)) (range (count (first heightmap))))
                           (filter #(= (int \a) (get-in heightmap %))))]
-
 
   (->> (astar :start [start-y start-x]
               :is-end #(= [end-y end-x] %)
