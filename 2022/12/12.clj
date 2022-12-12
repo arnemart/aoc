@@ -8,9 +8,8 @@
         [(inc y) x]
         [y (dec x)]
         [y (inc x)]]
-       (filter #(if-let [v (get-in hm %)]
-                  (<= v (inc (get-in hm [y x])))
-                  false))))
+       (filter #(when-let [v (get-in hm %)]
+                  (<= v (inc (get-in hm [y x])))))))
 
 (let [input (read-input)
       start-y (->> input (find-index #(re-matches #".*S.*" %2)))
