@@ -20,21 +20,23 @@
                     (assoc-in [start-y start-x] (int \a))
                     (assoc-in [end-y end-x] (int \z)))
       all-low-points (->> (combo/cartesian-product (range (count heightmap)) (range (count (first heightmap))))
-                          (filter #(= (int \a) (get-in heightmap %))))]
+                          (filter #(= (int \a) (get-in heightmap %))))
+      is-end (partial = [end-y end-x])
+      get-neighbors (partial neighbors heightmap)
+      heuristic (partial manhattan [end-y end-x])]
 
   (->> (astar :start [start-y start-x]
-              :is-end #(= [end-y end-x] %)
-              :get-neighbors (partial neighbors heightmap)
-              :heuristic (partial manhattan [end-y end-x]))
+              :is-end is-end
+              :get-neighbors get-neighbors
+              :heuristic heuristic)
        :cost
        (println "Part 1:"))
 
   (->> all-low-points
-       (map (fn [p]
-              (astar :start p
-                     :is-end #(= [end-y end-x] %)
-                     :get-neighbors (partial neighbors heightmap)
-                     :heuristic (partial manhattan [end-y end-x]))))
+       (map #(astar :start %
+                    :is-end is-end
+                    :get-neighbors get-neighbors
+                    :heuristic heuristic))
        (filter some?)
        (map :cost)
        (apply min)
