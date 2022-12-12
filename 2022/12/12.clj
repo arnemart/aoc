@@ -38,9 +38,7 @@
                                 (if (= start %)
                                   (apply conj all-low-points n)
                                   n))
-              :calculate-cost #(if (= (int \a) (get-in heightmap %2))
-                                 0
-                                 1)
+              :calculate-cost #(if (= (int \a) (get-in heightmap %2)) 0 1)
               :heuristic heuristic)
        :cost
        (println "Part 2:")))
