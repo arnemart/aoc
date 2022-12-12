@@ -1,6 +1,6 @@
 (ns aoc.2022.12.12
   (:require [aoc.astar :refer [astar]]
-            [aoc.common :refer [find-index read-input]]
+            [aoc.common :refer [find-index manhattan read-input]]
             [clojure.math.combinatorics :as combo]))
 
 (defn neighbors [hm [y x]]
@@ -18,8 +18,8 @@
 (let [input (read-input)
       start-y (->> input (find-index #(re-matches #".*S.*" %2)))
       end-y   (->> input (find-index #(re-matches #".*E.*" %2)))
-      start-x (->> (nth input start-y) (keep-indexed #(when (= \S %2) %1)) first)
-      end-x   (->> (nth input end-y) (keep-indexed #(when (= \E %2) %1)) first)
+      start-x (->> (nth input start-y) (find-index #(= \S %2)))
+      end-x   (->> (nth input end-y) (find-index #(= \E %2)))
       heightmap (-> (mapv #(mapv int %) input)
                     (assoc-in [start-y start-x] (int \a))
                     (assoc-in [end-y end-x] (int \z)))
@@ -29,7 +29,7 @@
   (->> (astar :start [start-y start-x]
               :is-end #(= [end-y end-x] %)
               :get-neighbors (partial neighbors heightmap)
-              :heuristic (fn [[y x]] (+ (abs (- y end-y)) (abs (- x end-x)))))
+              :heuristic (partial manhattan [end-y end-x]))
        :cost
        (println "Part 1:"))
 
@@ -38,7 +38,7 @@
               (astar :start p
                      :is-end #(= [end-y end-x] %)
                      :get-neighbors (partial neighbors heightmap)
-                     :heuristic (fn [[y x]] (+ (abs (- y end-y)) (abs (- x end-x)))))))
+                     :heuristic (partial manhattan [end-y end-x]))))
        (filter some?)
        (map :cost)
        (apply min)
