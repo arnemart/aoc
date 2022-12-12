@@ -21,8 +21,9 @@
 
     (cond
       ;; Did not find a path
-      (and (= 0 (count priorities))
-           (> 0 (count closed-set))) nil
+      (or (nil? node)
+          (and (= 0 (count priorities))
+               (> 0 (count closed-set)))) nil
       ;; Done!
       (is-end (:data node)) {:cost (:g node) :path (reconstruct-path node)}
       ;; Not done yet
@@ -56,4 +57,4 @@
                              (assoc open-map neighbor-hash new-neighbor-node)])))))
                   [priorities open-map]))]
 
-        (recur closed-set open-map (pop priorities) (first (peek priorities)))))))
+        (recur closed-set open-map (if (= 0 (count priorities)) priorities (pop priorities)) (first (peek priorities)))))))

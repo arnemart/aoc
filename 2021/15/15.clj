@@ -24,10 +24,9 @@
                   :calculate-cost (fn [_ [x y]] (get-in grid [y x]))
                   :heuristic (fn [[x y]] (+ (- max-x x) (- max-y y)))))))
 
-(defn -main []
-  (let [ceiling (->> (read-input)
-                     (mapv (fn [line]
-                            (as-> line l
-                                (str/split l #"")
-                                (mapv parse-long l)))))]
-    (println "Part 1:" (find-path ceiling))))
+(let [ceiling (->> (read-input)
+                   (mapv (fn [line]
+                           (as-> line l
+                             (str/split l #"")
+                             (mapv parse-long l)))))]
+  (println "Part 1:" (find-path ceiling)))
