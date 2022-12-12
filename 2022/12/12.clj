@@ -8,12 +8,9 @@
         [(inc y) x]
         [y (dec x)]
         [y (inc x)]]
-       (filter (fn [[ny nx]]
-                 (and (>= ny 0)
-                      (>= nx 0)
-                      (< ny (count hm))
-                      (< nx (count (first hm)))
-                      (<= (get-in hm [ny nx]) (inc (get-in hm [y x]))))))))
+       (filter #(if-let [v (get-in hm %)]
+                  (<= v (inc (get-in hm [y x])))
+                  false))))
 
 (let [input (read-input)
       start-y (->> input (find-index #(re-matches #".*S.*" %2)))
