@@ -26,8 +26,8 @@
       start [start-y start-x]
       end [end-y end-x]
       heightmap (-> (mapv #(mapv int %) input)
-                    (assoc-in [start-y start-x] (int \a))
-                    (assoc-in [end-y end-x] (int \z)))]
+                    (assoc-in start (int \a))
+                    (assoc-in end (int \z)))]
 
   (->> (astar :start start
               :is-end (partial = end)
@@ -36,7 +36,7 @@
        :cost
        (println "Part 1:"))
 
-  (->> (astar :start [end-y end-x]
+  (->> (astar :start end
               :is-end #(= (int \a) (get-in heightmap %))
               :get-neighbors (partial neighbors-2 heightmap)
               :heuristic #(- (get-in heightmap %) (int \a)))
