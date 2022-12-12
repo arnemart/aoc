@@ -16,7 +16,7 @@
 (defn neighbors-2 [hm p]
   (->> (adjacent p)
        (filter #(when-let [v (get-in hm %)]
-                  (<= (dec (get-in hm p)) v)))))
+                  (>= v (dec (get-in hm p)))))))
 
 (let [input (read-input)
       start-y (->> input (find-index #(re-matches #".*S.*" %2)))
