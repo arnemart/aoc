@@ -16,28 +16,31 @@
       end-y   (->> input (find-index #(re-matches #".*E.*" %2)))
       start-x (->> (nth input start-y) (find-index #(= \S %2)))
       end-x   (->> (nth input end-y) (find-index #(= \E %2)))
+      start [start-y start-x]
       heightmap (-> (mapv #(mapv int %) input)
                     (assoc-in [start-y start-x] (int \a))
                     (assoc-in [end-y end-x] (int \z)))
       all-low-points (->> (combo/cartesian-product (range (count heightmap)) (range (count (first heightmap))))
                           (filter #(= (int \a) (get-in heightmap %))))
       is-end (partial = [end-y end-x])
-      get-neighbors (partial neighbors heightmap)
       heuristic (partial manhattan [end-y end-x])]
 
-  (->> (astar :start [start-y start-x]
+  (->> (astar :start start
               :is-end is-end
-              :get-neighbors get-neighbors
+              :get-neighbors (partial neighbors heightmap)
               :heuristic heuristic)
        :cost
        (println "Part 1:"))
 
-  (->> all-low-points
-       (map #(astar :start %
-                    :is-end is-end
-                    :get-neighbors get-neighbors
-                    :heuristic heuristic))
-       (filter some?)
-       (map :cost)
-       (apply min)
+  (->> (astar :start start
+              :is-end is-end
+              :get-neighbors #(let [n (neighbors heightmap %)]
+                                (if (= start %)
+                                  (apply conj all-low-points n)
+                                  n))
+              :calculate-cost #(if (= (int \a) (get-in heightmap %2))
+                                 0
+                                 1)
+              :heuristic heuristic)
+       :cost
        (println "Part 2:")))
