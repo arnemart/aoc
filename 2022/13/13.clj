@@ -5,8 +5,8 @@
 
 (defn compr [l r]
   (match [l r]
-    [nil (_ :guard some?)] true
-    [(_ :guard some?) nil] false
+    [nil _] true
+    [_ nil] false
     [[] []] nil
     [[] _] true
     [_ []] false
@@ -14,7 +14,7 @@
     [(a :guard int?) (b :guard vector?)] (compr [a] b)
     [(a :guard vector?) (b :guard int?)] (compr a [b])
     [[(a :guard int?) & as] [(b :guard int?) & bs]] (if (= a b) (compr as bs) (compr a b))
-    [[a & as] [b & bs]] (->> [[a b] [as bs]] (map #(apply compr %)) (filter some?) first)))
+    [[a & as] [b & bs]] (->> [(compr a b) (compr as bs)] (filter some?) first)))
 
 (let [packets (->> (read-input :split-with #"\n+")
                    (map edn/read-string))
