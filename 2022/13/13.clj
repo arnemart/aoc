@@ -5,15 +5,15 @@
 
 (defn compr [l r]
   (match [l r]
-    [nil _] true
-    [_ nil] false
-    [[] []] nil
-    [[] _] true
-    [_ []] false
-    [(a :guard int?) (b :guard int?)] (if (= a b) nil (< a b))
+    [nil _] -1
+    [_ nil] 1
+    [[] []] 0
+    [[] _] -1
+    [_ []] 1
+    [(a :guard int?) (b :guard int?)] (compare a b)
     [(a :guard int?) (b :guard vector?)] (compr [a] b)
     [(a :guard vector?) (b :guard int?)] (compr a [b])
-    [[a & as] [b & bs]] (if-some [c (compr a b)] c (compr as bs))))
+    [[a & as] [b & bs]] (let [c (compr a b)] (if (= 0 c) (compr as bs) c))))
 
 (let [packets (->> (read-input :split-with #"\n+")
                    (map edn/read-string))
@@ -22,7 +22,7 @@
 
   (->> packets
        (partition 2)
-       (keep-indexed #(when (apply compr %2) %1))
+       (keep-indexed #(when (= -1 (apply compr %2)) %1))
        (map inc)
        sum
        (println "Part 1:"))

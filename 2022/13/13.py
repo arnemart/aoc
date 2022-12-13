@@ -8,7 +8,7 @@ def compr(l, r):
     case [[], []]: return 0
     case [[], _]: return -1
     case [_, []]: return 1
-    case [a, b] if type(a) == int and type(b) == int: return 0 if a == b else [1, -1][a < b]
+    case [a, b] if type(a) == int and type(b) == int: return a - b
     case [a, b] if type(a) == int and type(b) == list: return compr([a], b)
     case [a, b] if type(a) == list and type(b) == int: return compr(a, [b])
     case [[a, *aa], [b, *bb]]: return compr(a, b) or compr(aa, bb)
@@ -16,7 +16,7 @@ def compr(l, r):
 packets = [json.loads(line) for line in open("input.txt").read().splitlines() if line != ""]
 pairs = [[packets[i], packets[i+1]] for i in range(0, len(packets), 2)]
 
-print("Part 1:", sum(i + 1 if compr(*pairs[i]) == -1 else 0 for i in range(len(pairs))))
+print("Part 1:", sum(i + 1 if compr(*pairs[i]) < 0 else 0 for i in range(len(pairs))))
 
 packets.append([[2]])
 packets.append([[6]])
