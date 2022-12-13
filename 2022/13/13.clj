@@ -5,8 +5,6 @@
 
 (defn compr [l r]
   (match [l r]
-    [nil _] -1
-    [_ nil] 1
     [[] []] 0
     [[] _] -1
     [_ []] 1

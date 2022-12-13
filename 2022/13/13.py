@@ -3,8 +3,6 @@ from functools import cmp_to_key
 
 def compr(l, r):
   match [l, r]:
-    case [None, _]: return -1
-    case [_, None]: return 1
     case [[], []]: return 0
     case [[], _]: return -1
     case [_, []]: return 1
