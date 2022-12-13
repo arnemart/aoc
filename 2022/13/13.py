@@ -16,8 +16,8 @@ pairs = [[packets[i], packets[i+1]] for i in range(0, len(packets), 2)]
 
 print("Part 1:", sum(i + 1 if compr(*pairs[i]) < 0 else 0 for i in range(len(pairs))))
 
-packets.append([[2]])
-packets.append([[6]])
+dp1, dp2 = [[2]], [[6]]
+packets += [dp1, dp2]
 packets.sort(key=cmp_to_key(compr))
 
-print("Part 2:", (packets.index([[2]]) + 1) * (packets.index([[6]]) + 1))
+print("Part 2:", (packets.index(dp1) + 1) * (packets.index(dp2) + 1))
