@@ -1,5 +1,5 @@
 (ns aoc.2022.13.13 
-  (:require [aoc.common :refer [find-index read-input sum]]
+  (:require [aoc.common :refer [read-input sum]]
             [clojure.core.match :refer [match]]
             [clojure.edn :as edn]))
 
@@ -29,7 +29,8 @@
        sum
        (println "Part 1:"))
 
-  (->> [(->> sorted (find-index #(= dp1 %2)) inc)
-        (->> sorted (find-index #(= dp2 %2)) inc)]
+  (->> [(.indexOf sorted dp1)
+        (.indexOf sorted dp2)]
+       (map inc)
        (apply *)
        (println "Part 2:")))
