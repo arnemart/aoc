@@ -13,7 +13,7 @@
     [(a :guard int?) (b :guard int?)] (if (= a b) nil (< a b))
     [(a :guard int?) (b :guard vector?)] (compr [a] b)
     [(a :guard vector?) (b :guard int?)] (compr a [b])
-    [[a & as] [b & bs]] (->> [(compr a b) (compr as bs)] (filter some?) first)))
+    [[a & as] [b & bs]] (if-some [c (compr a b)] c (compr as bs))))
 
 (let [packets (->> (read-input :split-with #"\n+")
                    (map edn/read-string))
