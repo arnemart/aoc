@@ -21,10 +21,8 @@
 (let [input (read-input)
       start-y (->> input (find-index #(re-matches #".*S.*" %2)))
       end-y   (->> input (find-index #(re-matches #".*E.*" %2)))
-      start-x (->> (nth input start-y) (find-index #(= \S %2)))
-      end-x   (->> (nth input end-y) (find-index #(= \E %2)))
-      start [start-y start-x]
-      end [end-y end-x]
+      start [start-y (->> (nth input start-y) (find-index #(= \S %2)))]
+      end   [end-y (->> (nth input end-y) (find-index #(= \E %2)))]
       heightmap (-> (mapv #(mapv int %) input)
                     (assoc-in start (int \a))
                     (assoc-in end (int \z)))]
