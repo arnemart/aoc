@@ -47,3 +47,6 @@
 
 (defn find-index [f coll]
   (->> coll (keep-indexed #(when (f %1 %2) %1)) first))
+
+(defn tee [fs val]
+  (map #(% val) fs))

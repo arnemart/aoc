@@ -1,5 +1,5 @@
 (ns aoc.2022.13.13 
-  (:require [aoc.common :refer [read-input sum]]
+  (:require [aoc.common :refer [read-input sum tee]]
             [clojure.core.match :refer [match]]
             [clojure.edn :as edn]))
 
@@ -18,9 +18,7 @@
 (let [packets (->> (read-input :split-with #"\n+")
                    (map edn/read-string))
       dp1 [[2]]
-      dp2 [[6]]
-      sorted (->> (conj packets dp1 dp2)
-                  (sort compr))]
+      dp2 [[6]]]
 
   (->> packets
        (partition 2)
@@ -29,8 +27,10 @@
        sum
        (println "Part 1:"))
 
-  (->> [(.indexOf sorted dp1)
-        (.indexOf sorted dp2)]
+  (->> (conj packets dp1 dp2)
+       (sort compr)
+       (tee [#(.indexOf % dp1)
+             #(.indexOf % dp2)])
        (map inc)
        (apply *)
        (println "Part 2:")))
