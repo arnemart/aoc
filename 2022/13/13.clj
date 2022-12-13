@@ -22,7 +22,7 @@
 
   (->> packets
        (partition 2)
-       (keep-indexed #(when (= -1 (apply compr %2)) %1))
+       (keep-indexed #(when (< (apply compr %2) 0) %1))
        (map inc)
        sum
        (println "Part 1:"))
