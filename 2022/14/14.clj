@@ -18,7 +18,7 @@
 (defn add-sand [max-y grid]
   (loop [[x y] [500 0] new-grid grid]
     (let [new-pos (->> [[x (inc y)] [(dec x) (inc y)] [(inc x) (inc y)]]
-                       (filter (fn [p] (not (contains? grid p))))
+                       (filter #(not (contains? grid %)))
                        first)]
       (cond
         (> y max-y) grid
@@ -43,12 +43,10 @@
                  (keep-indexed #(when (odd? %1) %2))
                  (apply max))
       grid (->> paths
-                (reduce (fn [g ps]
-                          (->> [ps (drop 1 ps)]
-                               (apply zip)
-                               (reduce (fn [g [[x1 y1] [x2 y2]]]
-                                         (->> (combo/cartesian-product (inclusive-range x1 x2) (inclusive-range y1 y2))
-                                              (reduce #(conj %1 %2) g))) g))) #{}))
+                (reduce #(->> (zip %2 (drop 1 %2))
+                              (reduce (fn [g [[x1 y1] [x2 y2]]]
+                                        (->> (combo/cartesian-product (inclusive-range x1 x2) (inclusive-range y1 y2))
+                                             (reduce conj g))) %1)) #{}))
       grid-with-sand-part-1 (add-sand-until-full max-y grid)
       new-max-y (+ 2 max-y)
       grid-with-floor (->> (range 1000)
