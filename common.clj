@@ -50,3 +50,6 @@
 
 (defn tee [fs val]
   (map #(% val) fs))
+
+(defn inclusive-range [a b]
+  (range (min a b) (inc (max a b))))
