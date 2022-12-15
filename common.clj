@@ -53,3 +53,6 @@
 
 (defn inclusive-range [a b]
   (range (min a b) (inc (max a b))))
+
+(defn manhattan [[x1 y1] [x2 y2]]
+  (+ (abs (- x1 x2)) (abs (- y1 y2))))
