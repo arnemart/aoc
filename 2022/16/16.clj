@@ -57,7 +57,7 @@
            (apply max))
       (let [states (if (< i 6)
                      states
-                     (let [max (/ (->> states (map :t) (apply max)) 1.13)]
+                     (let [max (/ (->> states (map :t) (apply max)) (+ 1 (/ 1.5 i)))]
                        (->> states (filter #(> (:t %) max)))))]
         (recur (inc i) (set (mapcat moves states)))))))
 
