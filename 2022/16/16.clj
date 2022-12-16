@@ -14,7 +14,7 @@
         valve (get valves loc)
         can-open (and (not (contains? (:open state) loc))
                       (> (:flow valve) 0))]
-    (if (= max-flow (:flow state))
+    (if (= max-flow (:flow next-state))
       [next-state]
       (concat (if can-open [(-> next-state (update :open conj loc) (update :flow + (:flow valve)))] [])
               (->> (:to valve)
@@ -31,7 +31,7 @@
         can-open-2 (and (not= l1 l2)
                         (not (contains? (:open state) l2))
                         (> (:flow v2) 0))]
-    (if (= max-flow (:flow state))
+    (if (= max-flow (:flow next-state))
       [next-state]
       (concat (->> [(when can-open-1
                       (map #(-> next-state (update :open conj l1) (update :flow + (:flow v1)) (assoc :elephant %)) (:to v2)))
