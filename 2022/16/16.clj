@@ -8,45 +8,41 @@
    {:flow (parse-long (last (re-find #"rate=(\d+)" s)))
     :to (-> (re-find #"valves? (.+)$" s) last (str/split #", ") set)}])
 
-(defn moves [valves max-flow]
-  (memoize
-   (fn [state]
-     (let [next-state (update state :total-flown + (:flow state))
-           loc (:loc state)
-           valve (get valves loc)
-           can-open (and (not (contains? (:open state) loc))
-                         (> (:flow valve) 0))]
-       (if (= max-flow (:flow state))
-         [next-state]
-         (concat (if can-open [(-> next-state (update :open conj loc) (update :flow + (:flow valve)))] [])
-                 (->> (:to valve)
-                      (map #(assoc next-state :loc %)))))))))
+(defn moves [valves max-flow state]
+  (let [next-state (update state :total-flown + (:flow state))
+        loc (:loc state)
+        valve (get valves loc)
+        can-open (and (not (contains? (:open state) loc))
+                      (> (:flow valve) 0))]
+    (if (= max-flow (:flow state))
+      [next-state]
+      (concat (if can-open [(-> next-state (update :open conj loc) (update :flow + (:flow valve)))] [])
+              (->> (:to valve)
+                   (map #(assoc next-state :loc %)))))))
 
-(defn moves-2 [valves max-flow]
-  (memoize
-   (fn [state]
-     (let [next-state (update state :total-flown + (:flow state))
-           l1 (:loc state)
-           l2 (:loc2 state)
-           v1 (get valves l1)
-           v2 (get valves l2)
-           can-open-1 (and (not (contains? (:open state) l1))
-                           (> (:flow v1) 0))
-           can-open-2 (and (not= l1 l2)
-                           (not (contains? (:open state) l2))
-                           (> (:flow v2) 0))]
-       (if (= max-flow (:flow state))
-         [next-state]
-         (concat (->> [(when can-open-1
-                         (map #(-> next-state (update :open conj l1) (update :flow + (:flow v1)) (assoc :loc2 %)) (:to v2)))
-                       (when can-open-2
-                         (map #(-> next-state (update :open conj l2) (update :flow + (:flow v2)) (assoc :loc %)) (:to v1)))
-                       (when (and can-open-1 can-open-2)
-                         (-> next-state (update :open conj l1 l2) (update :flow + (:flow v1) (:flow v2))))]
-                      flatten
-                      (filter some?))
-                 (->> (combo/cartesian-product (:to v1) (:to v2))
-                      (map (fn [[l1 l2]] (assoc next-state :loc l1 :loc2 l2))))))))))
+(defn moves-2 [valves max-flow state]
+  (let [next-state (update state :total-flown + (:flow state))
+        l1 (:loc state)
+        l2 (:loc2 state)
+        v1 (get valves l1)
+        v2 (get valves l2)
+        can-open-1 (and (not (contains? (:open state) l1))
+                        (> (:flow v1) 0))
+        can-open-2 (and (not= l1 l2)
+                        (not (contains? (:open state) l2))
+                        (> (:flow v2) 0))]
+    (if (= max-flow (:flow state))
+      [next-state]
+      (concat (->> [(when can-open-1
+                      (map #(-> next-state (update :open conj l1) (update :flow + (:flow v1)) (assoc :loc2 %)) (:to v2)))
+                    (when can-open-2
+                      (map #(-> next-state (update :open conj l2) (update :flow + (:flow v2)) (assoc :loc %)) (:to v1)))
+                    (when (and can-open-1 can-open-2)
+                      (-> next-state (update :open conj l1 l2) (update :flow + (:flow v1) (:flow v2))))]
+                   flatten
+                   (filter some?))
+              (->> (combo/cartesian-product (:to v1) (:to v2))
+                   (map (fn [[l1 l2]] (assoc next-state :loc l1 :loc2 l2))))))))
 
 (defn solve [j moves state]
   (loop [i 0 states #{state}]
@@ -72,8 +68,8 @@
                      :open #{}
                      :loc "AA"}
       initial-state-2 (assoc initial-state :loc2 "AA")
-      moves (moves valves max-flow)
-      moves-2 (moves-2 valves max-flow)]
+      moves (partial moves valves max-flow)
+      moves-2 (partial moves-2 valves max-flow)]
 
   (println "Part 1:" (solve 30 moves initial-state))
   (println "Part 2:" (solve 26 moves-2 initial-state-2)))
