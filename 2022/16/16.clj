@@ -59,10 +59,7 @@
 (let [valves (->> (read-input)
                   (map parse-valve)
                   (into {}))
-      max-flow (->> valves
-                    (map last)
-                    (map :flow)
-                    sum)
+      max-flow (->> valves vals (map :flow) sum)
       initial-state {:flow 0
                      :total-flown 0
                      :open #{}
