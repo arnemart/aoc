@@ -38,12 +38,10 @@
        (if (= max-flow (:f state))
          [next-state]
          (concat (->> [(if can-open-1
-                         (->> (:to v2)
-                              (map #(-> next-state (update :o conj l1) (update :f + (:flow v1)) (assoc :l2 %))))
+                         (map #(-> next-state (update :o conj l1) (update :f + (:flow v1)) (assoc :l2 %)) (:to v2))
                          nil)
                        (if can-open-2
-                         (->> (:to v1)
-                              (map #(-> next-state (update :o conj l2) (update :f + (:flow v2)) (assoc :l %))))
+                         (map #(-> next-state (update :o conj l2) (update :f + (:flow v2)) (assoc :l %)) (:to v1))
                          nil)
                        (if (and can-open-1 can-open-2) (-> next-state (update :o conj l1 l2) (update :f + (:flow v1) (:flow v2))) nil)]
                       flatten
