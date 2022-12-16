@@ -55,7 +55,7 @@
       (->> states
            (map :t)
            (apply max))
-      (let [states (if (< i 7)
+      (let [states (if (< i 6)
                      states
                      (let [max (/ (->> states (map :t) (apply max)) 1.13)]
                        (->> states (filter #(> (:t %) max)))))]
