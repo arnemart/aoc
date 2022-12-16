@@ -10,7 +10,7 @@
 
 (defn moves [valves max-flow state]
   (let [next-state (update state :total-flown + (:flow state))
-        loc (:loc state)
+        loc (:you state)
         valve (get valves loc)
         can-open (and (not (contains? (:open state) loc))
                       (> (:flow valve) 0))]
@@ -18,12 +18,12 @@
       [next-state]
       (concat (if can-open [(-> next-state (update :open conj loc) (update :flow + (:flow valve)))] [])
               (->> (:to valve)
-                   (map #(assoc next-state :loc %)))))))
+                   (map #(assoc next-state :you %)))))))
 
 (defn moves-2 [valves max-flow state]
   (let [next-state (update state :total-flown + (:flow state))
-        l1 (:loc state)
-        l2 (:loc2 state)
+        l1 (:you state)
+        l2 (:elephant state)
         v1 (get valves l1)
         v2 (get valves l2)
         can-open-1 (and (not (contains? (:open state) l1))
@@ -34,15 +34,15 @@
     (if (= max-flow (:flow state))
       [next-state]
       (concat (->> [(when can-open-1
-                      (map #(-> next-state (update :open conj l1) (update :flow + (:flow v1)) (assoc :loc2 %)) (:to v2)))
+                      (map #(-> next-state (update :open conj l1) (update :flow + (:flow v1)) (assoc :elephant %)) (:to v2)))
                     (when can-open-2
-                      (map #(-> next-state (update :open conj l2) (update :flow + (:flow v2)) (assoc :loc %)) (:to v1)))
+                      (map #(-> next-state (update :open conj l2) (update :flow + (:flow v2)) (assoc :you %)) (:to v1)))
                     (when (and can-open-1 can-open-2)
                       (-> next-state (update :open conj l1 l2) (update :flow + (:flow v1) (:flow v2))))]
                    flatten
                    (filter some?))
               (->> (combo/cartesian-product (:to v1) (:to v2))
-                   (map (fn [[l1 l2]] (assoc next-state :loc l1 :loc2 l2))))))))
+                   (map (fn [[l1 l2]] (assoc next-state :you l1 :elephant l2))))))))
 
 (defn solve [j moves state]
   (loop [i 0 states #{state}]
@@ -63,8 +63,8 @@
       initial-state {:flow 0
                      :total-flown 0
                      :open #{}
-                     :loc "AA"}
-      initial-state-2 (assoc initial-state :loc2 "AA")
+                     :you "AA"}
+      initial-state-2 (assoc initial-state :elephant "AA")
       moves (partial moves valves max-flow)
       moves-2 (partial moves-2 valves max-flow)]
 
