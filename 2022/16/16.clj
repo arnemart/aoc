@@ -37,13 +37,12 @@
                            (> (:flow v2) 0))]
        (if (= max-flow (:flow state))
          [next-state]
-         (concat (->> [(if can-open-1
-                         (map #(-> next-state (update :open conj l1) (update :flow + (:flow v1)) (assoc :loc2 %)) (:to v2))
-                         nil)
-                       (if can-open-2
-                         (map #(-> next-state (update :open conj l2) (update :flow + (:flow v2)) (assoc :loc %)) (:to v1))
-                         nil)
-                       (if (and can-open-1 can-open-2) (-> next-state (update :open conj l1 l2) (update :flow + (:flow v1) (:flow v2))) nil)]
+         (concat (->> [(when can-open-1
+                         (map #(-> next-state (update :open conj l1) (update :flow + (:flow v1)) (assoc :loc2 %)) (:to v2)))
+                       (when can-open-2
+                         (map #(-> next-state (update :open conj l2) (update :flow + (:flow v2)) (assoc :loc %)) (:to v1)))
+                       (when (and can-open-1 can-open-2)
+                         (-> next-state (update :open conj l1 l2) (update :flow + (:flow v1) (:flow v2))))]
                       flatten
                       (filter some?))
                  (->> (combo/cartesian-product (:to v1) (:to v2))
