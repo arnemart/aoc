@@ -54,5 +54,7 @@
 (defn inclusive-range [a b]
   (range (min a b) (inc (max a b))))
 
-(defn manhattan [[x1 y1] [x2 y2]]
-  (+ (abs (- x1 x2)) (abs (- y1 y2))))
+(defn manhattan [p1 p2]
+  (->> (zip p1 p2)
+       (map (fn [[v1 v2]] (abs (- v1 v2))))
+       sum))
