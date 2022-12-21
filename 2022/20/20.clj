@@ -24,15 +24,14 @@
   (let [z (.indexOf nums 0)]
     (->> [1000 2000 3000] (map #(nth nums (mod (+ z %) (count nums)))) sum)))
 
-(time
- (let [nums (->> (read-input)
-                 (mapv parse-long))
-       [mixed1] (mix nums)]
+(let [nums (->> (read-input)
+                (mapv parse-long))
+      [mixed1] (mix nums)]
 
-   (println "Part 1:" (coords mixed1))
+  (println "Part 1:" (coords mixed1))
 
-   (loop [n 0 nums (mapv #(* 811589153 %) nums) indexes (vec (range (count nums)))]
-     (if (= 10 n)
-       (println "Part 2:" (coords nums))
-       (let [[nums indexes] (mix nums indexes)]
-         (recur (inc n) nums indexes))))))
+  (loop [n 0 nums (mapv #(* 811589153 %) nums) indexes (vec (range (count nums)))]
+    (if (= 10 n)
+      (println "Part 2:" (coords nums))
+      (let [[nums indexes] (mix nums indexes)]
+        (recur (inc n) nums indexes)))))
