@@ -24,8 +24,8 @@
 
 (defn yell-all [monkeys]
   (loop [monkeys monkeys]
-    (if-some [res (:num (get monkeys "root"))]
-      res
+    (if-some [num (get-in monkeys ["root" :num])]
+      num
       (recur (yell monkeys)))))
 
 (defn find-humn [monkeys]
