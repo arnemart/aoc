@@ -35,7 +35,7 @@
       (cond
         (= 0 res) n
         (< 0 res) (recur (update num digit inc) (inc digit))
-        (zero? (nth num digit)) (recur (assoc num digit 0) (inc digit))
+        (zero? (nth num digit)) (recur num (inc digit))
         :else (recur (update num digit dec) digit)))))
 
 (let [monkeys (->> (read-input)
