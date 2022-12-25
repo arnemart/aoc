@@ -43,7 +43,7 @@
        [f]
        (cons f (take-until pred r))))))
 
-(defn numeric? [s] (re-matches #"\d+" s))
+(defn numeric? [s] (re-matches #"\-?\d+" s))
 
 (defn find-index [f coll]
   (->> coll (keep-indexed #(when (f %1 %2) %1)) first))

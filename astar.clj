@@ -4,9 +4,9 @@
 (defn- reconstruct-path
   ([node] (reconstruct-path node []))
   ([node path]
-   (if (nil? (:parent node))
-     [(:data node)]
-     (recur (:parent node) (conj path (:data node))))))
+   (if (some? (:parent node))
+     (recur (:parent node) (conj path (:data node)))
+     (conj path (:data node)))))
 
 (defn astar [& {:keys [start is-end get-neighbors calculate-cost heuristic hash]
                 :or {calculate-cost (fn [_ _] 1) heuristic (fn [_] 1) hash identity}}]
