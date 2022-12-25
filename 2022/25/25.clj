@@ -8,13 +8,15 @@
 
 (def sn {\= -2 \- -1 \0 0 \1 1 \2 2})
 (def snr (map-invert sn))
+
+(def powers (->> (range) (map #(expt 5 %))))
+
 (defn snafu2dec [snafu]
   (->> snafu
        reverse
        (map-indexed #(* (expt 5 %1) (get sn %2)))
        sum))
 
-(def powers (->> (range) (map #(expt 5 %))))
 (defn biggest-power [n]
   (let [[i p] (->> powers
                    (take-while #(<= % n))
