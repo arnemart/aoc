@@ -1,11 +1,13 @@
 (ns aoc.2022.25.25
   (:require [aoc.common :refer [read-input sum]]
             [clojure.math.numeric-tower :refer [expt]]
+            [clojure.set :refer [map-invert]]
             [clojure.string :as str]))
 
 (defn inc! [n] (if (nil? n) 1 (inc n)))
 
 (def sn {\= -2 \- -1 \0 0 \1 1 \2 2})
+(def snr (map-invert sn))
 (defn snafu2dec [snafu]
   (->> snafu
        reverse
@@ -29,7 +31,6 @@
                    (assoc i (- n 5))
                    (update (inc i) inc!)))))))
 
-(def snr {-2 \= -1 \- 0 \0 1 \1 2 \2})
 (defn make-snafu [pows]
   (let [max-pow (apply max (keys pows))]
     (->> (range max-pow -1 -1)
