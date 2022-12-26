@@ -34,6 +34,12 @@
                         (<= 0 nx (dec w))
                         (not (contains? b [ny nx]))))))))
 
+(defn solve [start end neighbors]
+  (:cost (astar :start start
+                :is-end (fn [[y x]] (= [y x] end))
+                :heuristic (partial manhattan end)
+                :get-neighbors neighbors)))
+
 (let [valley (->> (read-input)
                   (drop 1)
                   butlast
@@ -45,19 +51,9 @@
       w (count (first valley))
       start [-1 0]
       end [h (dec w)]
-      part1 (:cost (astar :start (conj start 0)
-                          :is-end (fn [[y x]] (= [y x] end))
-                          :heuristic (partial manhattan end)
-                          :get-neighbors (partial neighbors h w blizzards)))
-      part2-1 (+ part1
-                 (:cost (astar :start (conj end part1)
-                               :is-end (fn [[y x]] (= [y x] start))
-                               :heuristic (partial manhattan [-1 0])
-                               :get-neighbors (partial neighbors h w blizzards))))
-      part2-2 (+ part2-1
-                 (:cost (astar :start (conj start part2-1)
-                               :is-end (fn [[y x]] (= [y x] end))
-                               :heuristic (partial manhattan end)
-                               :get-neighbors (partial neighbors h w blizzards))))]
+      neighbors (partial neighbors h w blizzards)
+      part1 (solve (conj start 0) end neighbors) 
+      part2-1 (+ part1 (solve (conj end part1) start neighbors))
+      part2-2 (+ part2-1 (solve (conj start part2-1) end neighbors))]
   (println "Part 1:" part1)
   (println "Part 2:" part2-2))
