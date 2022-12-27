@@ -73,4 +73,4 @@
   (println "Part 1:" (nth heights 2022))
   (println "Part 2:" (+ (sum (take offset deltas)) 
                         (* (sum (take cycle (drop offset deltas))) (quot 1000000000000 cycle))
-                        (sum (take (- (mod 1000000000000 cycle) 80) (drop offset deltas))))))
+                        (sum (take (- (mod 1000000000000 cycle) offset) (drop offset deltas))))))
