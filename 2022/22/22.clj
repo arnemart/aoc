@@ -53,42 +53,35 @@
 
 (def connections {0 {:r {:where 3 :dir :l :yd (n-y 149) :xd (just 99)}
                      :d {:where 2 :dir :l :yd (x-n 50) :xd (just 99)}
-                     :l {:where 1}
                      :u {:where 5 :dir :u :yd (just 199) :xd (x-n 100)}}
-                  1 {:r {:where 0}
-                     :d {:where 2}
-                     :l {:where 4 :dir :r :yd (n-y 149) :xd (just 0)}
+                  1 {:l {:where 4 :dir :r :yd (n-y 149) :xd (just 0)}
                      :u {:where 5 :dir :r :yd (x+n 100) :xd (just 0)}}
                   2 {:r {:where 0 :dir :u :yd (just 49) :xd (y+n 50)}
-                     :d {:where 3}
-                     :l {:where 4 :dir :d :yd (just 100) :xd (y-n 50)}
-                     :u {:where 1}}
+                     :l {:where 4 :dir :d :yd (just 100) :xd (y-n 50)}}
                   3 {:r {:where 0 :dir :l :yd (n-y 149) :xd (just 149)}
-                     :d {:where 5 :dir :l :yd (x+n 100) :xd (just 49)}
-                     :l {:where 4}
-                     :u {:where 2}}
-                  4 {:r {:where 3}
-                     :d {:where 5}
-                     :l {:where 1 :dir :r :yd (n-y 149) :xd (just 50)}
+                     :d {:where 5 :dir :l :yd (x+n 100) :xd (just 49)}}
+                  4 {:l {:where 1 :dir :r :yd (n-y 149) :xd (just 50)}
                      :u {:where 2 :dir :r :yd (x+n 50) :xd (just 50)}}
                   5 {:r {:where 3 :dir :u :yd (just 149) :xd (y-n 100)}
                      :d {:where 0 :dir :d :yd (just 0) :xd (x+n 100)}
-                     :l {:where 1 :dir :d :yd (just 0) :xd (y-n 100)}
-                     :u {:where 4}}})
+                     :l {:where 1 :dir :d :yd (just 0) :xd (y-n 100)}}})
 
 (defn step-2 [state what]
   (match what
     (n :guard int?) (loop [i 0 y (:y state) x (:x state) dir (:dir state) face (:face state)]
-                      (let [new-face (not= face (which-face y x))
+                      (let [ny (+ y (get {:r 0 :d 1 :l 0 :u -1} dir))
+                            nx (+ x (get {:r 1 :d 0 :l -1 :u 0} dir))
+                            next-face (which-face ny nx)
+                            changed-face (not= face next-face)
                             conn (get-in connections [face dir])
-                            dir (if new-face (get conn :dir dir) dir)
-                            face (if new-face (:where conn) face)
-                            ny (if new-face ((get conn :yd just-y) y x) (+ y (get {:r 0 :d 1 :l 0 :u -1} dir)))
-                            nx (if new-face ((get conn :xd just-x) y x) (+ x (get {:r 1 :d 0 :l -1 :u 0} dir)))
-                            nv (get-in state [:grid ny nx])]
+                            next-dir (if changed-face (get conn :dir dir) dir)
+                            next-face (if changed-face (get conn :where next-face) face)
+                            next-y (if changed-face ((get conn :yd just-y) ny nx) ny)
+                            next-x (if changed-face ((get conn :xd just-x) ny nx) nx)
+                            nv (get-in state [:grid next-y next-x])] 
                         (if (or (= i n) (= \# nv))
                           (assoc state :x x :y y :face face :dir dir)
-                          (recur (inc i) ny nx dir face))))
+                          (recur (inc i) next-y next-x next-dir next-face))))
 
     "L" (assoc state :dir (get-in dirs [(:dir state) 0]))
     "R" (assoc state :dir (get-in dirs [(:dir state) 1]))))
@@ -101,20 +94,7 @@
              #(.indexOf [:r :d :l :u] (:dir %))])
        sum))
 
-(let [[grid path] (->> (read-input :split-with #"\n\n" :test "        ...#
-        .#..
-        #...
-        ....
-...#.......#
-........#...
-..#....#....
-..........#.
-        ...#....
-        .....#..
-        .#......
-        ......#.
-
-10R5L5R10L4R5L5" :use-test false)
+(let [[grid path] (->> (read-input :split-with #"\n\n")
                        (tee [#(str/split-lines (first %))
                              #(->> (last %)
                                    (re-seq #"\d+|[LR]")
@@ -128,15 +108,3 @@
 
   (println "Part 1:" (solve path step-1 state))
   (println "Part 2:" (solve path step-2 state)))
-
-; 101102
-; 107393
-; 110370 too low
-; 112275
-; 129250
-; 125395
-; 127346
-; 162594
-; 181826
-; 188262
-; 196754 too high
