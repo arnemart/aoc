@@ -64,10 +64,10 @@
       initial-state {:flow 0
                      :total-flown 0
                      :open #{}
-                     :you "AA"}
-      initial-state-2 (assoc initial-state :elephant "AA")
+                     :you "AA"
+                     :elephant "AA"}
       moves (partial moves valves max-flow)
       moves-2 (partial moves-2 valves max-flow)]
 
   (println "Part 1:" (solve 30 moves initial-state))
-  (println "Part 2:" (solve 26 moves-2 initial-state-2)))
+  (println "Part 2:" (solve 26 moves-2 initial-state)))
