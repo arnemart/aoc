@@ -4,8 +4,6 @@
             [clojure.set :refer [map-invert]]
             [clojure.string :as str]))
 
-(defn inc! [n] (if (nil? n) 1 (inc n)))
-
 (def sn {\= -2 \- -1 \0 0 \1 1 \2 2})
 (def snr (map-invert sn))
 
@@ -16,19 +14,18 @@
        sum))
 
 (defn correct-snafu [pows]
-  (let [pow (->> pows (some #(when (> (last %) 2) %)))]
+  (let [pow (some #(when (> (last %) 2) %) pows)]
     (if (nil? pow)
       pows
       (let [[i n] pow]
         (recur (-> pows
                    (assoc i (- n 5))
-                   (update (inc i) inc!)))))))
+                   (update (inc i) inc)))))))
 
 (defn make-snafu [pows]
-  (let [max-pow (apply max (keys pows))]
-    (->> (range max-pow -1 -1)
-         (map #(get snr (get pows % 0)))
-         (str/join))))
+  (->> (range (apply max (keys pows)) -1 -1)
+       (map #(get snr (get pows % 0)))
+       str/join))
 
 (defn dec2snafu [dec]
   (->> (str/split (Long/toString dec 5) #"")
@@ -39,9 +36,8 @@
        correct-snafu
        make-snafu))
 
-(let [nums (read-input)]
-  (->> nums
-       (map snafu2dec)
-       sum
-       dec2snafu
-       (println "Part 1:")))
+(->> (read-input)
+     (map snafu2dec)
+     sum
+     dec2snafu
+     (println "Part 1:"))
