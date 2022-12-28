@@ -17,12 +17,14 @@
               (let [free-sides (->> (proposals i)
                                     (map #(map (fn [[yd xd]] [(+ y yd) (+ x xd)]) %))
                                     (filter (fn [ps] (every? #(not (contains? elves %)) ps))))]
-                (if
-                 (or (= 4 (count free-sides)) (= 0 (count free-sides))) [[y x]]
-                 [[y x] (nth (first free-sides) 1)]))))))
+
+                [[y x] 
+                 (if (contains? #{0 4} (count free-sides)) 
+                   nil 
+                   (nth (first free-sides) 1))])))))
 
 (defn move [elves]
-  (let [props (->> elves (map last))]
+  (let [props (->> elves (map last) (filter some?))]
     (->> elves
          (map (fn [[l p]] 
                 (if (and (some? p) (= 1 (count-where #(= p %) props))) p l)))
