@@ -52,8 +52,9 @@
            (apply max))
       (let [states (if (< i 5)
                      states
-                     (let [max (/ (->> states (map :total-flown) (apply max)) (+ 1 (/ 1.2 i)))]
-                       (->> states (filter #(> (:total-flown %) max)))))]
+                     (->> states
+                          (sort-by :total-flown >)
+                          (take 1000)))]
         (recur (inc i) (set (mapcat moves states)))))))
 
 (let [valves (->> (read-input)
