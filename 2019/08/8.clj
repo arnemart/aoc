@@ -1,5 +1,5 @@
 (ns aoc.2019.08.8
-  (:require [aoc.common :refer [count-where pick read-input zip]]
+  (:require [aoc.common :refer [count-where read-input tee zip]]
             [clojure.string :as str]))
 
 (let [w 25 h 6
@@ -11,7 +11,7 @@
        (sort-by #(count-where zero? %))
        first
        frequencies
-       (pick [1 2])
+       (tee [#(get % 1) #(get % 2)])
        (apply *)
        (println "Part 1:"))
 

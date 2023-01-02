@@ -17,9 +17,6 @@
 (defn count-where [fn coll]
   (count (filter fn coll)))
 
-(defn pick [keys coll]
-  (map coll keys))
-
 (defn zip [& lists]
   ((fn step [lists]
      (when (every? not-empty lists)
