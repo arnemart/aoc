@@ -10,8 +10,7 @@
   (->> chemicals
        (mapcat #(into [] %))
        (reduce (fn [chems [chem amt]]
-                 (update chems chem #(+ amt (if (some? %) % 0)))) {})
-       ))
+                 (update chems chem #(+ amt (if (some? %) % 0)))) {})))
 
 (defn replace-one [reactions leftovers [chem amt]]
   (if
