@@ -14,22 +14,22 @@
 
 (defn replace-one [reactions leftovers [chem amt]]
   (if
-    (= :ORE chem) {:need {chem amt} :leftovers leftovers}
-    (let [[amt leftovers] (if (= 0 (get leftovers chem 0))
-                            [amt leftovers]
-                            [(max 0 (- amt (get leftovers chem)))
-                             (update leftovers chem #(max 0 (- % amt)))])
-          {[_ amt-needed] :have need :need}
-          (->> reactions (filter #(= chem (first (:have %)))))]
-      (if (= 0 amt)
-        {:need {} :leftovers leftovers}
-        (loop [incr 1]
-          (if (>= (* incr amt-needed) amt)
-            {:need (->> need
-                        (map (fn [[k v]] [k (* v incr)]))
-                        (into {}))
-             :leftovers (update leftovers chem #(+ (- (* incr amt-needed) amt) (if (some? %) % 0)))}
-            (recur (inc incr))))))))
+   (= :ORE chem) {:need {chem amt} :leftovers leftovers}
+   (let [[amt leftovers] (if (= 0 (get leftovers chem 0))
+                           [amt leftovers]
+                           [(max 0 (- amt (get leftovers chem)))
+                            (update leftovers chem #(max 0 (- % amt)))])
+         {[_ amt-needed] :have need :need}
+         (get reactions chem)]
+     (if (= 0 amt)
+       {:need {} :leftovers leftovers}
+       (loop [incr 1]
+         (if (>= (* incr amt-needed) amt)
+           {:need (->> need
+                       (map (fn [[k v]] [k (* v incr)]))
+                       (into {}))
+            :leftovers (update leftovers chem #(+ (- (* incr amt-needed) amt) (if (some? %) % 0)))}
+           (recur (inc incr))))))))
 
 (defn step [reactions chemicals]
   (->> chemicals
@@ -49,12 +49,15 @@
 (let [reactions (->> (read-input)
                      (map #(str/split % #" => "))
                      (map (fn [[from to]]
-                            {:have (part to)
-                             :need (->> (str/split from #", ")
-                                        (map part)
-                                        (into {}))})))
+                            [(first (part to))
+                             {:have (part to)
+                              :need (->> (str/split from #", ")
+                                         (map part)
+                                         (into {}))}]))
+                     (into {}))
       step (partial step reactions)
-      onefuel (ore-needed step {:need {:FUEL 1} :leftovers {}})]
+      ore-needed (partial ore-needed step)
+      onefuel (ore-needed {:need {:FUEL 1} :leftovers {}})]
 
   (->> onefuel
        :need
@@ -64,5 +67,5 @@
   (loop [total-ore (->> onefuel :need :ORE) fuel 0 leftovers (:leftovers onefuel)]
     (if (>= total-ore 1000000000000)
       (println "Part 2" fuel)
-      (let [result (ore-needed step {:need {:FUEL 1} :leftovers leftovers})]
+      (let [result (ore-needed {:need {:FUEL 1} :leftovers leftovers})]
         (recur (+ total-ore (->> result :need :ORE)) (inc fuel) (:leftovers result))))))
