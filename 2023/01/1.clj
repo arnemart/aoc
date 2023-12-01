@@ -9,8 +9,8 @@
                              "seven" 7 "eight" 8 "nine" 9}))
 
 (defn first-and-last [ds]
-  (+ (* (get ds (apply min (keys ds))) 10)
-     (get ds (apply max (keys ds)))))
+  (+ (->> ds keys (apply min) (get ds) (* 10))
+     (->> ds keys (apply max) (get ds))))
 
 (defn find-value [digits s]
   (->> digits
