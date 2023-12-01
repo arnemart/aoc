@@ -8,25 +8,20 @@
                              "four" 4 "five" 5 "six" 6
                              "seven" 7 "eight" 8 "nine" 9}))
 
-(defn first-and-last [ds]
-  (+ (->> ds keys (apply min) (get ds) (* 10))
-     (->> ds keys (apply max) (get ds))))
+(def re1 (re-pattern (str "(?=(" (str/join "|" (keys digits1)) "))")))
+(def re2 (re-pattern (str "(?=(" (str/join "|" (concat (keys digits1) (keys digits2))) "))")))
 
-(defn find-value [digits s]
-  (->> digits
-       (mapcat (fn [[k v]]
-                 [(when-let [fi (str/index-of s k)] [fi v])
-                  (when-let [li (str/last-index-of s k)] [li v])]))
-       (filter some?)
-       (into {})
-       first-and-last))
+(defn get-digits [re digits s]
+  (let [m (re-seq re s)]
+    (+ (* 10 (get digits (last (first m))))
+       (get digits (last (last m))))))
 
 (let [input (read-input)]
   (->> input
-       (map (partial find-value digits1))
+       (map (partial get-digits re1 digits1))
        (apply +)
        (println "Part 1:"))
   (->> input
-       (map (partial find-value digits2))
+       (map (partial get-digits re2 digits2))
        (apply +)
        (println "Part 2:")))
