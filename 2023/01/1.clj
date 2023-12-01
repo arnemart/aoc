@@ -8,28 +8,25 @@
                              "four" 4 "five" 5 "six" 6
                              "seven" 7 "eight" 8 "nine" 9}))
 
-(defn find-digits [s digits]
+(defn first-and-last [ds]
+  (+ (* (get ds (apply min (keys ds))) 10)
+     (get ds (apply max (keys ds)))))
+
+(defn find-value [digits s]
   (->> digits
        (mapcat (fn [[k v]]
                  [(when-let [fi (str/index-of s k)] [fi v])
                   (when-let [li (str/last-index-of s k)] [li v])]))
        (filter some?)
-       (into {})))
-
-(defn first-and-last [ds]
-  (let [first-key (apply min (keys ds))
-        last-key (apply max (keys ds))]
-    (+ (* (get ds first-key) 10)
-       (get ds last-key))))
+       (into {})
+       first-and-last))
 
 (let [input (read-input)]
-  (->> input 
-       (map #(find-digits % digits1)) 
-       (map first-and-last) 
-       (apply +) 
+  (->> input
+       (map (partial find-value digits1))
+       (apply +)
        (println "Part 1:"))
-  (->> input 
-       (map #(find-digits % digits2)) 
-       (map first-and-last) 
-       (apply +) 
+  (->> input
+       (map (partial find-value digits2))
+       (apply +)
        (println "Part 2:")))
