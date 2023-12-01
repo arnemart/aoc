@@ -2,8 +2,7 @@
   (:require [aoc.common :refer [read-input]]
             [clojure.string :as str]))
 
-(def digits1 (into {} (->> (range 1 10) 
-                           (map #(vector (str %) %)))))
+(def digits1 (into {} (map #(vector (str %) %) (range 1 10))))
 
 (def digits2 (merge digits1 {"one" 1 "two" 2 "three" 3
                              "four" 4 "five" 5 "six" 6
