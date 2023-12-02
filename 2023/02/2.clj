@@ -6,8 +6,7 @@
 
 (let [games (->> (read-input)
                  (map #(-> %
-                           (str/split #": ")
-                           last
+                           (str/replace #"^.+: " "")
                            (str/split #"; ")))
                  (map (fn [g]
                         (->> g
