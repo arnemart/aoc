@@ -4,19 +4,18 @@
 
 (def digits ["zero" "one" "two" "three" "four" "five" "six" "seven" "eight" "nine"])
 
-(defn get-digits [s]
-  (let [m (re-seq #"\d" s)]
-    (+ (* 10 (parse-long (first m)))
-       (parse-long (last m)))))
+(defn calibrate [lines]
+  (->> lines
+       (map #(re-seq #"\d" %))
+       (map #(parse-long (str (first %) (last %))))
+       (apply +)))
 
 (let [input (read-input)]
   (->> input
-       (map get-digits)
-       (apply +)
+       calibrate
        (println "Part 1:"))
   (->> input
        (map (fn [s]
               (reduce-kv #(str/replace %1 %3 (str %3 %2 %3)) s digits)))
-       (map get-digits)
-       (apply +)
+       calibrate
        (println "Part 2:")))
