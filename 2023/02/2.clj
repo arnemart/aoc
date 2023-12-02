@@ -2,8 +2,6 @@
   (:require [aoc.common :refer [read-input]]
             [clojure.string :as str]))
 
-(def maxes {:red 12 :green 13 :blue 14})
-
 (let [games (as-> (read-input) input
               (map #(-> %
                         (str/replace #"^.+: " "[{")
@@ -16,9 +14,9 @@
   (->> games
        (keep-indexed (fn [i draw]
                        (when (every? #(and
-                                       (<= (get % :red 0) (:red maxes))
-                                       (<= (get % :green 0) (:green maxes))
-                                       (<= (get % :blue 0) (:blue maxes)))
+                                       (<= (get % :red 0) 12)
+                                       (<= (get % :green 0) 13)
+                                       (<= (get % :blue 0) 14))
                                      draw)
                          (inc i))))
        (apply +)
