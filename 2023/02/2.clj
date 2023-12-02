@@ -4,14 +4,14 @@
 
 (def maxes {:red 12 :green 13 :blue 14})
 
-(let [games (->> (read-input)
-                 (map #(-> %
-                           (str/replace #"^.+: " "")
-                           (str/split #"; ")))
-                 (map (fn [g]
-                        (->> g
-                             (map #(str/replace % #"(\d+) ([a-z]+)" ":$2 $1"))
-                             (map #(eval (read-string (str "{" % "}"))))))))]
+(let [games (as-> (read-input) input
+              (map #(-> %
+                        (str/replace #"^.+: " "[{")
+                        (str/replace #"; " "} {")
+                        (str/replace #"(\d+) ([a-z]+)" ":$2 $1")
+                        (str "}]")) input)
+              (str "[" (str/join input) "]")
+              (eval (read-string input)))]
 
   (->> games
        (keep-indexed #(when (every? (fn [draw]
