@@ -17,9 +17,9 @@
   (->> games
        (keep-indexed #(when (every? (fn [draw]
                                       (and
-                                       (>= (:red maxes) (get draw :red 0))
-                                       (>= (:green maxes) (get draw :green 0))
-                                       (>= (:blue maxes) (get draw :blue 0))))
+                                       (<= (get draw :red 0) (:red maxes))
+                                       (<= (get draw :green 0) (:green maxes))
+                                       (<= (get draw :blue 0) (:blue maxes))))
                                     %2)
                         (inc %1)))
        (apply +)
