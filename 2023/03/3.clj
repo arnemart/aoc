@@ -6,7 +6,7 @@
 
 (defn neighbors [[v x y]]
   (let [vpos (->> (range x (+ (count v) x))
-                  (map #(vector y %))
+                  (map #(list y %))
                   set)
         neighbors (->> (combo/cartesian-product
                         (inclusive-range (dec y) (inc y))
