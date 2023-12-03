@@ -20,7 +20,7 @@
                                     (map str/split-lines))
       crate-indices (->> (last stacks-input)
                          (re-seq-indexed #"\d")
-                         (map last))
+                         (map :start))
       stacks (->> stacks-input
                   drop-last
                   (map (fn [stack] (map #(.charAt stack %) crate-indices)))

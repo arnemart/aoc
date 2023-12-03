@@ -31,7 +31,9 @@
   (let [m (re-matcher pattern string)]
     ((fn step []
        (when (. m find)
-         (cons [(. m group) (. m start)] (lazy-seq (step))))))))
+         (cons {:match (. m group) 
+                :start (. m start)
+                :end (. m end)} (lazy-seq (step))))))))
 
 (defn take-until [pred coll]
   (lazy-seq

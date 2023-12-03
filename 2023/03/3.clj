@@ -4,26 +4,23 @@
             [clojure.set :as set]
             [clojure.string :as str]))
 
-(defn neighbors [[v x y]]
-  (let [vpos (->> (range x (+ (count v) x))
-                  (map #(list y %))
-                  set)
-        neighbors (->> (combo/cartesian-product
-                        (inclusive-range (dec y) (inc y))
-                        (inclusive-range (dec x) (+ x (count v))))
-                       set)]
-    (set/difference neighbors vpos)))
+(defn neighbors [{:keys [start end y]}]
+  (let [inside (->> (range start end)
+                    (map #(list y %)))
+        all-neighbors (combo/cartesian-product
+                       (inclusive-range (dec y) (inc y))
+                       (inclusive-range (dec start) end))]
+    (set/difference (set all-neighbors) (set inside))))
 
 (defn alone [grid num]
   (every? #(= "." (get-in grid % "."))
           (neighbors num)))
 
 (defn find-gears [grid num]
-  (let [gear (->> (neighbors num)
-                  (filter #(= "*" (get-in grid % ".")))
-                  first)]
-    (when (some? gear)
-      {:num num :gear gear})))
+  (when-let [gear (->> (neighbors num)
+                       (filter #(= "*" (get-in grid % ".")))
+                       first)]
+    (assoc num :gear gear)))
 
 (let [input (read-input)
       grid (->> input (mapv #(str/split % #"")) vec)
@@ -31,12 +28,12 @@
                 (map-indexed (fn [i line]
                                (->> line
                                     (re-seq-indexed #"\d+")
-                                    (map #(conj % i)))))
+                                    (map #(assoc % :y i)))))
                 (apply concat))]
 
   (->> nums
        (filter #(not (alone grid %)))
-       (map first)
+       (map :match)
        (map parse-long)
        (apply +)
        (println "Part 1:"))
@@ -48,7 +45,8 @@
        (map last)
        (filter #(= 2 (count %)))
        (map #(->> %
-                  (map (comp parse-long first :num))
+                  (map :match)
+                  (map parse-long)
                   (apply *)))
        (apply +)
        (println "Part 2:")))
