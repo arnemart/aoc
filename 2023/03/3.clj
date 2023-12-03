@@ -18,7 +18,7 @@
 
 (defn find-gears [grid num]
   (when-let [gear (->> (neighbors num)
-                       (filter #(= "*" (get-in grid % ".")))
+                       (filter #(= "*" (get-in grid %)))
                        first)]
     (assoc num :gear gear)))
 
@@ -28,13 +28,13 @@
                 (map-indexed (fn [i line]
                                (->> line
                                     (re-seq-indexed #"\d+")
+                                    (map #(update % :match parse-long))
                                     (map #(assoc % :y i)))))
                 (apply concat))]
 
   (->> nums
        (filter #(not (alone grid %)))
        (map :match)
-       (map parse-long)
        (apply +)
        (println "Part 1:"))
 
@@ -44,9 +44,6 @@
        (group-by :gear)
        (map last)
        (filter #(= 2 (count %)))
-       (map #(->> %
-                  (map :match)
-                  (map parse-long)
-                  (apply *)))
+       (map #(apply * (map :match %)))
        (apply +)
        (println "Part 2:")))
