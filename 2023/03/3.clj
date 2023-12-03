@@ -15,7 +15,7 @@
   (every? #(= "." (get-in grid % "."))
           (neighbors num)))
 
-(defn find-gears [grid num]
+(defn find-gear [grid num]
   (when-let [gear (->> (neighbors num)
                        (filter #(= "*" (get-in grid %)))
                        first)]
@@ -38,7 +38,7 @@
        (println "Part 1:"))
 
   (->> nums
-       (map #(find-gears grid %))
+       (map #(find-gear grid %))
        (filter #(some? (:gear %)))
        (group-by :gear)
        (map last)
