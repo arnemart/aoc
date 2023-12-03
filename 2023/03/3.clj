@@ -26,7 +26,7 @@
       {:num num :gear gear})))
 
 (let [input (read-input)
-      grid (->> input (map #(str/split % #"")) vec)
+      grid (->> input (mapv #(str/split % #"")) vec)
       nums (->> input
                 (map-indexed (fn [i line]
                                (->> line
