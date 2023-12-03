@@ -14,15 +14,16 @@
                        set)]
     (set/difference neighbors vpos)))
 
-(defn not-alone [grid num]
-  (not (every? #(= "." (get-in grid % "."))
-               (neighbors num))))
+(defn alone [grid num]
+  (every? #(= "." (get-in grid % "."))
+          (neighbors num)))
 
 (defn find-gears [grid num]
-  (let [gears (->> (neighbors num)
-                   (filter #(= "*" (get-in grid % "."))))]
-    (when (seq? gears)
-      {:num num :gear (first gears)})))
+  (let [gear (->> (neighbors num)
+                  (filter #(= "*" (get-in grid % ".")))
+                  first)]
+    (when (some? gear)
+      {:num num :gear gear})))
 
 (let [input (read-input)
       grid (->> input (map #(str/split % #"")) vec)
@@ -34,7 +35,7 @@
                 (apply concat))]
 
   (->> nums
-       (filter #(not-alone grid %))
+       (filter #(not (alone grid %)))
        (map first)
        (map parse-long)
        (apply +)
@@ -44,9 +45,9 @@
        (map #(find-gears grid %))
        (filter #(some? (:gear %)))
        (group-by :gear)
-       (filter #(= 2 (count (last %))))
+       (map last)
+       (filter #(= 2 (count %)))
        (map #(->> %
-                  last
                   (map (comp parse-long first :num))
                   (apply *)))
        (apply +)
