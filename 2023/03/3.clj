@@ -5,8 +5,7 @@
             [clojure.string :as str]))
 
 (defn neighbors [{:keys [start end y]}]
-  (let [inside (->> (range start end)
-                    (map #(list y %)))
+  (let [inside (combo/cartesian-product [y] (range start end))
         all-neighbors (combo/cartesian-product
                        (inclusive-range (dec y) (inc y))
                        (inclusive-range (dec start) end))]
