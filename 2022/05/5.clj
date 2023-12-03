@@ -1,5 +1,5 @@
 (ns aoc.2022.05.5
-  (:require [aoc.common :refer [re-seq-indices read-input zip]]
+  (:require [aoc.common :refer [re-seq-indexed read-input zip]]
             [clojure.string :as str]))
 
 (defn move [& {:keys [reverse]}]
@@ -18,7 +18,9 @@
 
 (let [[stacks-input ops-input] (->> (read-input :split-with #"\n\n")
                                     (map str/split-lines))
-      crate-indices (re-seq-indices #"\d" (last stacks-input))
+      crate-indices (->> (last stacks-input)
+                         (re-seq-indexed #"\d")
+                         (map last))
       stacks (->> stacks-input
                   drop-last
                   (map (fn [stack] (map #(.charAt stack %) crate-indices)))

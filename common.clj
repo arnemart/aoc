@@ -27,11 +27,11 @@
 
 (defn spy [v] (pprint v) v)
 
-(defn re-seq-indices [pattern string]
+(defn re-seq-indexed [pattern string]
   (let [m (re-matcher pattern string)]
     ((fn step []
        (when (. m find)
-         (cons (. m start) (lazy-seq (step))))))))
+         (cons [(. m group) (. m start)] (lazy-seq (step))))))))
 
 (defn take-until [pred coll]
   (lazy-seq
