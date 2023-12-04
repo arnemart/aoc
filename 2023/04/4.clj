@@ -15,9 +15,7 @@
                 (map #(apply set/intersection %))
                 (mapv count))
 
-      won-cards-initial (->> (range (count wins))
-                             (map #(vector % 1))
-                             (into {}))
+      won-cards-initial (vec (take (count wins) (repeat 1)))
       
       won-cards (->> (range (count wins))
                      (reduce (fn [cards card]
@@ -32,6 +30,5 @@
        (println "Part 1:"))
 
   (->> won-cards
-       vals
        (apply +)
        (println "Part 2:")))
