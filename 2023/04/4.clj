@@ -1,17 +1,14 @@
 (ns aoc.2023.04.4 
   (:require [aoc.common :refer [read-input]]
             [clojure.math.numeric-tower :refer [expt]]
-            [clojure.set :as set]
-            [clojure.string :as str]))
+            [clojure.set :as set]))
 
 (let [wins (->> (read-input)
-                (map #(str/replace % #".*:" ""))
-                (map #(str/split % #"\|"))
-                (mapv (fn [line]
-                        (->> line
-                             (map #(re-seq #"\d+" %))
-                             (map #(map parse-long %))
-                             (map set))))
+                (map #(->> %
+                          (re-find #"^.+:(.+)\|(.+)$")
+                          (drop 1)
+                          (map (partial re-seq #"\d+"))
+                          (map set)))
                 (map #(apply set/intersection %))
                 (mapv count))
       
