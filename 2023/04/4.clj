@@ -14,14 +14,12 @@
                              (map set))))
                 (map #(apply set/intersection %))
                 (mapv count))
-
-      won-cards-initial (vec (take (count wins) (repeat 1)))
       
       won-cards (->> (range (count wins))
                      (reduce (fn [cards card]
                                (->> (range (inc card) (+ card (get wins card) 1))
                                     (reduce (fn [cs c] (update cs c #(+ % (get cards card)))) cards)))
-                             won-cards-initial))]
+                             (vec (take (count wins) (repeat 1)))))]
 
   (->> wins
        (filter #(> % 0))
