@@ -380,7 +380,7 @@ export const nth =
   <T>(n: number) =>
   (arr: T[]): T =>
     n < 0 ? arr[arr.length + n] : arr[n]
-export const length = <T>(arr: T[] | string): number => arr.length
+export const length = <T>(a: T[] | string | Set<T>): number => (a instanceof Set ? a.size : a.length)
 export const count =
   <T>(fn: (v: T) => boolean) =>
   (arr: T[]) =>
@@ -627,6 +627,7 @@ export const within =
     n != null && n >= min && n <= max
 export const even = (n: number): boolean => n % 2 == 0
 export const odd = (n: number): boolean => n % 2 != 0
+export const pow = (n1: number) => (n2: number) => Math.pow(n1, n2)
 
 export const gt = (n1: number) => (n2: number) => n2 > n1
 export const lt = (n1: number) => (n2: number) => n2 < n1
@@ -701,6 +702,10 @@ export const set =
   <T, U>(key: string | number, val: T | ((v: T) => T)) =>
   (o: any[] | { [key: string]: any }): U =>
     $(o, setIn([key], val))
+export const update =
+  <T, U>(key: string | number, val: (v: T) => T | ((v: T) => T)) =>
+  (o: any[] | { [key: string]: any }): U =>
+    $(o, setIn([key], val(o[key])))
 
 export function values<K, V>(m: { [key: string]: V } | Map<K, V> | Set<V>) {
   if (m instanceof Map || m instanceof Set) return Array.from(m.values())
@@ -824,6 +829,17 @@ export const next =
     amt == 0 ? v : arr[(arr.indexOf(v) + arr.length + (amt % arr.length)) % arr.length]
 
 export const intoSet = <T>(val: T[]): Set<T> => new Set(val)
+export const intersect = <T>([s, ...ss]: Set<T>[]) =>
+  $(
+    Array.from(s),
+    filter((v: T) =>
+      $(
+        ss,
+        every(s => s.has(v))
+      )
+    )
+  )
+
 export const unique = pipe(intoSet, values)
 export const uniqueBy =
   <T, U>(fn: (v: T) => U) =>
