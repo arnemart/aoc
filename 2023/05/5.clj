@@ -28,7 +28,8 @@
                                      [source (+ source len -1) dest]) %))) 
       seed-ranges (->> seeds
                        (partition 2)
-                       (map (fn [[a b]] [a (+ a b -1)])))]
+                       (map (fn [[from to]] 
+                              [from (+ from to -1)])))]
 
   (->> seeds
        (map #(reduce convert % forward-maps))
