@@ -25,10 +25,10 @@
       reverse-maps (->> maps
                         reverse
                         (map #(map (fn [[source dest len]]
-                                     [source (+ source len -1) dest]) %))) 
+                                     [source (+ source len -1) dest]) %)))
       seed-ranges (->> seeds
                        (partition 2)
-                       (map (fn [[from len]] 
+                       (map (fn [[from len]]
                               [from (+ from len -1)])))]
 
   (->> seeds
