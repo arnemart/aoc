@@ -3,11 +3,10 @@
             [clojure.string :as str]))
 
 (defn convert [n ms]
-  (or
-   (some (fn [[dest source len]]
-           (when (<= source n (+ source len -1))
-             (+ n (- dest source)))) ms)
-   n))
+  (reduce (fn [n [dest source len]]
+            (if (<= source n (+ source len -1))
+              (reduced (+ n (- dest source)))
+              n)) n ms))
 
 (defn in-ranges [n ranges]
   (->> ranges
