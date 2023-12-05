@@ -14,6 +14,11 @@
          slurp))
    (str/split split-with)))
 
+(defn split-to-ints [s]
+  (->> s
+       (re-seq #"\d+")
+       (map parse-long)))
+
 (defn count-where [fn coll]
   (count (filter fn coll)))
 
