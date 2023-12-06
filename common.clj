@@ -23,9 +23,7 @@
   (count (filter fn coll)))
 
 (defn zip [& lists]
-  ((fn step [lists]
-     (when (every? not-empty lists)
-       (cons (map first lists) (lazy-seq (step (map rest lists)))))) lists))
+  (apply map (conj lists vector)))
 
 (defn sum [& lists]
   (apply + 0 (filter some? (flatten lists))))
