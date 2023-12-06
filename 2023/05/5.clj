@@ -1,5 +1,5 @@
 (ns aoc.2023.05.5 
-  (:require [aoc.common :refer [read-input split-to-ints tee]]
+  (:require [aoc.common :refer [read-input split-to-ints]]
             [clojure.string :as str]))
 
 (defn convert [n ms]
@@ -29,16 +29,14 @@
         (concat done leftover)
         (recur done leftover ms)))))
 
-(let [[seeds maps]
-      (->> (read-input :split-with #"\n\n")
-           (tee [#(->> % first split-to-ints)
-                 #(->> % rest
-                       (map (fn [m]
-                              (->> (str/split-lines m)
-                                   (drop 1)
-                                   (map split-to-ints)
-                                   (map (fn [[dest source len]]
-                                          [source (+ source len -1) dest]))))))]))
+(let [[seed-str & map-str] (read-input :split-with #"\n\n")
+      seeds (split-to-ints seed-str)
+      maps (->> map-str
+                (map #(->> % str/split-lines
+                           (drop 1)
+                           (map split-to-ints)
+                           (map (fn [[dest source len]]
+                                  [source (+ source len -1) dest]))))) 
       seed-ranges (->> seeds
                        (partition 2)
                        (map (fn [[from len]]
