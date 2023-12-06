@@ -9,5 +9,14 @@
   },
   "devDependencies": {
     "@types/heap": "^0.2.29"
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": false,
+    "arrowParens": "avoid",
+    "printWidth": 122,
+    "singleQuote": true,
+    "trailingComma": "none"
   }
 }
