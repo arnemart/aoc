@@ -20,7 +20,7 @@
                (and (= 3 groups) (= 2 largest-group)) 3 ; two pair
                (= 4 groups) 2                           ; one pair
                :else 1)]                                ; a rock
-    (vec (concat [type] cards))))
+    (apply conj [type] cards)))
 
 (defn classify-with-jokers [cards]
   (let [cards (map #(if (= 11 %) 1 %) cards)
@@ -34,7 +34,7 @@
                    [3 1] 5
                    [2 _] 4
                    [1 1] 2)]
-    (vec (concat [new-type] cards))))
+    (apply conj [new-type] cards)))
 
 (defn play [bets]
   (->> bets
