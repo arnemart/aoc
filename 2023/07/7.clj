@@ -13,13 +13,13 @@
         groups (count hand)
         largest-group (apply max (vals hand))
         type (cond
-               (= 5 largest-group) 7
-               (= 4 largest-group) 6
-               (and (= 2 groups) (= 3 largest-group)) 5
-               (and (= 3 groups) (= 3 largest-group)) 4
-               (and (= 3 groups) (= 2 largest-group)) 3
-               (= 4 groups) 2
-               :else 1)]
+               (= 5 largest-group) 7                    ; five of a kind
+               (= 4 largest-group) 6                    ; four of a kind
+               (and (= 2 groups) (= 3 largest-group)) 5 ; full house
+               (and (= 3 groups) (= 3 largest-group)) 4 ; three of a kind
+               (and (= 3 groups) (= 2 largest-group)) 3 ; two pair
+               (= 4 groups) 2                           ; one pair
+               :else 1)]                                ; a rock
     (concat [type] cards)))
 
 (defn classify-with-jokers [cards]
@@ -28,9 +28,7 @@
         num-jokers (->> cards (filter #(= 1 %)) count)
         new-type (match [type num-jokers]
                    [a 0] a
-                   [7 _] 7
-                   [6 _] 7
-                   [5 _] 7
+                   [(:or 5 6 7) _] 7
                    [4 _] 6
                    [3 j] (+ 4 j)
                    [2 _] 4
@@ -39,7 +37,7 @@
 
 (defn compare-hands [[[v1 & h1] _] [[v2 & h2] _]]
   (cond
-    (not= v1 v2) (- v1 v2)
+    (not= v1 v2) (compare v1 v2)
     (empty? h1) 0
     :else (compare-hands [h1] [h2])))
 
