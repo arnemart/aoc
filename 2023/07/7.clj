@@ -39,7 +39,7 @@
 (defn play [bets]
   (->> bets
        (sort #(compare (first %1) (first %2)))
-       (map-indexed (fn [i [_ bet]] (* bet (inc i))))
+       (map-indexed (fn [rank [_ bet]] (* bet (inc rank))))
        (apply +)))
 
 (let [hands (->> (read-input)
