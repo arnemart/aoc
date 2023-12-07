@@ -20,7 +20,7 @@
                (and (= 3 groups) (= 2 largest-group)) 3 ; two pair
                (= 4 groups) 2                           ; one pair
                :else 1)]                                ; a rock
-    (concat [type] cards)))
+    (vec (concat [type] cards))))
 
 (defn classify-with-jokers [cards]
   (let [cards (map #(if (= 11 %) 1 %) cards)
@@ -34,17 +34,11 @@
                    [3 1] 5
                    [2 _] 4
                    [1 1] 2)]
-    (concat [new-type] cards)))
-
-(defn compare-hands [[[v1 & h1] _] [[v2 & h2] _]]
-  (cond
-    (not= v1 v2) (compare v1 v2)
-    (empty? h1) 0
-    :else (compare-hands [h1] [h2])))
+    (vec (concat [new-type] cards))))
 
 (defn play [bets]
   (->> bets
-       (sort compare-hands)
+       (sort #(compare (first %1) (first %2)))
        (map-indexed (fn [i [_ bet]] (* bet (inc i))))
        (apply +)))
 
