@@ -24,7 +24,7 @@
 
 (defn classify-with-jokers [cards]
   (let [cards (map #(if (= 11 %) 1 %) cards)
-        [type & order] (classify cards)
+        [type] (classify cards)
         num-jokers (->> cards (filter #(= 1 %)) count)
         new-type (match [type num-jokers]
                    [a 0] a
@@ -35,7 +35,7 @@
                    [3 j] (+ 4 j)
                    [2 _] 4
                    [1 1] 2)]
-    (concat [new-type] order)))
+    (concat [new-type] cards)))
 
 (defn compare-hands [[[v1 & h1] _] [[v2 & h2] _]]
   (cond
