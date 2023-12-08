@@ -13,8 +13,8 @@
                 (map #(if (= "L" %) 0 1))
                 cycle)
       nodes (->> (str/split nodes-str #"\n")
-                 (map #(re-find #"^(\w+) = \((\w+), (\w+)\)$" %))
-                 (map (fn [[_, a, b, c]] [a [b c]]))
+                 (map #(re-seq #"\w+" %))
+                 (map (fn [[a b c]] [a [b c]]))
                  (into {}))
       ends-with-z #(= \Z (last %))]
 
