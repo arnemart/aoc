@@ -22,7 +22,7 @@
 
   (->> nodes
        keys
-       (filter #(str/ends-with? % "A"))
+       (filter #(= \A (last %)))
        (map #(solve % ends-with-z dirs nodes))
        (reduce lcm)
        (println "Part 2:")))
