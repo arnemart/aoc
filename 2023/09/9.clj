@@ -8,7 +8,7 @@
 (defn all-diffs [ns]
   (->> ns
        (iterate diffs)
-       (take-while #(not= 0 (apply + %)))))
+       (take-while #(some identity %))))
 
 (defn predict-next [ns]
   (->> ns
