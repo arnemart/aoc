@@ -16,7 +16,7 @@
 
 (defn split-to-ints [s]
   (->> s
-       (re-seq #"\d+")
+       (re-seq #"-?\d+")
        (map parse-long)))
 
 (defn count-where [fn coll]
