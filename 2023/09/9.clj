@@ -1,5 +1,5 @@
 (ns aoc.2023.09.9 
-  (:require [aoc.common :refer [read-input split-to-ints zip]]))
+  (:require [aoc.common :refer [read-input reduce-right split-to-ints zip]]))
 
 (defn diff [ns]
   (->> (zip ns (drop 1 ns))
@@ -15,13 +15,10 @@
        (map last)
        (apply +)))
 
-(defn sub [[n & ns]]
-  (- n (if (some? ns) (sub ns) 0)))
-
 (defn predict-prev [ns]
   (->> ns
        (map first)
-       sub))
+       (reduce-right -)))
 
 (let [input (->> (read-input)
                  (map split-to-ints)
