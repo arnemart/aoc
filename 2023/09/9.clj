@@ -11,7 +11,7 @@
        (take-while #(some identity %))))
 
 (defn predict-next [ns]
-  (->> (diffs ns)
+  (->> ns
        (map last)
        (apply +)))
 
@@ -19,12 +19,13 @@
   (- n (if (some? ns) (sub ns) 0)))
 
 (defn predict-prev [ns]
-  (->> (diffs ns)
+  (->> ns
        (map first)
        sub))
 
 (let [input (->> (read-input)
-                 (map split-to-ints))]
+                 (map split-to-ints)
+                 (map diffs))]
   (->> input
        (map predict-next)
        (apply +)
