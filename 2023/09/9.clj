@@ -1,5 +1,5 @@
 (ns aoc.2023.09.9 
-  (:require [aoc.common :refer [read-input split-to-ints take-until zip]]))
+  (:require [aoc.common :refer [read-input split-to-ints zip]]))
 
 (defn diffs [ns]
   (->> (zip ns (drop 1 ns))
@@ -8,7 +8,7 @@
 (defn all-diffs [ns]
   (->> ns
        (iterate diffs)
-       (take-until #(= 1 (count (set %))))))
+       (take-while #(not= 0 (apply + %)))))
 
 (defn predict-next [ns]
   (->> ns
