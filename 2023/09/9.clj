@@ -1,18 +1,17 @@
 (ns aoc.2023.09.9 
   (:require [aoc.common :refer [read-input split-to-ints zip]]))
 
-(defn diffs [ns]
+(defn diff [ns]
   (->> (zip ns (drop 1 ns))
        (map (fn [[a b]] (- b a)))))
 
-(defn all-diffs [ns]
+(defn diffs [ns]
   (->> ns
-       (iterate diffs)
+       (iterate diff)
        (take-while #(some identity %))))
 
 (defn predict-next [ns]
-  (->> ns
-       all-diffs
+  (->> (diffs ns)
        (map last)
        (apply +)))
 
@@ -20,8 +19,7 @@
   (- n (if (some? ns) (sub ns) 0)))
 
 (defn predict-prev [ns]
-  (->> ns
-       all-diffs
+  (->> (diffs ns)
        (map first)
        sub))
 
@@ -31,6 +29,7 @@
        (map predict-next)
        (apply +)
        (println "Part 1:"))
+
   (->> input
        (map predict-prev)
        (apply +)
