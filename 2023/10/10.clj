@@ -5,8 +5,8 @@
 
 (defn find-next [pipes [y x] [py px]]
   (case (get-in pipes [y x])
-    "|" (if (> y py) [(inc y) x] [(dec y) x])
-    "-" (if (> x px) [y (inc x)] [y (dec x)])
+    "|" [(+ y (- y py)) x]
+    "-" [y (+ x (- x px))]
     "L" (if (= x px) [y (inc x)] [(dec y) x])
     "J" (if (= x px) [y (dec x)] [(dec y) x])
     "7" (if (= x px) [y (dec x)] [(inc y) x])
@@ -24,13 +24,13 @@
                              (filter (fn [[py px]] (and (= y py) (< px x))))
                              sort
                              (map #(get-in pipes %))
-                             str/join)
-        massaged-str (-> str-to-the-left
-                         (str/replace #"L-*J" "")
-                         (str/replace #"F-*7" "")
-                         (str/replace #"F-*J" "|")
-                         (str/replace #"L-*7" "|"))]
-    (->> massaged-str
+                             str/join)]
+    (->> (reduce-kv str/replace
+                    str-to-the-left
+                    {#"L-*J" ""
+                     #"F-*7" ""
+                     #"F-*J" "|"
+                     #"L-*7" "|"})
          (filter #(= \| %))
          count
          odd?)))
