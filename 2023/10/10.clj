@@ -1,5 +1,6 @@
 (ns aoc.2023.10.10 
   (:require [aoc.common :refer [read-input]]
+            [clojure.core.match :refer [match]]
             [clojure.math.combinatorics :as combo]
             [clojure.string :as str]))
 
@@ -41,8 +42,19 @@
                      (keep-indexed (fn [y l]
                                      (let [[x] (keep-indexed #(when (= "S" %2) %1) l)]
                                        (when (some? x) [y x])))))
-      [ny nx] [(dec sy) sx]
-      pipes (assoc-in pipes [sy sx] "|")
+      [ny nx start-pipe] (match (mapv #(get-in pipes %)
+                                      [[(dec sy) sx]
+                                       [sy (inc sx)]
+                                       [(inc sy) sx]
+                                       [sy (dec sx)]])
+                           [(:or "|" "F" "7") _ (:or "|" "L" "J") _] [(dec sy) sx "|"]
+                           [_ (:or "-" "F" "L") _ (:or "-" "J" "7")] [sy (dec sx) "-"]
+                           [(:or "|" "F" "7") (:or "-" "F" "L") _ _] [(dec sy) sx "L"]
+                           [_ (:or "-" "F" "L") (:or "|" "L" "J") _] [sy (inc sx) "F"]
+                           [_ _ (:or "|" "L" "J") (:or "-" "J" "7")] [sy (dec sx) "7"]
+                           [(:or "|" "F" "7") _ _ (:or "-" "J" "7")] [(dec sy) sx "J"])
+
+      pipes (assoc-in pipes [sy sx] start-pipe)
       path (get-path pipes [ny nx] [sy sx])
       path-set (set path)
       outside-path (->> (set (combo/cartesian-product
