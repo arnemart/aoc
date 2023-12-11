@@ -3,7 +3,7 @@
             [clojure.math.combinatorics :as combo]
             [clojure.string :as str]))
 
-(defn expand [galaxies blank-rows blank-cols amount]
+(defn inflate [galaxies blank-rows blank-cols amount]
   (->> galaxies
        (map (fn [[y x]]
               [(+ y (->> blank-rows
@@ -15,22 +15,22 @@
                          count
                          (* amount)))]))))
 
-(let [picture (->> (read-input)
+(let [cosmos (->> (read-input)
                    (mapv #(str/split % #"")))
-      galaxies (->> (combo/cartesian-product (range (count picture)) (range (count (first picture))))
-                    (filter #(= "#" (get-in picture %))))
+      galaxies (->> (combo/cartesian-product (range (count cosmos)) (range (count (first cosmos))))
+                    (filter #(= "#" (get-in cosmos %))))
       [blank-rows blank-cols]
-      (->> picture
+      (->> cosmos
            (tee [identity #(apply zip %)])
            (map (fn [segment]
                   (keep-indexed (fn [i col] (when (every? #(= "." %) col) i)) segment))))]
 
-  (->> (combo/combinations (expand galaxies blank-rows blank-cols 1) 2)
+  (->> (combo/combinations (inflate galaxies blank-rows blank-cols 1) 2)
        (map #(apply manhattan %))
        (apply +)
        (println "Part 1:"))
 
-  (->> (combo/combinations (expand galaxies blank-rows blank-cols 999999) 2)
+  (->> (combo/combinations (inflate galaxies blank-rows blank-cols 999999) 2)
        (map #(apply manhattan %))
        (apply +)
        (println "Part 2:")))
