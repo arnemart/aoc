@@ -28,10 +28,8 @@
                              str/join)]
     (->> (reduce-kv str/replace
                     str-to-the-left
-                    {#"L-*J" ""
-                     #"F-*7" ""
-                     #"F-*J" "|"
-                     #"L-*7" "|"})
+                    {#"L-*J|F-*7" ""
+                     #"F-*J|L-*7" "|"})
          (filter #(= \| %))
          count
          odd?)))
