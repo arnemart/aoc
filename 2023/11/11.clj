@@ -16,7 +16,7 @@
                          (* amount)))]))))
 
 (let [cosmos (->> (read-input)
-                   (mapv #(str/split % #"")))
+                  (mapv #(str/split % #"")))
       galaxies (->> (combo/cartesian-product (range (count cosmos)) (range (count (first cosmos))))
                     (filter #(= "#" (get-in cosmos %))))
       [blank-rows blank-cols]
