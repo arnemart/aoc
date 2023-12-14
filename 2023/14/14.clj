@@ -45,8 +45,8 @@
 
 (defn find-pattern [l]
   (->> (range 10 (inc (quot (count l) 2)))
-       (some #(when (= (take % (drop % l)) 
-                       (take % l)) 
+       (some #(when (= (take % (drop % l))
+                       (take % l))
                 %))))
 
 (defn offset-and-pattern [l]
@@ -61,7 +61,7 @@
 
   (->> (tilt grid)
        calculate-load
-       (println "Part 1:")) 
+       (println "Part 1:"))
 
-  (println "Part 2:" (nth loads-2 
+  (println "Part 2:" (nth loads-2
                           (+ offset (mod (- 1000000000 offset) length)))))
