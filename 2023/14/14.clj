@@ -34,11 +34,8 @@
        (map reverse)
        (mapv vec)))
 
-(defn run-cycle [grid]
-  (nth (iterate (comp rotate tilt) grid) 4))
-
 (defn run-some-cycles [grid]
-  (->> (iterate run-cycle grid)
+  (->> (iterate (comp rotate tilt rotate tilt rotate tilt rotate tilt) grid)
        (take 400)
        (map calculate-load)
        vec))
