@@ -21,9 +21,9 @@
 
   (->> steps
        (reduce HASMAP (vec (repeat 256 (ordered-map))))
-       (map-indexed #(->> %2
-                          (map-indexed (fn [li [_ lens]]
-                                         (* (inc %1) (inc li) lens)))
-                          (apply +)))
-       (apply +)
+       (reduce-kv #(+ %1 (->> %3
+                              (map-indexed (fn [li [_ lens]]
+                                             (* (inc %2) (inc li) lens)))
+                              (apply +)))
+                  0)
        (println "Part 2:")))
