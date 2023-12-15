@@ -5,7 +5,7 @@
 (defn HASH [s]
   (reduce #(mod (* (+ %1 (int %2)) 17) 256) 0 s))
 
-(defn HASMAP [boxes step]
+(defn HASHMAP [boxes step]
   (let [[_ label op lens] (re-find #"(\w+)([=-])(\d+)?" step)
         box (HASH label)]
     (case op
@@ -20,7 +20,7 @@
        (println "Part 1:"))
 
   (->> steps
-       (reduce HASMAP (vec (repeat 256 (ordered-map))))
+       (reduce HASHMAP (vec (repeat 256 (ordered-map))))
        (reduce-kv #(+ %1 (->> %3
                               (map-indexed (fn [li [_ lens]]
                                              (* (inc %2) (inc li) lens)))
