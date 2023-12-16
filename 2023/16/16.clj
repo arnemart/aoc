@@ -14,10 +14,8 @@
   (let [move (partial move y x)]
     (->>
      (match [dir (get-in grid [y x])]
-       [_ nil] []
-       [_ \.] [(move dir)]
-       [(:or :r :l) \-] [(move dir)]
-       [(:or :u :d) \|] [(move dir)]
+       [(:or :r :l) \|] [(move :u) (move :d)]
+       [(:or :u :d) \-] [(move :l) (move :r)]
        [:l \\] [(move :u)]
        [:r \/] [(move :u)]
        [:r \\] [(move :d)]
@@ -26,8 +24,7 @@
        [:d \/] [(move :l)]
        [:d \\] [(move :r)]
        [:u \/] [(move :r)]
-       [(:or :r :l) \|] [(move :u) (move :d)]
-       [(:or :u :d) \-] [(move :l) (move :r)])
+       :else [(move dir)])
      (filter (fn [[_ y x]]
                (and (<= 0 y (dec (count grid)))
                     (<= 0 x (dec (count (first grid))))))))))
