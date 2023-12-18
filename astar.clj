@@ -1,15 +1,17 @@
 (ns aoc.astar
   (:require [clojure.data.priority-map :refer [priority-map]]))
 
-(defn- reconstruct-path
-  ([node] (reconstruct-path node []))
-  ([node path]
-   (if (some? (:parent node))
-     (recur (:parent node) (conj path (:data node)))
-     (conj path (:data node)))))
+(defn- reconstruct-path [node]
+  (cons (:data node)
+        (when (some? (:parent node))
+          (lazy-seq (reconstruct-path (:parent node))))))
 
-(defn astar [& {:keys [start is-end get-neighbors calculate-cost heuristic hash]
-                :or {calculate-cost (fn [_ _] 1) heuristic (fn [_] 1) hash identity}}]
+(defn astar [& {:keys [start is-end get-neighbors calculate-cost heuristic hash validate-path]
+                :or {get-neighbors (fn [_] [])
+                     calculate-cost (fn [_ _] 1)
+                     heuristic (fn [_] 1)
+                     hash hash
+                     validate-path nil}}]
 
   (loop [closed-set #{}
          open-map {}
@@ -34,6 +36,10 @@
             [priorities open-map]
             (->> (get-neighbors (:data node))
                  (filter #(not (contains? closed-set (hash %))))
+                 ;; Validate path to this neighbor if we have a valid-path?-function to call
+                 (filter #(if (some? validate-path)
+                            (validate-path (reconstruct-path {:data % :parent node}))
+                            true))
                  (reduce
                   (fn [[priorities open-map] neighbor-data]
                     (let [neighbor-hash (hash neighbor-data)
@@ -57,4 +63,7 @@
                              (assoc open-map neighbor-hash new-neighbor-node)])))))
                   [priorities open-map]))]
 
-        (recur closed-set open-map (if (= 0 (count priorities)) priorities (pop priorities)) (first (peek priorities)))))))
+        (recur closed-set 
+               open-map
+               (if (= 0 (count priorities)) priorities (pop priorities))
+               (first (peek priorities)))))))
