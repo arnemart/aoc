@@ -7,7 +7,7 @@
        (map #(apply manhattan %))
        (apply +)))
 
-(defn dig2 [dug [dir dist]]
+(defn dig [dug [dir dist]]
   (let [[y x] (last dug)
         pos (case dir
               "U" [(- y dist) x]
@@ -61,7 +61,7 @@
 
 (defn dig-and-fill [input]
   (let [trench (->> input
-                    (reduce dig2 [[0 0]]))
+                    (reduce dig [[0 0]]))
         [min-y max-y] (->> trench (map first) (tee [#(apply min %) #(apply max %)]))
         y-list (->> trench
                     (partition 2 1)
