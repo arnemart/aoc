@@ -7,11 +7,9 @@
           (lazy-seq (reconstruct-path (:parent node))))))
 
 (defn astar [& {:keys [start is-end get-neighbors calculate-cost heuristic hash validate-path]
-                :or {get-neighbors (fn [_] [])
-                     calculate-cost (fn [_ _] 1)
+                :or {calculate-cost (fn [_ _] 1)
                      heuristic (fn [_] 1)
-                     hash hash
-                     validate-path nil}}]
+                     hash hash}}]
 
   (loop [closed-set #{}
          open-map {}
