@@ -43,6 +43,6 @@
                  (map parse-part))]
   (->> parts
        (filter (partial accepted workflows))
-       (map vals)
-       (map #(apply + %))
-       (apply +)))
+       (map #(apply + (vals %)))
+       (apply +)
+       (println "Part 1:")))
