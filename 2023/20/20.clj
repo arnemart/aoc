@@ -67,8 +67,7 @@
 
 (defn find-to [nodes to]
   (->> nodes
-       (filter #(contains? (set (get-in % [1 :to])) to))
-       (map first)))
+       (keep #(when (contains? (set (get-in % [1 :to])) to) (first %)))))
 
 (let [nodes (->> (read-input)
                  (map parse-node)
