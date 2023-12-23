@@ -3,11 +3,22 @@
             [clojure.math.combinatorics :as combo]))
 
 (defn add-to-stack [stack brick]
-  (->> brick
-       (reduce #(assoc-in %1 %2 brick) stack)))
+  (reduce #(assoc-in %1 %2 brick) stack brick))
+
+(defn remove-from-stack [stack brick]
+  (reduce #(assoc-in %1 %2 nil) stack brick))
 
 (defn down [[z y x]] [(dec z) y x])
 (defn up [[z y x]] [(inc z) y x])
+
+(defn bricks-near [where stack brick]
+  (->> (map where brick)
+       (keep #(get-in stack %))
+       (filter #(not= brick %))
+       set))
+
+(def bricks-above (partial bricks-near up))
+(def bricks-below (partial bricks-near down))
 
 (defn lower-brick [[stack bricks] brick]
   (loop [brick brick]
@@ -18,48 +29,28 @@
         [(add-to-stack stack brick) (conj bricks brick)]
         (recur next-brick)))))
 
-(defn bricks-above [stack brick]
-  (->> (map up brick)
-       (keep #(get-in stack %))
-       (filter #(not= brick %))
-       set))
-
-(defn bricks-below [stack brick]
-  (->> (map down brick)
-       (keep #(get-in stack %))
-       (filter #(not= brick %))
-       set))
-
-(defn supported-only-by [stack brick]
+(defn safe-to-zap [stack brick]
   (->> brick
        (bricks-above stack)
-       (filter #(->> %
-                     (bricks-below stack)
+       (every? #(->> (bricks-below stack %)
                      count
-                     (>= 1)))
-       set))
-
-(defn can-be-disintegrated [stack brick]
-  (= 0 (count (supported-only-by stack brick))))
-
-(defn remove-from-stack [stack brick]
-  (->> brick
-       (reduce #(assoc-in %1 %2 nil) stack)))
+                     (<= 2)))))
 
 (defn unsupported [stack brick]
   (and (> (first (first brick)) 1)
        (= 0 (count (bricks-below stack brick)))))
 
-(defn remove-unsupported [initial-stack initial-bricks brick]
-  (loop [stack (remove-from-stack initial-stack brick) bricks (set initial-bricks)]
-    (let [[next-stack next-bricks]
-          (reduce (fn [[s bs] b]
-                    (if (unsupported s b)
-                      [(remove-from-stack s b) (disj bs b)]
-                      [s bs])) [stack bricks] bricks)]
-      (if (= stack next-stack)
-        (- (count initial-bricks) (count bricks))
-        (recur next-stack next-bricks)))))
+(defn zap! [stack bricks]
+  (loop [stack stack to-remove bricks removed 0]
+    (let [stack (reduce remove-from-stack stack to-remove)
+          supported (->> to-remove
+                         (mapcat (partial bricks-above stack))
+                         set
+                         (filter (partial unsupported stack)))
+          removed (+ removed (count supported))]
+      (if (empty? supported)
+        removed
+        (recur stack supported removed)))))
 
 (let [bricks (->> (read-input)
                   (map split-to-ints)
@@ -72,11 +63,11 @@
                           (reduce lower-brick [{} []]))]
 
   (->> bricks
-       (filter (partial can-be-disintegrated stack))
+       (filter (partial safe-to-zap stack))
        count
        (println "Part 1:"))
 
   (->> bricks
-       (map (partial remove-unsupported stack bricks))
+       (map #(zap! stack [%]))
        (apply +)
        (println "Part 2:")))
