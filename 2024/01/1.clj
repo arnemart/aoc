@@ -1,14 +1,11 @@
-(ns aoc.2024.01.1 
+(ns aoc.2024.01.1
   (:require
-   [aoc.common :refer [read-input zip]]
-   [clojure.string :as str]))
+   [aoc.common :refer [read-input split-to-ints zip]]))
 
 (let [[list1 list2] (->> (read-input)
-                         (map #(str/split % #"\s+"))
+                         (map split-to-ints)
                          (apply zip)
-                         (map #(->> %
-                                    (map parse-long)
-                                    sort)))
+                         (map sort))
       diff (->> [list1 list2]
                 (apply zip)
                 (map #(abs (apply - %))) 

@@ -1,6 +1,7 @@
 {:paths ["."]
  :deps
  {org.clojure/clojure {:mvn/version "1.11.1"}
+  medley/medley {:mvn/version "1.4.0"}
   org.clojure/math.combinatorics {:mvn/version "0.2.0"}
   org.clojure/core.async {:mvn/version "1.6.681"}
   org.clojure/math.numeric-tower {:mvn/version "0.0.5"}

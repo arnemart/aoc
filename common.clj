@@ -47,13 +47,6 @@
                 :start (. m start)
                 :end (. m end)} (lazy-seq (step))))))))
 
-(defn take-until [pred coll]
-  (lazy-seq
-   (when-let [[f & r] (seq coll)]
-     (if (pred f)
-       [f]
-       (cons f (take-until pred r))))))
-
 (defn numeric? [s] (re-matches #"\-?\d+" s))
 
 (defn find-index [f coll]

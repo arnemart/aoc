@@ -1,7 +1,8 @@
 (ns aoc.2022.08.8
-  (:require [aoc.common :refer [count-where read-input take-until]]
+  (:require [aoc.common :refer [count-where read-input]]
             [clojure.math.combinatorics :as combo]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [medley.core :refer [take-upto]]))
 
 (defn trees-in-all-directions [y x h w forest]
   [(->> (range x) (map #(get-in forest [y %])) reverse)
@@ -16,7 +17,7 @@
 
 (defn scenic-score [[y x] h w forest]
   (->> (trees-in-all-directions y x h w forest)
-       (map (fn [trees] (take-until #(>= % (get-in forest [y x])) trees)))
+       (map (fn [trees] (take-upto #(>= % (get-in forest [y x])) trees)))
        (map count)
        (apply *)))
 
