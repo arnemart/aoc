@@ -1,2 +1,5 @@
-a,b=[sorted(l[n]for l in[list(map(int,s.split()))for s in open("a")])for n in(0,1)]
+l=[int(x)for x in open("a").read().split()]
+s=sorted
+a=s(l[::2])
+b=s(l[1::2])
 print(sum((abs(x-y))for x,y in zip(a,b)),sum(x*b.count(x)for x in a))
