@@ -1,11 +1,11 @@
 (ns aoc.2024.01.1
   (:require
    [aoc.common :refer [parse-input zip]]
-   [blancas.kern.core :refer [<*> dec-num many skip-ws]]))
+   [blancas.kern.core :refer [<$> <*> dec-num many skip-ws]]))
 
-(let [[list1 list2] (->> (parse-input (many (<*> (skip-ws dec-num) (skip-ws dec-num))))
-                         (apply zip)
-                         (map sort))
+(let [[list1 list2] (parse-input
+                     (<$> #(->> % (apply zip) (map sort))
+                          (many (<*> (skip-ws dec-num) (skip-ws dec-num)))))
       diff (->> [list1 list2]
                 (apply zip)
                 (map #(abs (apply - %)))
