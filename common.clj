@@ -1,18 +1,27 @@
 (ns aoc.common
-  (:require [clojure.java.io :refer [file]]
-            [clojure.pprint :refer [pprint]]
-            [clojure.string :as str]))
+  (:require
+   [blancas.kern.core :as kern]
+   [clojure.java.io :refer [file]]
+   [clojure.pprint :refer [pprint]]
+   [clojure.string :as str]))
+
+(defn read-input-str [& {:keys [test use-test] :or {test nil use-test true}}]
+  (if (and use-test (some? test))
+    test
+    (-> *file*
+        file
+        .getParent
+        (file "input.txt")
+        slurp)))
 
 (defn read-input [& {:keys [split-with test use-test] :or {split-with #"\n" test nil use-test true}}]
   (->
-   (if (and use-test (some? test))
-     test
-     (-> *file*
-         file
-         .getParent
-         (file "input.txt")
-         slurp))
+   (read-input-str :test test :use-test use-test)
    (str/split split-with)))
+
+(defn parse-input [parser & {:keys [test use-test] :or {test nil use-test true}}] 
+  (kern/value parser
+   (read-input-str :test test :use-test use-test)))
 
 (defn split-to-ints [s]
   (->> s
