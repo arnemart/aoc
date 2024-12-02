@@ -6,12 +6,8 @@
 (defn safe [report]
   (let [diffs (->> (zip report (drop 1 report))
                    (map (fn [[a b]] (- b a))))]
-    (and
-     (or (every? pos? diffs)
-         (every? neg? diffs))
-     (->> diffs
-          (map abs)
-          (every? #(<= % 3))))))
+    (or (every? #(<= 1 % 3) diffs)
+        (every? #(>= -1 % -3) diffs))))
 
 (defn safe2 [report]
   (or (safe report)
@@ -25,4 +21,3 @@
   
   (println "Part 1:" (count super-safe))
   (println "Part 2:" (count somewhat-safe)))
-
