@@ -1,14 +1,13 @@
 (ns aoc.2024.02.2 
   (:require
-   [aoc.common :refer [parse-input remove-index zip]]
+   [aoc.common :refer [parse-input remove-index]]
    [blancas.kern.core :refer [dec-num new-line* sep-by space]]))
 
 (defn safe [report]
-  (let [diffs (->> report
-                   (zip (drop 1 report))
-                   (map #(apply - %)))]
+  (let [diffs (map - report (drop 1 report))]
     (or (every? #(<= 1 % 3) diffs)
         (every? #(>= -1 % -3) diffs))))
+
 
 (defn safe2 [report]
   (or (safe report)
