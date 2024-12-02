@@ -1,6 +1,7 @@
 (ns aoc.common
   (:require
-   [blancas.kern.core :as kern]
+   [blancas.kern.core :as kern :refer [<*> dec-num many new-line* optional
+                                       sep-by space sym*]]
    [clojure.java.io :refer [file]]
    [clojure.pprint :refer [pprint]]
    [clojure.string :as str]))
@@ -22,6 +23,10 @@
 (defn parse-input [parser & {:keys [test use-test] :or {test nil use-test true}}] 
   (kern/value parser
    (read-input-str :test test :use-test use-test)))
+
+(defn lines [p] (sep-by new-line* p))
+(defn comma-or-space-sep [p] (sep-by (<*> (optional (sym* \,)) (many space)) p))
+(def nums (comma-or-space-sep dec-num))
 
 (defn split-to-ints [s]
   (->> s
