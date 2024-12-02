@@ -1,21 +1,32 @@
 (ns aoc.2022.11.11
-  (:require [aoc.common :refer [read-input]]
-            [clojure.string :as str]))
- 
-(defn parse-monkey [s]
-  {:items (as-> (re-find #"items: ([\d, ]+)" s) v
-            (last v)
-            (str/split v #", ")
-            (mapv parse-long v))
-   :op (let [[_ o v] (re-find #"new = old ([\*\+]) (\w+)" s)
-             op (get {"*" * "+" +} o)]
-         (if-let [v (parse-long v)]
-           #(op % v)
-           #(op % %)))
-   :test (-> (re-find #"divisible by (\d+)" s) last parse-long)
-   :if {true (-> (re-find #"true: throw to monkey (\d+)" s) last parse-long)
-        false (-> (re-find #"false: throw to monkey (\d+)" s) last parse-long)}
-   :inspections 0}) 
+  (:require
+   [aoc.common :refer [nums parse-input]]
+   [blancas.kern.core :refer [<$> <|> >> bind dec-num return sep-by skip-ws
+                              token*]]))
+
+(def monkey-parser
+  (sep-by (token* "\n\n")
+          (bind [id (>> (token* "Monkey")
+                        (skip-ws dec-num))
+                 items (>> (token* ":")
+                           (skip-ws (token* "Starting items: "))
+                           nums)
+                 op (>> (skip-ws (token* "Operation: new = old"))
+                        (<$> #(eval (read-string %)) (skip-ws (<|> (token* "+") (token* "*")))))
+                 op-by (skip-ws (<|> dec-num (token* "old")))
+                 test (>> (skip-ws (token* "Test: divisible by"))
+                          (skip-ws dec-num))
+                 if-true (>> (skip-ws (token* "If true: throw to monkey"))
+                             (skip-ws dec-num))
+                 if-false (>> (skip-ws (token* "If false: throw to monkey"))
+                              (skip-ws dec-num))]
+                (return {:id id :items items
+                         :op (if (number? op-by)
+                               #(op % op-by)
+                               #(op % %))
+                         :test test
+                         :if {true if-true false if-false}
+                         :inspections 0}))))
 
 (defn step [manage-worry monkeys i]
   (let [monkey (nth monkeys i)]
@@ -42,8 +53,7 @@
        (take 2)
        (apply *)))
 
-(let [monkeys (->> (read-input :split-with #"\n\n")
-                   (mapv parse-monkey))
+(let [monkeys (parse-input monkey-parser)
       tests (->> monkeys
                  (map :test)
                  (apply *))]
