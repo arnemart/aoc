@@ -5,7 +5,7 @@
 
 (defn safe [report]
   (let [diffs (->> (zip report (drop 1 report))
-                   (mapv (fn [[a b]] (- b a))))]
+                   (map (fn [[a b]] (- b a))))]
     (and
      (or (every? pos? diffs)
          (every? neg? diffs))
@@ -19,14 +19,10 @@
            (map #(into (subvec report 0 %) (subvec report (inc %))))
            (some safe))))
 
-(let [reports (parse-input (sep-by new-line* (sep-by space dec-num)))]
-  (->> reports
-       (filter safe)
-       count
-       (println "Part 1:"))
-
-  (->> reports
-       (filter safe2)
-       count
-       (println "Part 2:")))
+(let [reports (parse-input (sep-by new-line* (sep-by space dec-num)))
+      somewhat-safe (filter safe2 reports)
+      super-safe (filter safe somewhat-safe)]
+  
+  (println "Part 1:" (count super-safe))
+  (println "Part 2:" (count somewhat-safe)))
 
