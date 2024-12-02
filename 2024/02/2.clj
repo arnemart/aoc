@@ -8,9 +8,10 @@
         (every? #(>= -1 % -3) diffs))))
 
 (defn safe-but-one [report]
-  (->> (range (count report))
-       (map #(remove-index report %))
-       (some safe)))
+  (or (safe report)
+      (->> (range (count report))
+           (map #(remove-index report %))
+           (some safe))))
 
 (let [reports (parse-input (lines nums))
       somewhat-safe (filter safe-but-one reports)

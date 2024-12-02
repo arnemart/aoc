@@ -51,8 +51,8 @@
 (defn sum [& lists]
   (apply + 0 (filter some? (flatten lists))))
 
-(defn remove-index [l p]
-  (into (subvec l 0 p) (subvec l (inc p))))
+(defn remove-index [vect idx]
+  (into (subvec vect 0 idx) (subvec vect (inc idx))))
 
 (defn spy [v] (pprint v) v)
 
