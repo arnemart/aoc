@@ -4,8 +4,9 @@
    [blancas.kern.core :refer [dec-num new-line* sep-by space]]))
 
 (defn safe [report]
-  (let [diffs (->> (zip report (drop 1 report))
-                   (map (fn [[a b]] (- b a))))]
+  (let [diffs (->> report
+                   (zip (drop 1 report))
+                   (map #(apply - %)))]
     (or (every? #(<= 1 % 3) diffs)
         (every? #(>= -1 % -3) diffs))))
 
