@@ -46,6 +46,9 @@
 (defn sum [& lists]
   (apply + 0 (filter some? (flatten lists))))
 
+(defn remove-index [l p]
+  (into (subvec l 0 p) (subvec l (inc p))))
+
 (defn spy [v] (pprint v) v)
 
 (defn re-seq-indexed [pattern string]

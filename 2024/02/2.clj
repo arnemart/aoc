@@ -1,6 +1,6 @@
 (ns aoc.2024.02.2 
   (:require
-   [aoc.common :refer [parse-input zip]]
+   [aoc.common :refer [parse-input remove-index zip]]
    [blancas.kern.core :refer [dec-num new-line* sep-by space]]))
 
 (defn safe [report]
@@ -13,7 +13,7 @@
 (defn safe2 [report]
   (or (safe report)
       (->> (range (count report))
-           (map #(into (subvec report 0 %) (subvec report (inc %))))
+           (map #(remove-index report %))
            (some safe))))
 
 (let [reports (parse-input (sep-by new-line* (sep-by space dec-num)))
