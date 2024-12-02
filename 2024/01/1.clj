@@ -1,9 +1,8 @@
 (ns aoc.2024.01.1
   (:require
-   [aoc.common :refer [parse-input zip]]
-   [blancas.kern.core :refer [<*> dec-num new-line* sep-by skip-ws]]))
+   [aoc.common :refer [lines nums parse-input zip]]))
 
-(let [[list1 list2] (->> (parse-input (sep-by new-line* (<*> dec-num (skip-ws dec-num))))
+(let [[list1 list2] (->> (parse-input (lines nums))
                          (apply zip)
                          (map sort))
       diff (->> [list1 list2]
