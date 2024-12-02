@@ -8,7 +8,6 @@
     (or (every? #(<= 1 % 3) diffs)
         (every? #(>= -1 % -3) diffs))))
 
-
 (defn safe2 [report]
   (or (safe report)
       (->> (range (count report))
