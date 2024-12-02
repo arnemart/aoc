@@ -8,14 +8,13 @@
     (or (every? #(<= 1 % 3) diffs)
         (every? #(>= -1 % -3) diffs))))
 
-(defn safe2 [report]
-  (or (safe report)
-      (->> (range (count report))
-           (map #(remove-index report %))
-           (some safe))))
+(defn safe-but-one [report]
+  (->> (range (count report))
+       (map #(remove-index report %))
+       (some safe)))
 
 (let [reports (parse-input (sep-by new-line* (sep-by space dec-num)))
-      somewhat-safe (filter safe2 reports)
+      somewhat-safe (filter safe-but-one reports)
       super-safe (filter safe somewhat-safe)]
   
   (println "Part 1:" (count super-safe))
