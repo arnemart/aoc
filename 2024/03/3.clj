@@ -6,7 +6,7 @@
 (defn mul-all [s]
   (->> s
        (re-seq #"mul\((\d+),(\d+)\)")
-       (map (fn [[_ a b]] (* (parse-long a) (parse-long b))))
+       (map #(->> % (drop 1) (map parse-long) (apply *)))
        (apply +)))
 
 (let [input (read-input-str)]
@@ -14,4 +14,3 @@
   (println "Part 2:" (-> input
                          (str/replace #"(?s)don't\(\).*?do\(\)" "")
                          mul-all)))
-
