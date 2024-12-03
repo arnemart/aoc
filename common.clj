@@ -20,9 +20,9 @@
    (read-input-str :test test :use-test use-test)
    (str/split split-with)))
 
-(defn parse-input [parser & {:keys [test use-test] :or {test nil use-test true}}] 
+(defn parse-input [parser & {:keys [test use-test state] :or {test nil use-test true state {}}}] 
   (kern/value parser
-   (read-input-str :test test :use-test use-test)))
+   (read-input-str :test test :use-test use-test) nil state))
 
 (defn lines [p] (sep-by new-line* p))
 (defn comma-or-space-sep [p] (sep-by (<*> (optional (sym* \,)) (many1 space)) p))
