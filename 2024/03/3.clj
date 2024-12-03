@@ -6,10 +6,8 @@
 
 (def mul (bind [_ (token* "mul")
                 n (between (sym* \() (sym* \)) nums)
-                state get-state]
-               (if (:skip state)
-                 (return nil)
-                 (return n))))
+                {skip :skip} get-state]
+               (return (if skip nil n))))
 
 (def dont (bind [_ (token* "don't()")
                  _ (modify-state assoc :skip true)] (return nil)))
