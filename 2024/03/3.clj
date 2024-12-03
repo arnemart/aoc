@@ -1,18 +1,18 @@
 (ns aoc.2024.03.3
   (:require
    [aoc.common :refer [nums parse-input]]
-   [blancas.kern.core :refer [<|> between bind get-state many modify-state
-                              return search sym* token*]]))
+   [blancas.kern.core :refer [<|> bind get-state many modify-state return search]]
+   [blancas.kern.lexer.basic :refer [parens token]]))
 
-(def mul (bind [_ (token* "mul")
-                n (between (sym* \() (sym* \)) nums)
+(def mul (bind [_ (token "mul")
+                n (parens nums)
                 {skip :skip} get-state]
                (return (if skip nil n))))
 
-(def dont (bind [_ (token* "don't()")
+(def dont (bind [_ (token "don't()")
                  _ (modify-state assoc :skip true)] (return nil)))
 
-(def do (bind [_ (token* "do()")
+(def do (bind [_ (token "do()")
                _ (modify-state assoc :skip false)] (return nil)))
 
 (defn mulsum [l]
