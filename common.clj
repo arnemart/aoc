@@ -1,7 +1,7 @@
 (ns aoc.common
   (:require
-   [blancas.kern.core :as kern :refer [<*> dec-num many1 new-line* optional
-                                       sep-by space sym*]]
+   [blancas.kern.core :as kern :refer [<*> <|> dec-num many1 new-line*
+                                       optional sep-by space sym*]]
    [clojure.java.io :refer [file]]
    [clojure.pprint :refer [pprint]]
    [clojure.string :as str]))
@@ -25,7 +25,7 @@
    (read-input-str :test test :use-test use-test) nil state))
 
 (defn lines [p] (sep-by new-line* p))
-(defn comma-or-space-sep [p] (sep-by (<*> (optional (sym* \,)) (many1 space)) p))
+(defn comma-or-space-sep [p] (sep-by (<|> (sym* \,) (many1 space) (<*> (optional (sym* \,)) (many1 space))) p))
 (def nums (comma-or-space-sep dec-num))
 
 (defn split-to-ints [s]

@@ -1,18 +1,15 @@
 (ns aoc.2024.03.3
   (:require
-   [aoc.common :refer [parse-input]]
-   [blancas.kern.core :refer [<|> bind dec-num get-state many modify-state
+   [aoc.common :refer [nums parse-input]]
+   [blancas.kern.core :refer [<|> between bind get-state many modify-state
                               return search sym* token*]]))
 
-(def mul (bind [_ (token* "mul(")
-                n1 dec-num
-                _ (sym* \,)
-                n2 dec-num
-                _ (sym* \))
+(def mul (bind [_ (token* "mul")
+                n (between (sym* \() (sym* \)) nums)
                 state get-state]
                (if (:skip state)
                  (return nil)
-                 (return [n1 n2]))))
+                 (return n))))
 
 (def dont (bind [_ (token* "don't()")
                  _ (modify-state assoc :skip true)] (return nil)))
