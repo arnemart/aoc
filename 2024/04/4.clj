@@ -44,7 +44,6 @@
        (println "Part 1:"))
 
   (->> as
-       (map (partial find-x-mas grid)) 
-       (filter true?)
+       (filter (partial find-x-mas grid)) 
        count
        (println "Part 2:")))
