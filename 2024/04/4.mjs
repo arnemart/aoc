@@ -2,7 +2,8 @@ import { readFileSync } from 'fs'
 
 const input = readFileSync('./input.txt').toString()
 
-const r = fn => [...Array(input.split('\n')[0].length)].map(fn)
+const w = input.split('\n')[0].length
+const r = fn => [...Array(w)].map(fn)
 
 const regs1 = [
   'XMAS',
