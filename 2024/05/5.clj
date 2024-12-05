@@ -13,7 +13,7 @@
   (nth l (math/floor (/ (count l) 2))))
 
 (defn groups [l]
-  (reduce #(assoc %1 (first %2) (conj (get %1 (first %2) #{}) (last %2))) {} l))
+  (reduce (fn [m [a b]] (assoc m a (conj (get m a #{}) b))) {} l))
 
 (let [[rules updates] (parse-input (<*> (<$> groups (many-till (<< (sep-by1 (sym* \|) dec-num) new-line*) new-line*))
                                         (lines nums)))
