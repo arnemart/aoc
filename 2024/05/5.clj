@@ -24,7 +24,7 @@
        (println "Part 1:"))
 
   (->> not-ordered
-       (map #(sort (fn [a b] (in-order rules [b a])) %))
+       (map #(sort (fn [a b] (in-order rules [a b])) %))
        (map middle)
        (apply +)
        (println "Part 2:")))
