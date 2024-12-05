@@ -14,8 +14,7 @@
 (defn middle [l]
   (nth l (math/floor (/ (count l) 2))))
 
-
-(let [[rules updates] (parse-input (<*> (many-till (<< (sep-by1 (sym* \|) dec-num) new-line*) new-line*) 
+(let [[rules updates] (parse-input (<*> (many-till (<< (sep-by1 (sym* \|) dec-num) new-line*) new-line*)
                                         (lines nums)))
       {ordered true not-ordered false} (group-by (partial in-order rules) updates)]
 
