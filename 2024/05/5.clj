@@ -7,13 +7,10 @@
 
 (defn in-order [rules update]
   (let [s (set update)]
-    (->> rules
-         (every? (fn [[a b]] (or (or (not (contains? s a))
-                                     (not (contains? s b)))
-                                 (< (.indexOf update a) (.indexOf update b))))))))
-
-(defn order [rules update]
-  (sort #(in-order rules [%1 %2]) update))
+    (every? (fn [[a b]] (or (or (not (contains? s a))
+                                (not (contains? s b)))
+                            (< (.indexOf update a) (.indexOf update b))))
+            rules)))
 
 (defn middle [l]
   (nth l (math/floor (/ (count l) 2))))
@@ -29,7 +26,7 @@
        (println "Part 1:"))
   
   (->> not-ordered
-       (map (partial order rules))
+       (map #(sort (fn [a b] (in-order rules [b a])) %))
        (map middle)
        (apply +)
        (println "Part 2:")))
