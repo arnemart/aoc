@@ -1,9 +1,8 @@
-(ns aoc.2024.05.5 
+(ns aoc.2024.05.5
   (:require
-   [aoc.common :refer [lines nums read-input-str]]
-   [blancas.kern.core :refer [dec-num sep-by1 sym* value]]
-   [clojure.math :as math]
-   [clojure.string :as str]))
+   [aoc.common :refer [lines nums parse-input]]
+   [blancas.kern.core :refer [<*> << dec-num many-till new-line* sep-by1 sym*]]
+   [clojure.math :as math]))
 
 (defn in-order [rules update]
   (let [s (set update)]
@@ -15,16 +14,16 @@
 (defn middle [l]
   (nth l (math/floor (/ (count l) 2))))
 
-(let [[rules-str updates-str] (str/split (read-input-str) #"\n\n")
-      rules (value (lines (sep-by1 (sym* \|) dec-num)) rules-str)
-      updates (value (lines nums) updates-str)
-      { ordered true not-ordered false} (group-by (partial in-order rules) updates)]
-  
+
+(let [[rules updates] (parse-input (<*> (many-till (<< (sep-by1 (sym* \|) dec-num) new-line*) new-line*) 
+                                        (lines nums)))
+      {ordered true not-ordered false} (group-by (partial in-order rules) updates)]
+
   (->> ordered
        (map middle)
        (apply +)
        (println "Part 1:"))
-  
+
   (->> not-ordered
        (map #(sort (fn [a b] (in-order rules [b a])) %))
        (map middle)
