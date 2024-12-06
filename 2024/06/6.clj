@@ -40,7 +40,7 @@
                 (take-while some?)
                 (map drop-last)
                 set)]
-  
+
   (println "Part 1:" (count path))
 
   (->> path
