@@ -1,21 +1,18 @@
 (ns aoc.2024.05.5
   (:require
-   [aoc.common :refer [lines nums parse-input]]
+   [aoc.common :refer [group-pairs lines nums parse-input]]
    [blancas.kern.core :refer [<$> <*> << dec-num many-till new-line* sep-by1 sym*]]
    [clojure.math :as math]))
 
 (defn in-order [rules update]
   (->> update
        (partition 2 1)
-       (every? (fn [[a b]] (contains? (get rules a) b)))))
+       (every? #(get-in rules %))))
 
 (defn middle [l]
   (nth l (math/floor (/ (count l) 2))))
 
-(defn groups [l]
-  (reduce (fn [m [a b]] (assoc m a (conj (get m a #{}) b))) {} l))
-
-(let [[rules updates] (parse-input (<*> (<$> groups (many-till (<< (sep-by1 (sym* \|) dec-num) new-line*) new-line*))
+(let [[rules updates] (parse-input (<*> (<$> group-pairs (many-till (<< (sep-by1 (sym* \|) dec-num) new-line*) new-line*))
                                         (lines nums)))
       {ordered true not-ordered false} (group-by (partial in-order rules) updates)]
 
