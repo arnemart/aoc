@@ -1,7 +1,7 @@
 (ns aoc.2024.06.6
   (:require
-   [aoc.common :refer [group-pairs parse-input]]
-   [blancas.kern.core :refer [<$> <|> bind get-position many new-line* return sym*]]))
+   [aoc.common :refer [parse-input]]
+   [blancas.kern.core :refer [<|> bind get-position many new-line* return sym*]]))
 
 (def delta {\^ [-1 0] \> [0 1] \v [1 0] \< [0 -1]})
 (def next-dir {\^ \> \> \v \v \< \< \^})
@@ -21,26 +21,26 @@
       (contains? visited guard) true
       :else (recur (step lab w h guard) (conj visited guard)))))
 
-(let [items (parse-input
-             (<$> (partial filter some?)
-                  (many (bind [s (<|> (sym* \.) (sym* \#) (sym* \^) new-line*)
-                               p get-position]
-                              (return (cond (= s \#) [(dec (:line p)) (- (:col p) 2)]
-                                            (= s \^) [(dec (:line p)) (- (:col p) 2) s]
-                                            :else nil))))))
-      guard (->> items
-                 (filter #(= 3 (count %)))
-                 first)
-      lab (->> items
-               (filter #(= 2 (count %)))
-               group-pairs)
-      w (->> items (map #(nth % 1)) (apply max))
-      h (->> items (map first) (apply max))
+(let [{lab :lab guard :guard w :w h :h}
+      (->> (parse-input
+            (many (bind [s (<|> (sym* \.) (sym* \#) (sym* \^) new-line*)
+                         p get-position]
+                        (return (cond (= s \#) [(dec (:line p)) (- (:col p) 2)]
+                                      (= s \^) [(dec (:line p)) (- (:col p) 2) s]
+                                      :else nil)))))
+           (filter some?)
+           (reduce (fn [d [y x g]]
+                     (assoc
+                      (if (some? g) (assoc d :guard [y x g])
+                          (assoc-in d [:lab y x] true))
+                      :w (max (:w d) y)
+                      :h (max (:h d) x)))
+                   {:lab {} :guard nil :w 0 :h 0}))
       path (->> (iterate (partial step lab w h) guard)
                 (take-while some?)
                 (map drop-last)
                 set)]
-
+  
   (println "Part 1:" (count path))
 
   (->> path
