@@ -1,14 +1,13 @@
 (ns aoc.2024.06.6
   (:require
-   [aoc.common :refer [group-pairs lines parse-input]]
-   [blancas.kern.core :refer [<|> bind get-position many return sym*]]
-   [clojure.math.combinatorics :refer [cartesian-product]]))
+   [aoc.common :refer [group-pairs parse-input]]
+   [blancas.kern.core :refer [<$> <|> bind get-position many new-line* return sym*]]))
 
-(def dirs {\^ [-1 0] \> [0 1] \v [1 0] \< [0 -1]})
+(def delta {\^ [-1 0] \> [0 1] \v [1 0] \< [0 -1]})
 (def next-dir {\^ \> \> \v \v \< \< \^})
 
 (defn step [lab w h [y x dir]]
-  (let [[dy dx] (get dirs dir)
+  (let [[dy dx] (get delta dir)
         ny (+ y dy)
         nx (+ x dx)]
     (cond (or (< ny 0) (< nx 0) (> ny h) (> nx w)) nil
@@ -16,23 +15,19 @@
           :else [ny nx dir])))
 
 (defn loops? [w h guard lab]
-  (let [step (partial step lab w h)]
-    (loop [guard guard visited #{}]
-      (let [next-guard (step guard)]
-        (cond
-          (nil? next-guard) false
-          (contains? visited next-guard) true
-          :else (recur next-guard (conj visited next-guard)))))))
+  (loop [guard guard visited #{}]
+    (cond
+      (nil? guard) false
+      (contains? visited guard) true
+      :else (recur (step lab w h guard) (conj visited guard)))))
 
-(let [items (->> (parse-input
-                  (lines (many (bind [s (<|> (sym* \.) (sym* \#) (sym* \^))
-                                      p get-position]
-                                     (return (cond
-                                               (= s \#) [(dec (:line p)) (- (:col p) 2)]
-                                               (= s \^) [(dec (:line p)) (- (:col p) 2) s]
-                                               :else nil))))))
-                 (apply concat)
-                 (filter some?))
+(let [items (parse-input
+             (<$> (partial filter some?)
+                  (many (bind [s (<|> (sym* \.) (sym* \#) (sym* \^) new-line*)
+                               p get-position]
+                              (return (cond (= s \#) [(dec (:line p)) (- (:col p) 2)]
+                                            (= s \^) [(dec (:line p)) (- (:col p) 2) s]
+                                            :else nil))))))
       guard (->> items
                  (filter #(= 3 (count %)))
                  first)
@@ -40,18 +35,17 @@
                (filter #(= 2 (count %)))
                group-pairs)
       w (->> items (map #(nth % 1)) (apply max))
-      h (->> items (map first) (apply max))]
+      h (->> items (map first) (apply max))
+      path (->> (iterate (partial step lab w h) guard)
+                (take-while some?)
+                (map drop-last)
+                set)]
 
-  (->> (iterate (partial step lab w h) guard)
-       (take-while some?)
-       (map drop-last)
-       set
-       count
-       (println "Part 1:"))
+  (println "Part 1:" (count path))
 
-  (->> (cartesian-product (range (inc h)) (range (inc w)))
-       (filter #(not (get-in lab %)))
-       (map (fn [[y x]] (assoc-in lab [y x] true)))
+  (->> path
+       (filter #(not= (drop-last guard) %))
+       (map #(assoc-in lab % true))
        (filter (partial loops? w h guard))
        count
        (println "Part 2:")))
