@@ -1,6 +1,6 @@
 (ns aoc.2024.04.4 
   (:require
-   [aoc.common :refer [lines parse-input]]
+   [aoc.common :refer [++ lines parse-input]]
    [blancas.kern.core :refer [<$> letter many]]
    [clojure.math.combinatorics :refer [cartesian-product]]))
 
@@ -10,11 +10,11 @@
     (->> (cartesian-product (range h) (range w))
          (filter #(= letter (get-in grid %))))))
 
-(defn find-in-grid [grid y x c dy dx]
-  (= c (get-in grid [(+ y dy) (+ x dx)])))
+(defn find-in-grid [grid p c dx dy]
+  (= c (get-in grid (++ p [dx dy]))))
 
-(defn find-xmas [grid [y x]]
-  (let [🎅 (partial find-in-grid grid y x)]
+(defn find-xmas [grid p]
+  (let [🎅 (partial find-in-grid grid p)]
     (->>
      [(and (🎅 :M  0  1) (🎅 :A  0  2) (🎅 :S  0  3)) ; e
       (and (🎅 :M  1  1) (🎅 :A  2  2) (🎅 :S  3  3)) ; se
@@ -27,8 +27,8 @@
      (filter true?)
      count)))
 
-(defn find-x-mas [grid [y x]]
-  (let [🤶 (partial find-in-grid grid y x)]
+(defn find-x-mas [grid p]
+  (let [🤶 (partial find-in-grid grid p)]
     (and (or (and (🤶 :M -1 -1) (🤶 :S  1  1))
              (and (🤶 :M  1  1) (🤶 :S -1 -1)))
          (or (and (🤶 :M  1 -1) (🤶 :S -1  1))

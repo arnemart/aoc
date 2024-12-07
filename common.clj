@@ -45,6 +45,12 @@
 (defn sum [& lists]
   (apply + 0 (filter some? (flatten lists))))
 
+(defn ++ [a b]
+  (cond (and (number? a) (number? b)) (+ a b)
+        (and (number? a) (seqable? b)) (->> b (map #(+ a %)))
+        (and (seqable? a) (number? b)) (->> a (map #(+ b %)))
+        :else (->> (zip a b) (map #(apply + %)))))
+
 (defn remove-index [vect idx]
   (into (subvec vect 0 idx) (subvec vect (inc idx))))
 
