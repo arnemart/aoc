@@ -6,7 +6,7 @@
 
 (defn do-ops [ops [initial & vals]]
   (->> (zip ops vals)
-       (reduce-right (fn [[op val] result]
+       (reduce-right (fn [result [op val]]
                        (op result val)) initial)))
 
 (defn possible [ops [sum vals]]
