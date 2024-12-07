@@ -40,14 +40,12 @@
 (defn zip [& lists]
   (apply map (conj lists vector)))
 
-(defn flip [f] (fn [a b] (f b a)))
-
 (defn reduce-right
   ([f v vs]
    (loop [v v vs vs]
      (if (empty? vs)
        v
-       (recur (f v (first vs)) (rest vs)))))
+       (recur (f (first vs) v) (rest vs)))))
   ([f [v & vs]]
    (reduce-right f v vs)))
 
