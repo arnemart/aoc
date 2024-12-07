@@ -28,4 +28,4 @@
   (->> possible-part-2
        (map first)
        (apply +)
-       (println "Part 1:")))
+       (println "Part 2:")))
