@@ -25,8 +25,7 @@
                     (filter #(and (not= \newline (first %)) (not= \. (first %))))
                     (reduce (fn [m [a b]] (assoc m a (conj (get m a #{}) b))) {})
                     vals)
-      w (->> points (map last) (map last) (apply max))
-      h (->> points (map last) (map first) (apply max))]
+      [h w] (last (last points))]
 
   (->> antennae
        (reduce (partial find-antipodes w h 1 1) #{})
