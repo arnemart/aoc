@@ -51,6 +51,9 @@
         (and (seqable? a) (number? b)) (->> a (map #(+ b %)))
         :else (->> (zip a b) (map #(apply + %)))))
 
+(defn -- [a b]
+  (++ a (if (number? b) (- b) (map - b))))
+
 (defn remove-index [vect idx]
   (into (subvec vect 0 idx) (subvec vect (inc idx))))
 
@@ -79,6 +82,3 @@
   (->> (zip p1 p2)
        (map (fn [[v1 v2]] (abs (- v1 v2))))
        sum))
-
-(defn group-pairs [l]
-  (reduce (fn [m [a b]] (assoc-in m [a b] true)) {} l))
