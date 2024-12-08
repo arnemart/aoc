@@ -1,7 +1,8 @@
 (ns aoc.common
   (:require
-   [blancas.kern.core :refer [<*> <|> dec-num many many1 new-line* optional
-                              sep-by space sym* value]]
+   [blancas.kern.core :refer [<$> <*> <|> any-char bind dec-num get-position
+                              many many1 new-line* optional return sep-by
+                              space sym* value]]
    [clojure.java.io :refer [file]]
    [clojure.pprint :refer [pprint]]
    [clojure.string :as str]))
@@ -23,11 +24,6 @@
 (defn parse-input [parser & {:keys [test use-test state] :or {test nil use-test true state {}}}] 
   (value parser
    (read-input-str :test test :use-test use-test) nil state))
-
-(defn lines [p] (sep-by new-line* p))
-(defn comma-or-space-sep [p] (sep-by (<|> (<*> (sym* \,) (many space)) 
-                                          (<*> (optional (sym* \,)) (many1 space))) p))
-(def nums (comma-or-space-sep dec-num))
 
 (defn split-to-ints [s]
   (->> s
@@ -82,3 +78,13 @@
   (->> (zip p1 p2)
        (map (fn [[v1 v2]] (abs (- v1 v2))))
        sum))
+
+;; Parsers
+(defn lines [p] (sep-by new-line* p))
+(defn comma-or-space-sep [p] (sep-by (<|> (<*> (sym* \,) (many space)) 
+                                          (<*> (optional (sym* \,)) (many1 space))) p))
+(def nums (comma-or-space-sep dec-num))
+(def points (<$> #(filter (fn [v] (not= \newline (first v))) %)
+                 (many (bind [s any-char
+                              p get-position]
+                             (return [s (++ [(:line p) (:col p)] [-1 -2])])))))

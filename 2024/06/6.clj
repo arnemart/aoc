@@ -1,7 +1,6 @@
 (ns aoc.2024.06.6
   (:require
-   [aoc.common :refer [++ parse-input]]
-   [blancas.kern.core :refer [<|> bind get-position many new-line* return sym*]]))
+   [aoc.common :refer [++ parse-input points]]))
 
 (def delta {\^ [-1 0] \> [0 1] \v [1 0] \< [0 -1]})
 (def next-dir {\^ \> \> \v \v \< \< \^})
@@ -20,17 +19,12 @@
       :else (recur (step lab w h guard) (conj visited guard)))))
 
 (let [{lab :lab guard :guard w :w h :h}
-      (->> (parse-input
-            (many (bind [s (<|> (sym* \.) (sym* \#) (sym* \^) new-line*)
-                         p get-position]
-                        (return (cond (= s \#) (++ [(:line p) (:col p)] [-1 -2])
-                                      (= s \^) (concat (++ [(:line p) (:col p)] [-1 -2]) [s])
-                                      :else nil)))))
-           (filter some?)
-           (reduce (fn [d [y x g]]
+      (->> (parse-input points)
+           (reduce (fn [d [v [y x]]]
                      (assoc
-                      (if (some? g) (assoc d :guard [y x g])
-                          (assoc-in d [:lab y x] true))
+                      (cond (= \^ v) (assoc d :guard [y x v])
+                            (= \# v) (assoc-in d [:lab y x] true)
+                            :else d)
                       :w (max (:w d) y)
                       :h (max (:h d) x)))
                    {:lab {} :guard nil :w 0 :h 0}))

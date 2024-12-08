@@ -1,7 +1,6 @@
 (ns aoc.2024.08.8
   (:require
-   [aoc.common :refer [++ -- parse-input]]
-   [blancas.kern.core :refer [any-char bind get-position many return]]
+   [aoc.common :refer [++ -- parse-input points spy]]
    [clojure.math.combinatorics :refer [combinations]]))
 
 (defn many-antipodes [w h start delta]
@@ -17,12 +16,9 @@
                       (apply concat)
                       (reduce conj as))) antipodes)))
 
-(let [points (parse-input
-              (many (bind [s any-char
-                           p get-position]
-                          (return [s (++ [(:line p) (:col p)] [-1 -2])]))))
+(let [points (spy (parse-input points))
       antennae (->> points
-                    (filter #(and (not= \newline (first %)) (not= \. (first %))))
+                    (filter #(not= \. (first %)))
                     (reduce (fn [m [a b]] (assoc m a (conj (get m a #{}) b))) {})
                     vals)
       [h w] (last (last points))]
