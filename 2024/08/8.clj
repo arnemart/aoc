@@ -34,6 +34,6 @@
        (println "Part 1:"))
 
   (->> antennae
-      (reduce (partial find-antipodes w h 0 ##Inf) #{})
+       (reduce (partial find-antipodes w h 0 ##Inf) #{})
        count
        (println "Part 2:")))
