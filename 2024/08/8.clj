@@ -17,13 +17,13 @@
                       (reduce conj as))) antipodes)))
 
 (let [points (parse-input points)
+      [h w] (last (last points))
       antennae (->> points
                     (filter #(not= \. (first %)))
                     (group-by first)
                     vals
                     (map #(map last %))
-                    (map set))
-      [h w] (last (last points))]
+                    (map set))]
 
   (->> antennae
        (reduce (partial find-antipodes w h 1 1) #{})
