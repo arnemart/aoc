@@ -48,10 +48,10 @@
                   (apply concat)
                   vec)
       disk-2 (->> disk-map
-                  (reduce (fn [{id :id pos :pos sectors :blocks} [file free]]
+                  (reduce (fn [{id :id pos :pos blocks :blocks} [file free]]
                             {:id (inc id)
                              :pos (+ pos file (or free 0))
-                             :blocks (conj sectors {:id id :file file :free (or free 0) :pos pos :filled 0})})
+                             :blocks (conj blocks {:id id :file file :free (or free 0) :pos pos :filled 0})})
                           {:id 0 :pos 0 :blocks []})
                   :blocks
                   (map #(vector (:id %) %))
