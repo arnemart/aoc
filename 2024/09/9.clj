@@ -15,7 +15,6 @@
 
 (defn compact-2 [disk]
   (->> (keys disk)
-       (drop (/ (count disk) 3))
        reverse
        (reduce
         (fn [disk id]
