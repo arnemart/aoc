@@ -40,9 +40,8 @@
                       (map #(* % id)))))
        (apply +)))
 
-(let [disk-map (parse-input (many (<$> #(Character/digit % 10) digit)))
+(let [disk-map (parse-input (<$> #(partition-all 2 %) (many (<$> #(Character/digit % 10) digit))))
       disk-1 (->> disk-map
-                  (partition-all 2)
                   (map-indexed (fn [id [file space]]
                                  (concat (repeat file id)
                                          (if space (repeat space \.) []))))
@@ -50,7 +49,6 @@
                   vec)
 
       disk-2 (->> disk-map
-                  (partition-all 2)
                   (reduce (fn [{id :id pos :pos sectors :sectors} [file free]]
                             {:id (inc id)
                              :pos (+ pos file (or free 0))
