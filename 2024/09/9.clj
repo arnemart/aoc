@@ -8,7 +8,7 @@
   (let [empty-spaces (keep-indexed #(when (= \. %2) %1) disk)
         numbers (->> disk (keep-indexed #(when (number? %2) [%1 %2])) reverse)]
     (->> (zip empty-spaces numbers)
-         (filter (fn [[empty-idx [num-idx]]] (< empty-idx num-idx)))
+         (take-while (fn [[empty-idx [num-idx]]] (< empty-idx num-idx)))
          (reduce (fn [disk [empty-idx [num-idx num]]]
                    (assoc disk empty-idx num num-idx \.)) disk))))
 
@@ -55,12 +55,11 @@
                             {:id (inc id)
                              :pos (+ pos file (or free 0))
                              :sectors (conj sectors {:id id :file file :free (or free 0) :pos pos :filled 0})})
-                          {:id 0
-                           :pos 0
-                           :sectors []})
+                          {:id 0 :pos 0 :sectors []})
                   :sectors
                   (map #(vector (:id %) %))
                   (into (sorted-map)))]
+
   (->> disk-1
        compact-1
        checksum-1
