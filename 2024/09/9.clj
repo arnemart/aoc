@@ -15,6 +15,7 @@
 
 (defn compact-2 [disk]
   (->> (keys disk)
+       (drop (/ (count disk) 3))
        reverse
        (reduce
         (fn [disk id]
@@ -40,30 +41,30 @@
                  (->> (range pos (+ pos file))
                       (map #(* % id)))))
        (apply +)))
-(time
- (let [disk-map (parse-input (<$> #(partition-all 2 %) (many digit-num)))
-       disk-1 (->> disk-map
-                   (map-indexed (fn [id [file space]]
-                                  (concat (repeat file id)
-                                          (if space (repeat space \.) []))))
-                   (apply concat)
-                   vec)
-       disk-2 (->> disk-map
-                   (reduce (fn [{id :id pos :pos blocks :blocks} [file free]]
-                             {:id (inc id)
-                              :pos (+ pos file (or free 0))
-                              :blocks (conj blocks {:id id :file file :free (or free 0) :pos pos :filled 0})})
-                           {:id 0 :pos 0 :blocks []})
-                   :blocks
-                   (map #(vector (:id %) %))
-                   (into (ordered-map)))]
 
-   (->> disk-1
-        compact-1
-        checksum-1
-        (println "Part 1:"))
+(let [disk-map (parse-input (<$> #(partition-all 2 %) (many digit-num)))
+      disk-1 (->> disk-map
+                  (map-indexed (fn [id [file space]]
+                                 (concat (repeat file id)
+                                         (if space (repeat space \.) []))))
+                  (apply concat)
+                  vec)
+      disk-2 (->> disk-map
+                  (reduce (fn [{id :id pos :pos blocks :blocks} [file free]]
+                            {:id (inc id)
+                             :pos (+ pos file (or free 0))
+                             :blocks (conj blocks {:id id :file file :free (or free 0) :pos pos :filled 0})})
+                          {:id 0 :pos 0 :blocks []})
+                  :blocks
+                  (map #(vector (:id %) %))
+                  (into (ordered-map)))]
 
-   (->> disk-2
-        compact-2
-        checksum-2
-        (println "Part 2:"))))
+  (->> disk-1
+       compact-1
+       checksum-1
+       (println "Part 1:"))
+
+  (->> disk-2
+       compact-2
+       checksum-2
+       (println "Part 2:")))
