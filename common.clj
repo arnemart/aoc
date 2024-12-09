@@ -1,8 +1,8 @@
 (ns aoc.common
   (:require
-   [blancas.kern.core :refer [<$> <*> <|> any-char bind dec-num get-position
-                              many many1 new-line* optional return sep-by
-                              space sym* value]]
+   [blancas.kern.core :refer [<$> <*> <|> any-char bind dec-num digit
+                              get-position many many1 new-line* optional
+                              return sep-by space sym* value]]
    [clojure.java.io :refer [file]]
    [clojure.pprint :refer [pprint]]
    [clojure.string :as str]))
@@ -84,6 +84,7 @@
 (defn lines [p] (sep-by new-line* p))
 (defn comma-or-space-sep [p] (sep-by (<|> (<*> (sym* \,) (many space)) 
                                           (<*> (optional (sym* \,)) (many1 space))) p))
+(def digit-num (<$> #(Character/digit % 10) digit))
 (def nums (comma-or-space-sep dec-num))
 (def points (<$> #(filter (fn [v] (not= \newline (first v))) %)
                  (many (bind [s any-char

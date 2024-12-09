@@ -1,7 +1,7 @@
 (ns aoc.2024.09.9
   (:require
-   [aoc.common :refer [parse-input zip]]
-   [blancas.kern.core :refer [<$> digit many]]
+   [aoc.common :refer [digit-num parse-input zip]]
+   [blancas.kern.core :refer [<$> many]]
    [medley.core :refer [find-first]]))
 
 (defn compact-1 [disk]
@@ -40,14 +40,13 @@
                       (map #(* % id)))))
        (apply +)))
 
-(let [disk-map (parse-input (<$> #(partition-all 2 %) (many (<$> #(Character/digit % 10) digit))))
+(let [disk-map (parse-input (<$> #(partition-all 2 %) (many digit-num)))
       disk-1 (->> disk-map
                   (map-indexed (fn [id [file space]]
                                  (concat (repeat file id)
                                          (if space (repeat space \.) []))))
                   (apply concat)
                   vec)
-
       disk-2 (->> disk-map
                   (reduce (fn [{id :id pos :pos sectors :blocks} [file free]]
                             {:id (inc id)
