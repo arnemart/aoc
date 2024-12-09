@@ -2,7 +2,8 @@
   (:require
    [aoc.common :refer [digit-num parse-input zip]]
    [blancas.kern.core :refer [<$> many]]
-   [medley.core :refer [find-first]]))
+   [medley.core :refer [find-first]]
+   [flatland.ordered.map :refer [ordered-map]]))
 
 (defn compact-1 [disk]
   (let [empty-spaces (keep-indexed #(when (= \. %2) %1) disk)
@@ -55,7 +56,7 @@
                           {:id 0 :pos 0 :blocks []})
                   :blocks
                   (map #(vector (:id %) %))
-                  (into (sorted-map)))]
+                  (into (ordered-map)))]
 
   (->> disk-1
        compact-1
