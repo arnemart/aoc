@@ -29,7 +29,7 @@
 
 
 (defn checksum-1 [disk]
-  (->> (keys disk)
+  (->> disk
        (take-while number?)
        (map-indexed *)
        (apply +)))
@@ -41,35 +41,33 @@
                       (map #(* % id)))))
        (apply +)))
 
-(time
- (let [disk-map (parse-input (many (<$> #(Character/digit % 10) digit)))
-       disk-1 (->> disk-map
-                   (partition-all 2)
-                   (map-indexed (fn [id [file space]]
-                                  (concat (repeat file id)
-                                          (if space (repeat space \.) []))))
-                   (apply concat)
-                   :sectors
-                   vec)
+(let [disk-map (parse-input (many (<$> #(Character/digit % 10) digit)))
+      disk-1 (->> disk-map
+                  (partition-all 2)
+                  (map-indexed (fn [id [file space]]
+                                 (concat (repeat file id)
+                                         (if space (repeat space \.) []))))
+                  (apply concat)
+                  vec)
 
-       disk-2 (->> disk-map
-                   (partition-all 2)
-                   (reduce (fn [{id :id pos :pos sectors :sectors} [file free]]
-                             {:id (inc id)
-                              :pos (+ pos file (or free 0))
-                              :sectors (conj sectors {:id id :file file :free (or free 0) :pos pos :filled 0})})
-                           {:id 0
-                            :pos 0
-                            :sectors []})
-                   :sectors
-                   (map #(vector (:id %) %))
-                   (into (sorted-map)))]
-   (->> disk-1
-        compact-1
-        checksum-1
-        (println "Part 1:"))
+      disk-2 (->> disk-map
+                  (partition-all 2)
+                  (reduce (fn [{id :id pos :pos sectors :sectors} [file free]]
+                            {:id (inc id)
+                             :pos (+ pos file (or free 0))
+                             :sectors (conj sectors {:id id :file file :free (or free 0) :pos pos :filled 0})})
+                          {:id 0
+                           :pos 0
+                           :sectors []})
+                  :sectors
+                  (map #(vector (:id %) %))
+                  (into (sorted-map)))]
+  (->> disk-1
+       compact-1
+       checksum-1
+       (println "Part 1:"))
 
-   (->> disk-2
-        compact-2
-        checksum-2
-        (println "Part 2:"))))
+  (->> disk-2
+       compact-2
+       checksum-2
+       (println "Part 2:")))
