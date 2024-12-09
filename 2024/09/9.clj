@@ -1,16 +1,16 @@
-(ns aoc.2024.09.9 
+(ns aoc.2024.09.9
   (:require
-   [aoc.common :refer [find-last-index parse-input]]
+   [aoc.common :refer [parse-input zip]]
    [blancas.kern.core :refer [<$> digit many]]
    [medley.core :refer [find-first]]))
 
 (defn compact-1 [disk]
-  (loop [disk disk]
-    (let [first-free (.indexOf disk \.)
-          last-file (find-last-index #(number? %2) disk)]
-      (if (> first-free last-file)
-        disk
-        (recur (assoc disk first-free (disk last-file) last-file (disk first-free)))))))
+  (let [empty-spaces (keep-indexed #(when (= \. %2) %1) disk)
+        numbers (->> disk (keep-indexed #(when (number? %2) [%1 %2])) reverse)]
+    (->> (zip empty-spaces numbers)
+         (filter (fn [[empty-idx [num-idx]]] (< empty-idx num-idx)))
+         (reduce (fn [disk [empty-idx [num-idx num]]]
+                   (assoc disk empty-idx num num-idx \.)) disk))))
 
 (defn compact-2 [disk]
   (->> (keys disk)
@@ -26,7 +26,6 @@
                   (assoc-in [(:id first-free) :filled] (+ (:filled first-free) (:file file))))
               disk)))
         disk)))
-
 
 (defn checksum-1 [disk]
   (->> disk

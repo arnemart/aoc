@@ -53,7 +53,8 @@
 (defn remove-index [vect idx]
   (into (subvec vect 0 idx) (subvec vect (inc idx))))
 
-(defn spy [v] (pprint v) v)
+(defn spy-with [f v] (f v) v)
+(def spy (partial spy-with pprint))
 
 (defn re-seq-indexed [pattern string]
   (let [m (re-matcher pattern string)]
@@ -67,10 +68,6 @@
 
 (defn find-index [f coll]
   (->> coll (keep-indexed #(when (f %1 %2) %1)) first))
-
-(defn find-last-index [f coll]
-  (- (dec (count coll))
-     (find-index f (reverse coll))))
 
 (defn tee [fs val]
   (map #(% val) fs))
