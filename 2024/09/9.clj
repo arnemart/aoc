@@ -17,13 +17,13 @@
        reverse
        (reduce
         (fn [disk id]
-          (let [file (get disk id)
-                first-free (find-first #(and (< (:id %) (:id file)) (>= (:free %1) (:file file))) (vals disk))]
-            (if (some? first-free)
+          (let [{id :id file :file} (get disk id)
+                free (find-first #(and (< (:id %) id) (>= (:free %1) file)) (vals disk))]
+            (if (some? free)
               (-> disk
-                  (assoc-in [id :pos] (+ (:pos first-free) (:file first-free) (:filled first-free)))
-                  (assoc-in [(:id first-free) :free] (- (:free first-free) (:file file)))
-                  (assoc-in [(:id first-free) :filled] (+ (:filled first-free) (:file file))))
+                  (assoc-in [id :pos] (+ (:pos free) (:file free) (:filled free)))
+                  (assoc-in [(:id free) :free] (- (:free free) file))
+                  (assoc-in [(:id free) :filled] (+ (:filled free) file)))
               disk)))
         disk)))
 
@@ -49,12 +49,12 @@
                   vec)
 
       disk-2 (->> disk-map
-                  (reduce (fn [{id :id pos :pos sectors :sectors} [file free]]
+                  (reduce (fn [{id :id pos :pos sectors :blocks} [file free]]
                             {:id (inc id)
                              :pos (+ pos file (or free 0))
-                             :sectors (conj sectors {:id id :file file :free (or free 0) :pos pos :filled 0})})
-                          {:id 0 :pos 0 :sectors []})
-                  :sectors
+                             :blocks (conj sectors {:id id :file file :free (or free 0) :pos pos :filled 0})})
+                          {:id 0 :pos 0 :blocks []})
+                  :blocks
                   (map #(vector (:id %) %))
                   (into (sorted-map)))]
 
