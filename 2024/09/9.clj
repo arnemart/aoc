@@ -2,8 +2,14 @@
   (:require
    [aoc.common :refer [digit-num parse-input zip]]
    [blancas.kern.core :refer [<$> many]]
-   [medley.core :refer [find-first]]
-   [flatland.ordered.map :refer [ordered-map]]))
+   [clojure.math :as math]
+   [flatland.ordered.map :refer [ordered-map]]
+   [medley.core :refer [find-first]]) 
+  (:import
+   [java.awt Color]
+   [java.awt.image BufferedImage]
+   [java.io File]
+   [javax.imageio ImageIO]))
 
 (defn compact-1 [disk]
   (let [empty-spaces (keep-indexed #(when (= \. %2) %1) disk)
@@ -12,6 +18,22 @@
          (take-while (fn [[empty-idx [num-idx]]] (< empty-idx num-idx)))
          (reduce (fn [disk [empty-idx [num-idx num]]]
                    (assoc disk empty-idx num num-idx \.)) disk))))
+
+(def n° (atom 0))
+(defn draw [disk id]
+  (let [w (inc (* 4 375)) h (inc (* 5 252))
+        img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)] 
+    (doto (.getGraphics img)
+      (.setColor Color/WHITE)
+      (.fillRect 0 0 w h))
+    (doseq [{cur-id :id pos :pos len :file} (vals disk)]
+      (doseq [p (range pos (+ len pos))]
+        (doto (.getGraphics img)
+          (.setColor (if (= cur-id id) Color/RED
+                         Color/GREEN))
+          (.fillRect (inc (* 4 (mod p 375))) (inc (* 5 (math/floor (/ p 375)))) 3 4)))) 
+    (ImageIO/write img "png" (File. (format "2024/09/img/%06d.png" (swap! n° inc))))) 
+  disk)
 
 (defn compact-2 [disk]
   (->> (keys disk)
@@ -24,7 +46,9 @@
               (-> disk
                   (assoc-in [id :pos] (+ (:pos free) (:file free) (:filled free)))
                   (assoc-in [(:id free) :free] (- (:free free) file))
-                  (assoc-in [(:id free) :filled] (+ (:filled free) file)))
+                  (assoc-in [(:id free) :filled] (+ (:filled free) file))
+               ;;    (draw id)
+                  )
               disk)))
         disk)))
 

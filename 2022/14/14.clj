@@ -1,9 +1,14 @@
 (ns aoc.2022.14.14 
-  (:require [aoc.common :refer [inclusive-range read-input zip]]
-            [clojure.math.combinatorics :as combo]
-            [clojure.string :as str]))
+  (:require
+   [aoc.common :refer [inclusive-range read-input zip]]
+   [clojure.math.combinatorics :as combo]
+   [clojure.string :as str]) 
+  (:import
+   [java.awt Color]
+   [java.awt.image BufferedImage]
+   [java.io File]
+   [javax.imageio ImageIO]))
 
-(import 'java.awt.image.BufferedImage 'javax.imageio.ImageIO 'java.awt.Color)
 (defn draw-image [grid i]
   (let [img (BufferedImage. 200 360 BufferedImage/TYPE_INT_ARGB)]
     (doto (.getGraphics img)
