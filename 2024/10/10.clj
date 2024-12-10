@@ -9,26 +9,24 @@
        (filter #(= what (get-in grid %)))))
 
 (defn find-trails [cat-fn start]
-  (loop [what 0 current #{start}]
-    (cond (= 0 (count current)) 0
-          (= 9 what) (count current)
-          :else (recur (inc what)
-                       (->> current
-                            (mapcat (partial cat-fn (inc what)))
+  (loop [next 1 trails #{start}]
+    (cond (= 0 (count trails)) 0
+          (> next 9) (count trails)
+          :else (recur (inc next)
+                       (->> trails
+                            (mapcat (partial cat-fn next))
                             set)))))
 
-(let [grid (parse-input (lines (many digit-num)))
-      h (count grid)
-      w (count (first grid))
-      zeroes (->> (cartesian-product (range h) (range w))
-                  (filter #(= 0 (get-in grid %))))]
+(let [grid (parse-input (lines (many digit-num))) 
+      heads (->> (cartesian-product (range (count grid)) (range (count (first grid))))
+                 (filter #(= 0 (get-in grid %))))]
 
-  (->> zeroes
+  (->> heads
        (map (partial find-trails (partial around grid)))
        (apply +)
        (println "Part 1:"))
 
-  (->> zeroes
+  (->> heads
        (map vector)
        (map (partial find-trails #(map (partial conj %2) (around grid %1 (last %2)))))
        (apply +)
