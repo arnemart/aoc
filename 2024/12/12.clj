@@ -19,29 +19,33 @@
        (map around)
        (apply set/union)))
 
-(defn merge-plots [plots plot]
-  (if-let [existing-plot-idx
-           (->> plots
-                (find-index
-                 (fn [_ {t :t ps :ps}]
-                   (and (= t (:t plot))
-                        (not-empty (set/intersection (around-many (:ps plot)) ps))))))]
-    (update-in plots [existing-plot-idx :ps] set/union (:ps plot))
-    (conj plots plot)))
+(defn expand-plot [grid p]
+  (let [type (get-in grid p)]
+    (loop [plot #{p} to-search #{p}]
+      (let [neighbors (->> (around-many to-search)
+                           (filter #(and (not (contains? plot %))
+                                         (= (get-in grid %) type)))
+                           set)]
+        (if (empty? neighbors)
+          plot
+          (recur (set/union plot neighbors) neighbors))))))
 
 (defn find-plots [grid]
-  (->> (cartesian-product (range (count grid)) (range (count (first grid))))
-       (reduce #(merge-plots %1 {:t (get-in grid %2) :ps #{%2}}) [])
-       (reduce merge-plots [])
-       (reduce merge-plots [])))
+  (let [points (cartesian-product (range (count grid)) (range (count (first grid))))]
+    (loop [points points plots [] visited #{}]
+      (cond
+        (empty? points) plots
+        (contains? visited (first points)) (recur (rest points) plots visited)
+        :else (let [plot (expand-plot grid (first points))]
+                (recur (rest points) (conj plots plot) (set/union visited plot)))))))
 
 (defn fence-cost-1 [plots]
   (->> plots
-       (map (fn [{ps :ps}]
-              (* (count ps)
-                 (->> ps
+       (map (fn [plot]
+              (* (count plot)
+                 (->> plot
                       (mapcat around)
-                      (filter #(not (contains? ps %)))
+                      (filter #(not (contains? plot %)))
                       count))))
        (apply +)))
 
@@ -69,12 +73,12 @@
 (defn fence-cost-2 [plots]
   (->> plots
        (map (fn [plot]
-              (* (count (:ps plot))
-                 (find-fences (:ps plot)))))
+              (* (count plot)
+                 (find-fences plot))))
        (apply +)))
 
 (let [grid (parse-input (lines (many letter)))
       plots (find-plots grid)]
-
+  
   (println "Part 1:" (fence-cost-1 plots))
   (println "Part 2:" (fence-cost-2 plots)))
