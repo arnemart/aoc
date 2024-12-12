@@ -56,17 +56,16 @@
   (->> (around-dir p)
        (filter #(not (contains? ps (first %))))
        (reduce (fn [fences [fp dir]]
-                 (let [fns ((case dir (:u :d) horiz (:r :l) verti) fp)]
+                 (let [fence-neighbors ((case dir (:u :d) horiz (:r :l) verti) fp)]
                    (if-let [existing-fence-index
                             (find-index #(and (= (:dir %2) dir)
-                                              (> (count (set/intersection (:fps %2) fns)) 0)) fences)]
+                                              (> (count (set/intersection (:fps %2) fence-neighbors)) 0)) fences)]
                      (update-in fences [existing-fence-index :fps] conj fp)
                      (conj fences {:dir dir :fps #{fp}})))) fences)))
 
 (defn find-fences [ps]
   (->> ps
-       (sort (fn [a b]
-               (compare (vec a) (vec b))))
+       (sort #(compare (vec %1) (vec %2)))
        (reduce (partial add-point ps) [])
        count))
 
