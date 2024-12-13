@@ -1,9 +1,9 @@
 (ns aoc.2024.13.13 
   (:require
-   [aoc.common :refer [++ parse-input]]
+   [aoc.common :refer [parse-input]]
    [blancas.kern.core :refer [dec-num many search]]))
 
-(defn prize [[[ax ay] [bx by] [px py]]]
+(defn prize [[ax ay bx by px py]]
   (let [a (/ (- (* by px) (* bx py))
              (- (* by ax) (* bx ay)))
         b (/ (- px (* ax a)) bx)]
@@ -12,12 +12,11 @@
       0)))
 
 (let [machines (->> (parse-input (many (search dec-num)))
-                    (partition 2)
-                    (partition 3))
+                    (partition 6))
 
       machines-2 (->> machines
-                      (map (fn [[a b p]]
-                             [a b (++ p [10000000000000 10000000000000])])))]
+                      (map (fn [[ax ay bx by px py]]
+                             [ax ay bx by (+ px 10000000000000) (+ py 10000000000000)])))]
 
   (->> machines
        (map prize)
