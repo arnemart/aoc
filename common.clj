@@ -91,6 +91,7 @@
 (defn comma-or-space-sep [p] (sep-by (<|> (<*> (sym* \,) (many space)) 
                                           (<*> (optional (sym* \,)) (many1 space))) p))
 (def digit-num (<$> #(Character/digit % 10) digit))
+(def dec-num- (<$> (fn [[d n]] (if d (- n) n)) (<*> (optional (sym* \-)) dec-num)))
 (def nums (comma-or-space-sep dec-num))
 (def points (<$> #(filter (fn [v] (not= \newline (first v))) %)
                  (many (bind [s any-char
