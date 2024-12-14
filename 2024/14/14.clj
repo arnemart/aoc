@@ -19,16 +19,14 @@
 
 (defn draw [robots i]
   (let [w 202 h 206
-        img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)]
-    (doto (.getGraphics img)
-      (.setColor Color/WHITE)
-      (.fillRect 0 0 w h))
+        img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
+        g (.getGraphics img)]
+    (.setColor g Color/WHITE)
+    (.fillRect g 0 0 w h)
+    (.setColor g Color/GREEN)
     (doseq [[x y] robots]
-      (doto (.getGraphics img)
-        (.setColor Color/GREEN)
-        (.fillRect (* 2 x) (* 2 y) 2 2)))
-    (ImageIO/write img "png" (File. (format "2024/14/img/%06d.png" i))))
-  robots)
+      (.fillRect g (* 2 x) (* 2 y) 2 2))
+    (ImageIO/write img "png" (File. (format "2024/14/img/%06d.png" i)))))
 
 (let [robots (->> (parse-input (many (search dec-num-)))
                   (partition 4))]
