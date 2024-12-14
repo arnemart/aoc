@@ -6,3 +6,4 @@ node_modules
 .clj-kondo
 .nrepl-port
 **/input.txt
+**/img/
