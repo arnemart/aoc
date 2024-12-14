@@ -41,9 +41,9 @@
     ;; (when (= 0 (mod (- i 23) 101))
     ;;   (draw robots i))
 
-    (if (= 500 (->> robots
-                    (map #(take 2 %))
-                    set
-                    count))
+    (if (= (count robots) (->> robots
+                               (map #(take 2 %))
+                               set
+                               count))
       (println "Part 2:" i)
       (recur (map move-robot robots) (inc i)))))
