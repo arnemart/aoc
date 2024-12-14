@@ -1,15 +1,12 @@
 (ns aoc.2024.09.9
   (:require
-   [aoc.common :refer [digit-num parse-input zip]]
+   [aoc.common :refer [digit-num draw-image parse-input zip]]
    [blancas.kern.core :refer [<$> many]]
    [clojure.math :as math]
    [flatland.ordered.map :refer [ordered-map]]
    [medley.core :refer [find-first]]) 
   (:import
-   [java.awt Color]
-   [java.awt.image BufferedImage]
-   [java.io File]
-   [javax.imageio ImageIO]))
+   [java.awt Color]))
 
 (defn compact-1 [disk]
   (let [empty-spaces (keep-indexed #(when (= \. %2) %1) disk)
@@ -21,18 +18,11 @@
 
 (def n° (atom 0))
 (defn draw [disk id]
-  (let [w (inc (* 4 375)) h (inc (* 5 252))
-        img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)] 
-    (doto (.getGraphics img)
-      (.setColor Color/WHITE)
-      (.fillRect 0 0 w h))
-    (doseq [{cur-id :id pos :pos len :file} (vals disk)]
-      (doseq [p (range pos (+ len pos))]
-        (doto (.getGraphics img)
-          (.setColor (if (= cur-id id) Color/RED
-                         Color/GREEN))
-          (.fillRect (inc (* 4 (mod p 375))) (inc (* 5 (math/floor (/ p 375)))) 3 4)))) 
-    (ImageIO/write img "png" (File. (format "2024/09/img/%06d.png" (swap! n° inc))))) 
+  (draw-image (inc (* 4 375)) (inc (* 5 252)) (swap! n° inc)
+              #(doseq [{cur-id :id pos :pos len :file} (vals disk)]
+                 (.setColor % (if (= cur-id id) Color/RED Color/GREEN))
+                 (doseq [p (range pos (+ len pos))]
+                   (.fillRect % (inc (* 4 (mod p 375))) (inc (* 5 (math/floor (/ p 375)))) 3 4))))
   disk)
 
 (defn compact-2 [disk]
@@ -47,7 +37,7 @@
                   (assoc-in [id :pos] (+ (:pos free) (:file free) (:filled free)))
                   (assoc-in [(:id free) :free] (- (:free free) file))
                   (assoc-in [(:id free) :filled] (+ (:filled free) file))
-               ;;    (draw id)
+               ;; (draw id)
                   )
               disk)))
         disk)))
