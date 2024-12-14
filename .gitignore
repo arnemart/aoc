@@ -5,3 +5,4 @@ node_modules
 .vscode
 .clj-kondo
 .nrepl-port
+**/input.txt
