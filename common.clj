@@ -5,7 +5,12 @@
                               return sep-by space sym* value]]
    [clojure.java.io :refer [file]]
    [clojure.pprint :refer [pprint]]
-   [clojure.string :as str]))
+   [clojure.string :as str]) 
+  (:import
+   [java.awt Color]
+   [java.awt.image BufferedImage]
+   [java.io File]
+   [javax.imageio ImageIO]))
 
 (defn read-input-str [& {:keys [test use-test] :or {test nil use-test true}}]
   (if (and use-test (some? test))
@@ -24,6 +29,19 @@
 (defn parse-input [parser & {:keys [test use-test state] :or {test nil use-test true state {}}}] 
   (value parser
    (read-input-str :test test :use-test use-test) nil state))
+
+(defn draw-image [w h i draw-fn]
+  (let [img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
+        g (.getGraphics img)
+        dir (-> *file*
+                file
+                .getParent
+                (file "img"))]
+    (.mkdir dir)
+    (.setColor g Color/WHITE)
+    (.fillRect g 0 0 w h)
+    (draw-fn g)
+    (ImageIO/write img "png" (File. (format "%s/%06d.png" (.toString dir) i)))))
 
 (defn split-to-ints [s]
   (->> s
