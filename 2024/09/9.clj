@@ -16,14 +16,17 @@
          (reduce (fn [disk [empty-idx [num-idx num]]]
                    (assoc disk empty-idx num num-idx \.)) disk))))
 
-(def n° (atom 0))
-(defn draw [disk id]
-  (draw-image (inc (* 4 375)) (inc (* 5 252)) (swap! n° inc)
-              #(doseq [{cur-id :id pos :pos len :file} (vals disk)]
-                 (.setColor % (if (= cur-id id) Color/RED Color/GREEN))
-                 (doseq [p (range pos (+ len pos))]
-                   (.fillRect % (inc (* 4 (mod p 375))) (inc (* 5 (math/floor (/ p 375)))) 3 4))))
-  disk)
+(let [n° (atom 0)
+      iw (inc (* 4 375))
+      ih (inc (* 5 252))]
+  (defn draw [disk id]
+    (println @n°)
+    (draw-image iw ih (swap! n° inc)
+                #(doseq [{cur-id :id pos :pos len :file} (vals disk)]
+                   (.setColor % (if (= cur-id id) Color/RED Color/GREEN))
+                   (doseq [p (range pos (+ len pos))]
+                     (.fillRect % (inc (* 4 (mod p 375))) (inc (* 5 (math/floor (/ p 375)))) 3 4))))
+    disk))
 
 (defn compact-2 [disk]
   (->> (keys disk)
@@ -37,7 +40,7 @@
                   (assoc-in [id :pos] (+ (:pos free) (:file free) (:filled free)))
                   (assoc-in [(:id free) :free] (- (:free free) file))
                   (assoc-in [(:id free) :filled] (+ (:filled free) file))
-               ;; (draw id)
+                  (draw id)
                   )
               disk)))
         disk)))

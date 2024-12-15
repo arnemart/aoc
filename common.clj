@@ -30,18 +30,27 @@
   (value parser
    (read-input-str :test test :use-test use-test) nil state))
 
+(let [dir-cache (atom {})]
+  (defn get-img-dir []
+    (if-let [dir (get @dir-cache *file*)]
+      dir
+      (let [dir (-> *file*
+                    file
+                    .getParent
+                    (file "img"))
+            dir-str (.toString dir)]
+        (.mkdir dir)
+        (swap! dir-cache assoc *file* dir-str)
+        dir-str))))
+
 (defn draw-image [w h i draw-fn]
   (let [img (BufferedImage. w h BufferedImage/TYPE_INT_ARGB)
         g (.getGraphics img)
-        dir (-> *file*
-                file
-                .getParent
-                (file "img"))]
-    (.mkdir dir)
+        dir (get-img-dir)]
     (.setColor g Color/WHITE)
     (.fillRect g 0 0 w h)
     (draw-fn g)
-    (ImageIO/write img "png" (File. (format "%s/%06d.png" (.toString dir) i)))))
+    (ImageIO/write img "png" (File. (format "%s/%06d.png" dir i)))))
 
 (defn split-to-ints [s]
   (->> s

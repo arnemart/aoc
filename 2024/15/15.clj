@@ -59,7 +59,7 @@
                                           \@ [\@ \.]
                                           [% %]))
                                vec))))]
-
+  
   (->> moves
        (reduce move [grid [y x]])
        gps
