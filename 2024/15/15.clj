@@ -24,23 +24,21 @@
     (let [new-pos (++ pos (get deltas dir))
           v (get-in grid pos)
           nv (get-in grid new-pos)]
-      (case nv
-        \. [(-> grid
-                (assoc-in new-pos v)
-                (assoc-in pos \.)) new-pos]
-        \O [(-> (move [grid new-pos] dir)
-                first
-                (assoc-in new-pos v)
-                (assoc-in pos \.)) new-pos]
-        (\[ \]) [(-> (move [(case dir
-                              (\< \>) grid
-                              (\^ \v) (first (move [grid (++ new-pos [0 (case nv \[ 1 \] -1)])] dir)))
-                            new-pos] dir)
-                     first
-                     (assoc-in new-pos v)
-                     (assoc-in pos \.))
-                 new-pos]
-        [grid pos]))
+      (if (= nv \#)
+        [grid pos]
+        (let [next-grid
+              (case nv
+                \. grid
+                \O (first (move [grid new-pos] dir))
+                (\[ \]) (-> (move [(case dir
+                                     (\< \>) grid
+                                     (\^ \v) (first (move [grid (++ new-pos [0 (case nv \[ 1 \] -1)])] dir)))
+                                   new-pos] dir)
+                            first))]
+          [(-> next-grid
+               (assoc-in new-pos v)
+               (assoc-in pos \.))
+           new-pos])))
     [grid pos]))
 
 (defn gps [[grid]]
