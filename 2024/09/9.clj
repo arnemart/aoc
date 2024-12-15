@@ -20,7 +20,6 @@
       iw (inc (* 4 375))
       ih (inc (* 5 252))]
   (defn draw [disk id]
-    (println @n°)
     (draw-image iw ih (swap! n° inc)
                 #(doseq [{cur-id :id pos :pos len :file} (vals disk)]
                    (.setColor % (if (= cur-id id) Color/RED Color/GREEN))
