@@ -25,6 +25,9 @@
           v (get-in grid pos)
           nv (get-in grid new-pos)]
       (case nv
+        \. [(-> grid
+                (assoc-in new-pos v)
+                (assoc-in pos \.)) new-pos]
         \O [(-> (move [grid new-pos] dir)
                 first
                 (assoc-in new-pos v)
@@ -37,9 +40,6 @@
                      (assoc-in new-pos v)
                      (assoc-in pos \.))
                  new-pos]
-        \. [(-> grid
-                (assoc-in new-pos v)
-                (assoc-in pos \.)) new-pos]
         [grid pos]))
     [grid pos]))
 
