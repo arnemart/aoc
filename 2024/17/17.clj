@@ -2,7 +2,7 @@
   (:require
    [aoc.common :refer [nums parse-input]]
    [blancas.kern.core :refer [<*> >> dec-num new-line* token*]]
-   [clojure.math :refer [pow]]
+   [clojure.math.numeric-tower :refer [expt]]
    [clojure.string :as str]))
 
 (defn combo [state opr]
@@ -18,14 +18,14 @@
         opr (get-in state [:program (inc i)])]
     (when opc
       (case opc
-        0 (-> state (update :A #(long (/ % (pow 2 (combo state opr))))) (update :I + 2))
+        0 (-> state (update :A #(quot % (expt 2 (combo state opr)))) (update :I + 2))
         1 (-> state (update :B bit-xor opr) (update :I + 2))
         2 (-> state (assoc :B (mod (combo state opr) 8)) (update :I + 2))
         3 (-> state (assoc :I (if (zero? (:A state)) (+ i 2) opr)))
         4 (-> state (update :B bit-xor (:C state)) (update :I + 2))
         5 (-> state (update :stdout conj (mod (combo state opr) 8)) (update :I + 2))
-        6 (-> state (assoc :B (long (/ (:A state) (pow 2 (combo state opr))))) (update :I + 2))
-        7 (-> state (assoc :C (long (/ (:A state) (pow 2 (combo state opr))))) (update :I + 2))))))
+        6 (-> state (assoc :B (quot (:A state) (expt 2 (combo state opr)))) (update :I + 2))
+        7 (-> state (assoc :C (quot (:A state) (expt 2 (combo state opr)))) (update :I + 2))))))
 
 (defn run [state]
   (->> state
@@ -42,21 +42,26 @@
        (map #(conj digits %))
        (filter #(valid-prefix state %))))
 
+(defn find-digits [state]
+  (loop [candidates [[]]]
+    (if (= (count (:program state)) (count (first candidates)))
+      (first candidates)
+      (recur (mapcat (partial find-next-digit state) candidates)))))
+
 (let [[[A B C] program] (parse-input (<*> (<*> (>> (token* "Register A: ") dec-num)
                                                (>> new-line* (token* "Register B: ") dec-num)
                                                (>> new-line* (token* "Register C: ") dec-num))
                                           (>> new-line* new-line* (token* "Program: ") nums)))
-      state {:A A :B B :C C :I 0 :stdout [] :program program}
-      oct-str (->> (loop [candidates [[]]]
-                     (if (= (count program) (count (first candidates)))
-                       (first candidates)
-                       (recur (mapcat (partial find-next-digit state) candidates))))
-                   (apply str))]
+      state {:A A :B B :C C :I 0 :stdout [] :program program}]
 
   (->> state
        run
        :stdout
        (str/join ",")
        (println "Part 1:"))
-  
-  (println "Part 2:" (read-string (str \0 oct-str))))
+
+  (->> (find-digits state)
+       (apply str)
+       (str \0)
+       read-string
+       (println "Part 2:")))
