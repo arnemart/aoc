@@ -60,4 +60,5 @@
        :stdout
        (str/join ",")
        (println "Part 1:"))
+  
   (println "Part 2:" (read-string (str \0 oct-str))))
