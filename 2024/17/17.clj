@@ -54,8 +54,7 @@
                                           (>> new-line* new-line* (token* "Program: ") nums)))
       state {:A A :B B :C C :I 0 :stdout [] :program program}]
 
-  (->> state
-       run
+  (->> (run state)
        :stdout
        (str/join ",")
        (println "Part 1:"))
