@@ -1,4 +1,4 @@
-(ns aoc.2024.17.17 
+(ns aoc.2024.17.17
   (:require
    [aoc.common :refer [nums parse-input]]
    [blancas.kern.core :refer [<*> >> dec-num new-line* token*]]
@@ -35,14 +35,29 @@
        (take-while some?)
        last))
 
+(defn valid-prefix [state digits]
+  (let [{prog :program out :stdout} (run (assoc state :A (read-string (str \0 (apply str digits)))))]
+    (= out (drop (- (count prog) (count out)) prog))))
+
+(defn find-next-digit [state digits]
+  (->> (range 8)
+       (map #(conj digits %))
+       (filter #(valid-prefix state %))))
+
 (let [[[A B C] program] (parse-input (<*> (<*> (>> (token* "Register A: ") dec-num)
                                                (>> new-line* (token* "Register B: ") dec-num)
                                                (>> new-line* (token* "Register C: ") dec-num))
                                           (>> new-line* new-line* (token* "Program: ") nums)))
-      initial-state {:A A :B B :C C :I 0 :stdout [] :program program}]
+      state {:A A :B B :C C :I 0 :stdout [] :program program}
+      oct-str (->> (loop [candidates [[]]]
+                     (if (= (count program) (count (first candidates)))
+                       (first candidates)
+                       (recur (mapcat (partial find-next-digit state) candidates))))
+                   (apply str))]
 
-  (->> initial-state
+  (->> state
        run
        :stdout
        (str/join ",")
-       (println "Part 1:")))
+       (println "Part 1:"))
+  (println "Part 2:" (read-string (str \0 oct-str))))
