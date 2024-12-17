@@ -10,15 +10,13 @@
     (0 1 2 3) opr
     4 (:A state)
     5 (:B state)
-    6 (:C state)
-    (throw (Exception. "omg"))))
+    6 (:C state)))
 
 (defn step [state]
   (let [i (:I state)
         opc (get-in state [:program i])
         opr (get-in state [:program (inc i)])]
-    (if (nil? opc)
-      nil
+    (when opc
       (case opc
         0 (-> state (update :A #(long (/ % (pow 2 (combo state opr))))) (update :I + 2))
         1 (-> state (update :B bit-xor opr) (update :I + 2))
