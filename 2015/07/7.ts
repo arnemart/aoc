@@ -70,4 +70,4 @@ $(
   forEach(key => (input[key].memo = undefined))
 )
 
-console.log('Part 1:', findValue('a'))
+console.log('Part 2:', findValue('a'))

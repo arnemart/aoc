@@ -35,4 +35,4 @@ const nextRoom = ({ room, safe }: { room: string[]; safe: number }) =>
 
 console.log('Part 1:', $({ room, safe: 0 }, repeat(39, nextRoom), pluck('safe')))
 
-console.log('Part 1:', $({ room, safe: 0 }, repeat(399999, nextRoom), pluck('safe')))
+console.log('Part 2:', $({ room, safe: 0 }, repeat(399999, nextRoom), pluck('safe')))

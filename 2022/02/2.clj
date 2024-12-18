@@ -19,4 +19,4 @@
   (->> strategy
        (map #(get-in scores-part2 %))
        sum
-       (println "Part 1:")))
+       (println "Part 2:")))

@@ -72,4 +72,4 @@ const part2 = (input: Input) => (values: number[]) =>
     number(2)
   )
 
-console.log('Part 1:', $(input, solve(part2)))
+console.log('Part 2:', $(input, solve(part2)))

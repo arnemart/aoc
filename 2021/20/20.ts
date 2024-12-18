@@ -75,4 +75,4 @@ const countLitPixels = (img: Image) => $(img, flatten(), count(is(1)))
 
 console.log('Part 1:', $(image, enhance(2), countLitPixels))
 
-console.log('Part 1:', $(image, enhance(50), countLitPixels))
+console.log('Part 2:', $(image, enhance(50), countLitPixels))

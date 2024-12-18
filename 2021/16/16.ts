@@ -107,4 +107,4 @@ const value = (p: Packet) =>
     ])
   )
 
-console.log('Part 1:', $(packets, value))
+console.log('Part 2:', $(packets, value))

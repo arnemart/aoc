@@ -24,6 +24,3 @@
        first
        str/join
        (println "Part 2:")))
-
-;; Part 1: 3850704
-;; Part 2: 6718

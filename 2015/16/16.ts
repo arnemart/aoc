@@ -68,4 +68,4 @@ const valid2 = (key: Key, sue: Sue) => {
   )
 }
 
-console.log('Part 1:', $(sues, find(sueMatchesScan(valid2)), pluck('number')))
+console.log('Part 2:', $(sues, find(sueMatchesScan(valid2)), pluck('number')))

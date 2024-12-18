@@ -17,6 +17,3 @@
        :output
        last
        (println "Part 2:")))
-
-;; Part 1: 16209841
-;; Part 2: 8834787

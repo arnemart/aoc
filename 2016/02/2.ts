@@ -56,4 +56,4 @@ const actualDigit = (state: State, directions: string[]): State =>
     y
   }))
 
-console.log('Part 1:', $(instructions, reduce(actualDigit, { code: [], x: 0, y: 2 }), pluck('code'), join()))
+console.log('Part 2:', $(instructions, reduce(actualDigit, { code: [], x: 0, y: 2 }), pluck('code'), join()))
