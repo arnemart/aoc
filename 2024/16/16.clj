@@ -5,15 +5,14 @@
    [blancas.kern.core :refer [many one-of*]]
    [clojure.math.combinatorics :refer [cartesian-product]]))
 
-(defn get-path [maze start end is-end]
+(defn get-path [maze start is-end]
   (astar :start start
          :is-end is-end
          :get-neighbors (fn [[y x]]
                           (->> [[(inc y) x \v] [(dec y) x \^] [y (inc x) \>] [y (dec x) \<]]
                                (filter (fn [[y x]] (contains? #{\. \E} (get-in maze [y x]))))))
          :calculate-cost (fn [[_ _ d1] [_ _ d2]]
-                           (if (= d1 d2) 1 1001))
-         :heuristic (fn [[x y]] (manhattan [y x] end))))
+                           (if (= d1 d2) 1 1001))))
 
 (let [maze (parse-input (lines (many (one-of* "#.SE"))))
       [[sy sx] end] (->> (cartesian-product (range (count maze)) (range (count (first maze))))
@@ -25,7 +24,7 @@
                                          [s e])))
                                  [nil nil]))
 
-      shortest-path (:cost (get-path maze [sy sx \>] end #(= end (drop-last %))))]
+      shortest-path (:cost (get-path maze [sy sx \>] #(= end (drop-last %))))]
 
   (println "Part 1:" shortest-path)
 
@@ -34,11 +33,11 @@
        (filter (fn [[y x]]
                  (->> [\> \^ \< \v]
                       (some (fn [d]
-                              (let [from-start (get-path maze [sy sx \>] [y x] #(= [y x d] %))
+                              (let [from-start (get-path maze [sy sx \>] #(= [y x d] %))
                                     h (manhattan [y x] end)]
                                 (if (and (some? from-start)
                                          (<= (+ h (:cost from-start)) shortest-path))
-                                  (let [to-end (get-path maze (first (:path from-start)) end #(= end (drop-last %)))]
+                                  (let [to-end (get-path maze (first (:path from-start)) #(= end (drop-last %)))]
                                     (if to-end
                                       (= shortest-path (+ (:cost from-start) (:cost to-end)))
                                       false))
