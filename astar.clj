@@ -7,11 +7,11 @@
           (lazy-seq (reconstruct-path (:parent node))))))
 
 (defn astar [& {:keys [start is-end get-neighbors calculate-cost heuristic hash validate-path]
-                :or {calculate-cost (fn [_ _] 1)
-                     heuristic (fn [_] 1)
+                :or {calculate-cost (constantly 1)
+                     heuristic (constantly 1)
                      hash hash}}]
 
-  (loop [closed-set #{}
+  (loop [closed-map {}
          open-map {}
          priorities (priority-map)
          node {:data start
@@ -23,17 +23,17 @@
       ;; Did not find a path
       (or (nil? node)
           (and (= 0 (count priorities))
-               (> 0 (count closed-set)))) nil
+               (> 0 (count closed-map)))) nil
       ;; Done!
-      (is-end (:data node)) {:cost (:g node) :path (reconstruct-path node)}
+      (is-end (:data node)) {:cost (:g node) :path (reconstruct-path node) :visited closed-map}
       ;; Not done yet
       :else
       (let [hashed-data (hash (:data node))
-            closed-set (conj closed-set hashed-data)
+            closed-map (assoc closed-map hashed-data (dissoc node :parent))
             open-map (dissoc open-map hashed-data)
             [priorities open-map]
             (->> (get-neighbors (:data node))
-                 (filter #(not (contains? closed-set (hash %))))
+                 (filter #(not (contains? closed-map (hash %))))
                  ;; Validate path to this neighbor if we have a valid-path?-function to call
                  (filter #(if (some? validate-path)
                             (validate-path (reconstruct-path {:data % :parent node}))
@@ -61,7 +61,7 @@
                              (assoc open-map neighbor-hash new-neighbor-node)])))))
                   [priorities open-map]))]
 
-        (recur closed-set 
+        (recur closed-map
                open-map
                (if (= 0 (count priorities)) priorities (pop priorities))
                (first (peek priorities)))))))
