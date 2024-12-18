@@ -110,13 +110,15 @@
        (map (fn [[v1 v2]] (abs (- v1 v2))))
        sum))
 
-(defn binsearch [check from to]
+(defn binsearch 
+  "Returns the lowest number for which check returns true. Assumes (check from) returns false."
+  [check from to]
   (if (= from to)
-    to
+    (if (check to) to nil)
     (let [mid (quot (+ from to) 2)]
       (if (check mid)
-        (recur check (inc mid) to)
-        (recur check from (dec mid))))))
+        (recur check from (dec mid))
+        (recur check (inc mid) to)))))
 
 ;; Parsers
 (defn lines [p] (sep-by new-line* p))
