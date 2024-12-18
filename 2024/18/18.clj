@@ -15,8 +15,7 @@
   (let [mem (reduce #(assoc-in %1 (reverse %2) \#) empty-memory bytes)]
     (:cost (astar :start [0 0]
                   :is-end #(= [70 70] %)
-                  :get-neighbors (partial neighbors mem)
-                  :heuristic #(manhattan % [70 70])))))
+                  :get-neighbors (partial neighbors mem)))))
 
 (let [bytes (parse-input (lines nums))]
 
