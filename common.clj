@@ -83,8 +83,8 @@
 (defn remove-index [vect idx]
   (into (subvec vect 0 idx) (subvec vect (inc idx))))
 
-(defn spy-with [f v] (f v) v)
-(def spy (partial spy-with pprint))
+(defn spy-with [f v] (pprint (f v)) v)
+(def spy (partial spy-with identity))
 
 (defn re-seq-indexed [pattern string]
   (let [m (re-matcher pattern string)]
@@ -109,6 +109,14 @@
   (->> (zip p1 p2)
        (map (fn [[v1 v2]] (abs (- v1 v2))))
        sum))
+
+(defn binsearch [check from to]
+  (if (= from to)
+    to
+    (let [mid (+ from (quot (- to from) 2))]
+      (if (check mid)
+        (binsearch check (inc mid) to)
+        (binsearch check from mid)))))
 
 ;; Parsers
 (defn lines [p] (sep-by new-line* p))
