@@ -23,7 +23,7 @@
   (->> (get-path (take 1024 bytes))
        (println "Part 1:"))
   
-  (->> (binsearch #(some? (get-path (take % bytes))) 1025 (count bytes))
+  (->> (binsearch #(get-path (take % bytes)) 1025 (count bytes))
        (nth bytes)
        (str/join ",")
        (println "Part 2:")))
