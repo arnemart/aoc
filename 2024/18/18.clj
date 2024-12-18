@@ -23,6 +23,7 @@
        (println "Part 1:"))
   
   (->> (binsearch #(nil? (get-path (take % bytes))) 1025 (count bytes))
+       dec
        (nth bytes)
        (str/join ",")
        (println "Part 2:")))
