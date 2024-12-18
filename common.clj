@@ -111,13 +111,13 @@
        sum))
 
 (defn binsearch 
-  "Returns the lowest number for which check returns true. Assumes (check from) returns false."
+  "Returns the lowest number for which check returns true."
   [check from to]
   (if (= from to)
     (if (check to) to nil)
     (let [mid (quot (+ from to) 2)]
       (if (check mid)
-        (recur check from (dec mid))
+        (recur check from mid)
         (recur check (inc mid) to)))))
 
 ;; Parsers
