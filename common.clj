@@ -113,7 +113,7 @@
 (defn binsearch [check from to]
   (if (= from to)
     to
-    (let [mid (+ from (quot (- to from) 2))]
+    (let [mid (quot (+ from to) 2)]
       (if (check mid)
         (binsearch check (inc mid) to)
         (binsearch check from mid)))))
