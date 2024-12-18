@@ -115,8 +115,8 @@
     to
     (let [mid (quot (+ from to) 2)]
       (if (check mid)
-        (binsearch check (inc mid) to)
-        (binsearch check from mid)))))
+        (recur check (inc mid) to)
+        (recur check from mid)))))
 
 ;; Parsers
 (defn lines [p] (sep-by new-line* p))
