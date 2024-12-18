@@ -1,7 +1,7 @@
 (ns aoc.2024.18.18 
   (:require
    [aoc.astar :refer [astar]]
-   [aoc.common :refer [++ binsearch lines manhattan nums parse-input]]
+   [aoc.common :refer [++ binsearch lines nums parse-input]]
    [clojure.string :as str]))
 
 (defn neighbors [memory p]
