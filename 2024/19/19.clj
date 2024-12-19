@@ -1,7 +1,6 @@
 (ns aoc.2024.19.19
   (:require
-   [aoc.common :refer [any-word comma-or-space-sep lines
-                       parse-input]]
+   [aoc.common :refer [any-word comma-or-space-sep lines parse-input]]
    [blancas.kern.core :refer [<$> <*> >> new-line*]]
    [clojure.string :as str]))
 
@@ -13,12 +12,26 @@
                   (subs design (count %))))
          (some (partial possible towels)))))
 
-(let [[all-towels designs] (parse-input (<*> (<$> set (comma-or-space-sep any-word))
-                                             (>> new-line* new-line*
-                                                 (lines any-word))))
-      towels (->> all-towels (filter #(not (possible (disj all-towels %) %))) set)
-      possible-designs (filter (partial possible towels) designs)]
+(def count-combinations
+  (memoize
+   (fn [towels design]
+     (if (= "" design)
+       1
+       (->> towels
+            (keep #(when (str/starts-with? design %)
+                     (subs design (count %))))
+            (map #(count-combinations towels %))
+            (apply +))))))
+
+(let [[towels designs] (parse-input (<*> (<$> set (comma-or-space-sep any-word))
+                                         (>> new-line* new-line*
+                                             (lines any-word))))
+      simple-towels (->> towels (filter #(not (possible (disj towels %) %))))
+      possible-designs (filter (partial possible simple-towels) designs)]
+
+  (println "Part 1:" (count possible-designs))
 
   (->> possible-designs
-       count
-       (println "Part 1:")))
+       (map (partial count-combinations towels))
+       (apply +)
+       (println "Part 2:")))
