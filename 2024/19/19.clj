@@ -1,7 +1,7 @@
 (ns aoc.2024.19.19
   (:require
    [aoc.common :refer [any-word comma-or-space-sep lines parse-input]]
-   [blancas.kern.core :refer [<$> <*> >> new-line*]]
+   [blancas.kern.core :refer [<*> >> new-line*]]
    [clojure.string :as str]))
 
 (def count-combinations
@@ -15,7 +15,7 @@
             (map #(count-combinations towels %))
             (apply +))))))
 
-(let [[towels designs] (parse-input (<*> (<$> set (comma-or-space-sep any-word))
+(let [[towels designs] (parse-input (<*> (comma-or-space-sep any-word)
                                          (>> new-line* new-line*
                                              (lines any-word))))
       combinations (->> designs
