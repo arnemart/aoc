@@ -26,8 +26,8 @@
 (let [[towels designs] (parse-input (<*> (<$> set (comma-or-space-sep any-word))
                                          (>> new-line* new-line*
                                              (lines any-word))))
-      simple-towels (->> towels (filter #(not (possible (disj towels %) %))))
-      possible-designs (filter (partial possible simple-towels) designs)]
+      elemental-towels (filter #(not (possible (disj towels %) %)) towels)
+      possible-designs (filter (partial possible elemental-towels) designs)]
 
   (println "Part 1:" (count possible-designs))
 
