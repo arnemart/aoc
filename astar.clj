@@ -25,7 +25,7 @@
           (and (= 0 (count priorities))
                (> 0 (count closed-map)))) nil
       ;; Done!
-      (is-end (:data node)) {:cost (:g node) :path (reconstruct-path node) :visited closed-map}
+      (is-end (:data node)) {:cost (:g node) :path (reconstruct-path node) :visited (->> closed-map (map (fn [[_ v]] [(:data v) v])) (into {}))}
       ;; Not done yet
       :else
       (let [hashed-data (hash (:data node))
@@ -34,7 +34,7 @@
             [priorities open-map]
             (->> (get-neighbors (:data node))
                  (filter #(not (contains? closed-map (hash %))))
-                 ;; Validate path to this neighbor if we have a valid-path?-function to call
+                 ;; Validate path to this neighbor if we have a validate-path-function to call
                  (filter #(if (some? validate-path)
                             (validate-path (reconstruct-path {:data % :parent node}))
                             true))
@@ -42,10 +42,12 @@
                   (fn [[priorities open-map] neighbor-data]
                     (let [neighbor-hash (hash neighbor-data)
                           g-from-this-node (+ (:g node) (calculate-cost (:data node) neighbor-data))]
-                      (if (and (contains? open-map neighbor-hash)
-                               (< (get-in open-map [neighbor-hash :g]) g-from-this-node))
-                        ;; We have seen this node before and already have a faster path to it
+                      (if
+                       ;; We have seen this node before and already have a faster path to it
+                       (and (contains? open-map neighbor-hash)
+                            (< (get-in open-map [neighbor-hash :g]) g-from-this-node))
                         [priorities open-map]
+
                         (let [new-neighbor-node {:data neighbor-data
                                                  :parent node
                                                  :g g-from-this-node
