@@ -23,21 +23,19 @@
                           (filter #(contains? #{\. \E} (get-in maze %)))))))
 
 (defn cheats [maze {visited :visited honest-cost :cost path :path} deltas]
-  (let [honest-path (reverse path)]
-    (->> (range 1 (count honest-path))
-         (mapcat (fn [i]
-                   (let [path (take i honest-path)
-                         current (last path)
-                         cost-here (get-in visited [current :g])]
-                     (->> deltas
-                          (map (fn [[p c]] [(++ p current) c]))
-                          (filter #(contains? #{\. \E} (get-in maze (first %))))
-                          (map (fn [[p c]] [(get-in visited [p :g] honest-cost) c]))
-                          (filter #(> (first %) cost-here))
-                          (map #(+ (last %) (- honest-cost (- (first %) cost-here))))))))
-         (map #(- honest-cost %))
-         (filter #(>= % 100))
-         count)))
+  (->> (range 1 (count path))
+       (mapcat (fn [i]
+                 (let [current (nth path i)
+                       cost-here (get-in visited [current :g])]
+                   (->> deltas
+                        (map (fn [[p c]] [(++ p current) c]))
+                        (filter #(contains? #{\. \E} (get-in maze (first %))))
+                        (map (fn [[p c]] [(get-in visited [p :g] honest-cost) c]))
+                        (filter #(> (first %) cost-here))
+                        (map #(+ (last %) (- honest-cost (- (first %) cost-here))))))))
+       (map #(- honest-cost %))
+       (filter #(>= % 100))
+       count))
 
 (let [maze (parse-input (lines (many (one-of* ".#SE"))))
       [start end] (get-start-end maze)
