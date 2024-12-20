@@ -22,13 +22,18 @@
          (fn [[y x]] (->> [[(inc y) x] [(dec y) x] [y (inc x)] [y (dec x)]]
                           (filter #(contains? #{\. \E} (get-in maze %)))))))
 
-(defn cheats [honest-path visited honest-cost count-fn]
+(defn cheats [maze honest-path visited honest-cost deltas]
   (->> (range 1 (count honest-path))
        (mapcat (fn [i]
                  (let [path (take i honest-path)
                        current (last path)
                        cost-here (get-in visited [current :g])]
-                   (count-fn current cost-here))))
+                   (->> deltas
+                        (map (fn [[p c]] [(++ p current) c]))
+                        (filter #(contains? #{\. \E} (get-in maze (first %))))
+                        (map (fn [[p c]] [(get-in visited [p :g] honest-cost) c]))
+                        (filter #(> (first %) cost-here))
+                        (map #(+ (last %) (- honest-cost (- (first %) cost-here))))))))
        (map #(- honest-cost %))
        (filter #(>= % 100))
        count))
@@ -36,27 +41,12 @@
 (let [maze (parse-input (lines (many (one-of* ".#SE"))))
       [start end] (get-start-end maze)
       {visited :visited honest-cost :cost path :path} (get-path start end maze)
-      honest-path (reverse path)
-      deltas (->> (cartesian-product (range -20 21) (range -20 21))
-                  (map #(vector % (manhattan [0 0] %)))
-                  (filter #(<= 2 (last %) 20)))]
+      honest-path (reverse path)]
 
-  (println "Part 1:"
-           (cheats honest-path visited honest-cost
-                   (fn [current cost-here]
-                     (->> [[2 0] [-2 0] [0 2] [0 -2]]
-                          (map #(++ % current))
-                          (filter #(contains? #{\. \E} (get-in maze %)))
-                          (map #(get-in visited [% :g] honest-cost))
-                          (filter #(> % cost-here))
-                          (map #(+ 2 (- honest-cost (- % cost-here))))))))
+  (println "Part 1:" (cheats maze honest-path visited honest-cost
+                             [[[2 0] 2] [[-2 0] 2] [[0 2] 2] [[0 -2] 2]]))
 
-  (println "Part 2:"
-           (cheats honest-path visited honest-cost
-                   (fn [current cost-here]
-                     (->> deltas
-                          (map (fn [[p c]] [(++ p current) c]))
-                          (filter #(contains? #{\. \E} (get-in maze (first %))))
-                          (map (fn [[p c]] [(get-in visited [p :g] honest-cost) c]))
-                          (filter #(> (first %) cost-here))
-                          (map #(+ (last %) (- honest-cost (- (first %) cost-here)))))))))
+  (println "Part 2:" (cheats maze honest-path visited honest-cost
+                             (->> (cartesian-product (range -20 21) (range -20 21))
+                                  (map #(vector % (manhattan [0 0] %)))
+                                  (filter #(<= 2 (last %) 20))))))
