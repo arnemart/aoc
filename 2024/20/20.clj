@@ -22,41 +22,41 @@
          (fn [[y x]] (->> [[(inc y) x] [(dec y) x] [y (inc x)] [y (dec x)]]
                           (filter #(contains? #{\. \E} (get-in maze %)))))))
 
-(defn cheats [no-cheating-path visited no-cheating-cost count-fn]
-  (->> (range 1 (count no-cheating-path))
+(defn cheats [cheatless-path visited cheatless-cost count-fn]
+  (->> (range 1 (count cheatless-path))
        (mapcat (fn [i]
-                 (let [path (take i no-cheating-path)
+                 (let [path (take i cheatless-path)
                        current (last path)
                        cost-here (get-in visited [current :g])]
                    (count-fn current cost-here))))
-       (map #(- no-cheating-cost %))
+       (map #(- cheatless-cost %))
        (filter #(>= % 100))
        count))
 
 (let [maze (parse-input (lines (many (one-of* ".#SE"))))
       [start end] (get-start-end maze)
-      {visited :visited no-cheating-cost :cost -path :path} (get-path start end maze)
-      no-cheating-path (reverse -path)
+      {visited :visited cheatless-cost :cost -path :path} (get-path start end maze)
+      cheatless-path (reverse -path)
       deltas (->> (cartesian-product (range -20 21) (range -20 21))
                   (map #(vector % (manhattan [0 0] %)))
                   (filter #(<= 2 (last %) 20)))]
 
   (println "Part 1:"
-           (cheats no-cheating-path visited no-cheating-cost
+           (cheats cheatless-path visited cheatless-cost
                    (fn [current cost-here]
                      (->> [[2 0] [-2 0] [0 2] [0 -2]]
                           (map #(++ % current))
                           (filter #(contains? #{\. \E} (get-in maze %)))
-                          (map #(get-in visited [% :g] no-cheating-cost))
+                          (map #(get-in visited [% :g] cheatless-cost))
                           (filter #(> % cost-here))
-                          (map #(+ 2 (- no-cheating-cost (- % cost-here))))))))
+                          (map #(+ 2 (- cheatless-cost (- % cost-here))))))))
 
   (println "Part 2:"
-           (cheats no-cheating-path visited no-cheating-cost
+           (cheats cheatless-path visited cheatless-cost
                    (fn [current cost-here]
                      (->> deltas
                           (map (fn [[p c]] [(++ p current) c]))
                           (filter #(contains? #{\. \E} (get-in maze (first %))))
-                          (map (fn [[p c]] [(get-in visited [p :g] no-cheating-cost) c]))
+                          (map (fn [[p c]] [(get-in visited [p :g] cheatless-cost) c]))
                           (filter #(> (first %) cost-here))
-                          (map #(+ (last %) (- no-cheating-cost (- (first %) cost-here)))))))))
+                          (map #(+ (last %) (- cheatless-cost (- (first %) cost-here)))))))))
