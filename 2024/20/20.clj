@@ -3,21 +3,12 @@
    [aoc.astar :refer [astar]]
    [aoc.common :refer [++ lines manhattan parse-input]]
    [blancas.kern.core :refer [many one-of*]]
-   [clojure.math.combinatorics :refer [cartesian-product]]))
+   [clojure.math.combinatorics :refer [cartesian-product]]
+   [medley.core :refer [find-first]]))
 
-(defn get-start-end [maze]
-  (->> (cartesian-product (range (count maze)) (range (count (first maze))))
-       (reduce (fn [[s e] p]
-                 (if (and s e) (reduced [s e])
-                     (case (get-in maze p)
-                       \S [p e]
-                       \E [s p]
-                       [s e])))
-               [nil nil])))
-
-(defn get-path [start end maze]
+(defn get-path [start maze]
   (astar :start start
-         :is-end (partial = end)
+         :is-end #(= \E (get-in maze %))
          :get-neighbors
          (fn [[y x]] (->> [[(inc y) x] [(dec y) x] [y (inc x)] [y (dec x)]]
                           (filter #(contains? #{\. \E} (get-in maze %)))))))
@@ -38,8 +29,9 @@
        count))
 
 (let [maze (parse-input (lines (many (one-of* ".#SE"))))
-      [start end] (get-start-end maze)
-      honest-attempt (get-path start end maze)]
+      start (->> (cartesian-product (range (count maze)) (range (count (first maze))))
+                 (find-first #(= \S (get-in maze %))))
+      honest-attempt (get-path start maze)]
 
   (println "Part 1:" (cheats maze honest-attempt
                              [[[2 0] 2] [[-2 0] 2] [[0 2] 2] [[0 -2] 2]]))
