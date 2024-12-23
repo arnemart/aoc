@@ -6,12 +6,12 @@
 (def paths
   {[\A \^] "<" [\A \>] "v" [\A \v] "<v" [\A \<] "v<<"
    [\< \v] ">" [\< \>] ">>" [\< \^] ">^" [\< \A] ">>^"
-   [\v \<] "<" [\v \>] ">" [\v \^] "^" [\v \A] ">^"
+   [\v \<] "<" [\v \>] ">" [\v \^] "^" [\v \A] "^>"
    [\> \<] "<<" [\> \v] "<" [\> \^] "<^" [\> \A] "^"
-   [\^ \<] "<v" [\^ \v] "v" [\^ \>] "v>" [\^ \A] ">"
+   [\^ \<] "v<" [\^ \v] "v" [\^ \>] "v>" [\^ \A] ">"
    [\A \0] "<" [\A \1] "^<<" [\A \2] "<^" [\A \3] "^" [\A \4] "^^<<" [\A \5] "<^^" [\A \6] "^^" [\A \7] "^^<<^" [\A 8] "^^<^" [\A \9] "^^^"
-   [\0 \1] "^<" [\0 \2] "^" [\0 \3] ">" [\0 \4] "<^^" [\0 \5] "^^" [\0 \6] ">^^" [\0 \7] "^^<^" [\0 \8] "^^^" [\0 \9] ">^^^" [\0 \A] ">"
-   [\1 \0] ">v" [\1 \2] ">" [\1 \3] ">>" [\1 \4] "^" [\1 \5] ">^" [\1 \6] ">>^" [\1 \7] "^^" [\1 \8] ">^^" [\1 \9] ">>^^" [\1 \A] ">v>"
+   [\0 \1] "^<" [\0 \2] "^" [\0 \3] ">" [\0 \4] "^<^" [\0 \5] "^^" [\0 \6] ">^^" [\0 \7] "^^<^" [\0 \8] "^^^" [\0 \9] ">^^^" [\0 \A] ">"
+   [\1 \0] ">v" [\1 \2] ">" [\1 \3] ">>" [\1 \4] "^" [\1 \5] ">^" [\1 \6] ">>^" [\1 \7] "^^" [\1 \8] ">^^" [\1 \9] ">>^^" [\1 \A] ">>v"
    [\2 \0] "v" [\2 \1] "<" [\2 \3] ">" [\2 \4] "<^" [\2 \5] "^" [\2 \6] "^>" [\2 \7] "<^^" [\2 \8] "^^" [\2 \9] ">^^" [\2 \A] "v>"
    [\3 \0] "<v" [\3 \1] "<<" [\3 \2] "<" [\3 \4] "<<^" [\3 \5] "<^" [\3 \6] "^" [\3 \7] "<<^^" [\3 \8] "<^^" [\3 \9] "^^" [\3 \A] "v"
    [\4 \0] ">vv" [\4 \1] "v" [\4 \2] "v>" [\4 \3] "v>>" [\4 \5] ">" [\4 \6] ">>" [\4 \7] "^" [\4 \8] "^>" [\4 \9] ">>^" [\4 \A] "v>v>"
@@ -21,34 +21,28 @@
    [\8 \0] "vvv" [\8 \1] "<vv" [\8 \2] "vv" [\8 \3] "vv>" [\8 \4] "<v" [\8 \5] "v" [\8 \6] "v>" [\8 \7] "<" [\8 \9] ">" [\8 \A] "vvv>"
    [\9 \0] "<vvv" [\9 \1] "<<vv" [\9 \2] "<vv" [\9 \3] "vv" [\9 \4] "<<v" [\9 \5] "<v" [\9 \6] "v" [\9 \7] "<<" [\9 \8] "<" [\9 \A] "vvv"})
 
-(def path-for-code 
+(declare get-path)
+
+(def get-path-part
   (memoize
-   (fn [code]
-     (->> (concat [\A] code)
-          (partition 2 1)
-          (map #(get paths %))
-          (mapcat #(concat % [\A]))))))
+   (fn [depth p]
+     (if (zero? depth)
+       (inc (count (get paths p)))
+       (get-path (dec depth)
+                 (concat (get paths p) [\A]))))))
 
-(apply str (path-for-code (path-for-code (path-for-code "379A"))))
-(apply str (path-for-code "179A"))
+(defn get-path [depth code]
+  (->> (concat [\A] code)
+       (partition 2 1)
+       (map (partial get-path-part depth))
+       (apply +)))
 
-(defn many-keypads [n code]
-  (->> code
-       (iterate path-for-code)
-       (take (+ 2 n))
-       last
-       count))
-
-(let [codes (parse-input (lines (many alpha-num)))]
+(defn complexities [codes depth]
   (->> codes
        (map #(* (parse-long (apply str (drop-last %)))
-                (many-keypads 2 %)))
-       (apply +)
-       (println "Part 1:"))
-  
-  ;; (->> codes
-  ;;      (map #(* (parse-long (apply str (drop-last %)))
-  ;;               (many-keypads 25 %)))
-  ;;      (apply +)
-  ;;      (println "Part 1:"))
-  )
+                (get-path depth %)))
+       (apply +)))
+
+(let [codes (parse-input (lines (many alpha-num)))]
+  (println "Part 1:" (complexities codes 2))
+  (println "Part 2:" (complexities codes 25)))
