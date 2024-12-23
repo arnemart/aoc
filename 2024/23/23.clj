@@ -1,6 +1,6 @@
 (ns aoc.2024.23.23 
   (:require
-   [aoc.common :refer [any-word lines parse-input spy]]
+   [aoc.common :refer [any-word lines parse-input]]
    [blancas.kern.core :refer [<*> >> any-char]]
    [clojure.math.combinatorics :refer [combinations]]
    [clojure.string :as str]
@@ -37,7 +37,6 @@
 
   (->> (groups computers conns)
        (sort-by count)
-       spy
        last
        sort
        (str/join ",")
