@@ -30,18 +30,19 @@
 
   (->> (cartesian-product (range (count maze)) (range (count (first maze))))
        (filter #(= \. (get-in maze %)))
-       (filter (fn [[y x]]
-                 (->> [\> \^ \< \v]
-                      (some (fn [d]
-                              (let [from-start (get-path maze [sy sx \>] #(= [y x d] %))
-                                    h (manhattan [y x] end)]
-                                (if (and (some? from-start)
-                                         (<= (+ h (:cost from-start)) shortest-path))
-                                  (let [to-end (get-path maze (first (:path from-start)) #(= end (drop-last %)))]
-                                    (if to-end
-                                      (= shortest-path (+ (:cost from-start) (:cost to-end)))
-                                      false))
-                                  false)))))))
+       (pmap (fn [[y x]]
+               (->> [\> \^ \< \v]
+                    (some (fn [d]
+                            (let [from-start (get-path maze [sy sx \>] #(= [y x d] %))
+                                  h (manhattan [y x] end)]
+                              (if (and (some? from-start)
+                                       (<= (+ h (:cost from-start)) shortest-path))
+                                (let [to-end (get-path maze (first (:path from-start)) #(= end (drop-last %)))]
+                                  (if to-end
+                                    (= shortest-path (+ (:cost from-start) (:cost to-end)))
+                                    false))
+                                false)))))))
+       (filter true?)
        count
        (+ 2)
        (println "Part 2:")))
