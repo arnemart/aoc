@@ -14,10 +14,7 @@
 
 (defn get-output [inputs outputs]
   (let [GET (memoize
-             (fn [w]
-               (if-let [o (get inputs w)]
-                 o
-                 (eval (get outputs w)))))
+             (fn [w] (or (get inputs w) (eval (get outputs w)))))
         AND (fn [a b]
               (if (and (= 1 (GET a)) (= 1 (GET b))) 1 0))
         OR (fn [a b]
