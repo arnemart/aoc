@@ -6,7 +6,7 @@
 
 (defn key-fits [[key lock]]
   (->> (zip key lock)
-       (every? (fn [[k l]] (or (= k \.) (= l \.))))))
+       (every? #(some (partial = \.) %))))
 
 (let [{keys \. locks \#} (parse-input (<$> (partial group-by first)
                                            (lines (many (<< (one-of* "#.") (optional new-line*))))))]
