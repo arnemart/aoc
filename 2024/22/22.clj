@@ -42,8 +42,7 @@
       diffs (->> two-thousand
                  (map diffs))
       change-candidates (->> diffs
-                             (map candidates)
-                             (apply concat)
+                             (mapcat candidates)
                              frequencies
                              (filter (fn [[_ c]] (> c 110)))
                              (map first)
