@@ -14,18 +14,18 @@
   (= c (get-in grid (++ p [dx dy]))))
 
 (defn find-xmas [grid p]
-  (let [🎅 (partial find-in-grid grid p)]
-    (->>
-     [(and (🎅 :M  0  1) (🎅 :A  0  2) (🎅 :S  0  3)) ; e
-      (and (🎅 :M  1  1) (🎅 :A  2  2) (🎅 :S  3  3)) ; se
-      (and (🎅 :M  1  0) (🎅 :A  2  0) (🎅 :S  3  0)) ; s
-      (and (🎅 :M  1 -1) (🎅 :A  2 -2) (🎅 :S  3 -3)) ; sw
-      (and (🎅 :M  0 -1) (🎅 :A  0 -2) (🎅 :S  0 -3)) ; w
-      (and (🎅 :M -1 -1) (🎅 :A -2 -2) (🎅 :S -3 -3)) ; nw
-      (and (🎅 :M -1  0) (🎅 :A -2  0) (🎅 :S -3  0)) ; n
-      (and (🎅 :M -1  1) (🎅 :A -2  2) (🎅 :S -3 3))] ; ne
-     (filter true?)
-     count)))
+  (->>
+   [[[:M  0  1] [:A  0  2] [:S  0  3]] ; e
+    [[:M  1  1] [:A  2  2] [:S  3  3]] ; se
+    [[:M  1  0] [:A  2  0] [:S  3  0]] ; s
+    [[:M  1 -1] [:A  2 -2] [:S  3 -3]] ; sw
+    [[:M  0 -1] [:A  0 -2] [:S  0 -3]] ; w
+    [[:M -1 -1] [:A -2 -2] [:S -3 -3]] ; nw
+    [[:M -1  0] [:A -2  0] [:S -3  0]] ; n
+    [[:M -1  1] [:A -2  2] [:S -3  3]]]; ne
+   (map #(map (partial apply find-in-grid grid p) %))
+   (filter #(every? true? %))
+   count))
 
 (defn find-x-mas [grid p]
   (let [🤶 (partial find-in-grid grid p)]

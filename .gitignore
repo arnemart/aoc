@@ -3,7 +3,7 @@ node_modules
 .cpcache
 .lsp
 .vscode
-.clj-kondo
+.clj-kondo/.cache
 .nrepl-port
 **/input.txt
 **/img/

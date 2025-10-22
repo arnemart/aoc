@@ -1,0 +1,1 @@
+{:lint-as {blancas.kern.core/bind clojure.core/let}}
