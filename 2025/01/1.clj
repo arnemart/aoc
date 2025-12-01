@@ -1,10 +1,10 @@
 (ns aoc.2025.01.1
   (:require
    [aoc.common :refer [lines parse-input]]
-   [blancas.kern.core :refer [<*> dec-num one-of*]]))
+   [blancas.kern.core :refer [<$> <*> dec-num one-of*]]))
 
-(let [turns (->> (parse-input (lines (<*> (one-of* "LR") dec-num)))
-                 (map (fn [[dir dist]] (if (= \L dir) (- dist) dist))))
+(let [turns (->> (parse-input (lines (<*> (<$> #(get {\L - \R +} %1) (one-of* "LR")) dec-num)))
+                 (map (comp eval seq)))
 
       zeroes (->> turns
                   (reduce (fn [[prev zeroes-1 zeroes-2] d]
