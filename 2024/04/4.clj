@@ -34,16 +34,16 @@
          (or (and (🤶 :M  1 -1) (🤶 :S -1  1))
              (and (🤶 :M -1  1) (🤶 :S  1 -1))))))
 
-(let [grid (parse-input (lines (many (<$> (comp keyword str) letter))))
-      xes (find-letter grid :X)
-      as (find-letter grid :A)]
+(let [grid (parse-input (lines (many (<$> (comp keyword str) letter))))]
 
-  (->> xes
+  (->> :X
+       (find-letter grid)
        (map (partial find-xmas grid))
        (apply +)
        (println "Part 1:"))
 
-  (->> as
-       (filter (partial find-x-mas grid)) 
+  (->> :A
+       (find-letter grid)
+       (filter (partial find-x-mas grid))
        count
        (println "Part 2:")))
