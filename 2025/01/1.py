@@ -1,4 +1,6 @@
-p=[int(l[1:])*{"L":-1,"R":1}[l[0]]for l in open("a").read().split()]
-s=50;z=0;x=0
-for n in p:j=s+n;x+=j==0 or abs(j)//100+(j<0 and s!=0);s=j%100;z+=s==0
-print(z,x)
+p=[(int(l[1:]),l[0])for l in open("a").read().split()]
+v=50;a=0;b=0
+for d,r in p:
+ for i in range(d):v=(v+{"L":-1,"R":1}[r])%100;b+=v==0
+ a+=v==0
+print(a,b)
