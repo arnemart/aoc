@@ -6,7 +6,9 @@ import pf.File
 to_range : Str -> List U64
 to_range = |range_str|
   nums = range_str |> Str.split_on("-") |> List.map(|s| Str.to_u64(s) ?? 0)
-  List.range({ start: At (List.first(nums) ?? 0), end: At (List.last(nums) ?? 0) })
+  when nums is
+    [first, last] -> List.range({ start: At first, end: At last })
+    _ -> []
 
 valid_1 : Num * -> Bool
 valid_1 = |num|
