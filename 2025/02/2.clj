@@ -3,21 +3,14 @@
    [aoc.common :refer [inclusive-range parse-input sum]]
    [blancas.kern.core :refer [dec-num sep-by sym*]]))
 
-(defn invalid-1 [n]
-  (re-matches #"^(\d+)\1$" (str n)))
-
-(defn invalid-2 [n]
-  (re-matches #"^(\d+)\1+$" (str n)))
+(defn valid [ids re]
+  (->> ids
+       (filter #(re-matches re (str %1)))
+       sum))
 
 (let [input (parse-input (sep-by (sym* \,) (sep-by (sym* \-) dec-num)))
       ids (->> input
                (mapcat (partial apply inclusive-range)))]
-  (->> ids
-       (filter invalid-1)
-       sum
-       (println "Part 1:"))
-
-  (->> ids
-       (filter invalid-2)
-       sum
-       (println "Part 2:")))
+  
+  (println "Part 1:" (valid ids #"^(\d+)\1$"))
+  (println "Part 2:" (valid ids #"^(\d+)\1+$")))
