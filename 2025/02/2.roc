@@ -27,7 +27,7 @@ all_equal = |list|
   when list is
     [] -> Bool.true
     [_] -> Bool.true
-    [a, b, .. as tail] -> a == b and all_equal(List.concat([b], tail))
+    [a, b, .. as tail] -> a == b and all_equal(List.prepend(tail, b))
 
 valid_2: Num * -> Bool
 valid_2 = |num|
