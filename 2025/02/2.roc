@@ -3,10 +3,6 @@ app [main!] { pf: platform "https://github.com/roc-lang/basic-cli/releases/downl
 import pf.Stdout
 import pf.File
 
-read_file! : Str => Str
-read_file! = |path|
-  File.read_utf8!(path) ?? ""
-
 parse_input : Str -> List Str
 parse_input = |input_str|
   Str.split_on(input_str, ",")
@@ -14,9 +10,7 @@ parse_input = |input_str|
 to_range : Str -> List U64 [ListWasEmpty, InvalidNumStr]
 to_range = |range_str|
   nums = Str.split_on(range_str, "-") |> List.map(|s| Str.to_u64(s) ?? 0)
-  start = List.first(nums) ?? 0
-  end = List.last(nums) ?? 0
-  List.range({ start: At start, end: At end})
+  List.range({ start: At (List.first(nums) ?? 0), end: At (List.last(nums) ?? 0)})
 
 valid_1: Num * -> Bool
 valid_1 = |num|
@@ -35,21 +29,21 @@ all_equal = |list|
     [_] -> Bool.true
     [a, b, .. as tail] -> a == b and all_equal(List.concat([b], tail))
 
-valid_2: U64 -> Bool
+valid_2: Num * -> Bool
 valid_2 = |num|
   strl = Num.to_str(num) |> Str.to_utf8()
   len = List.len(strl)
-  if len == 1 then
-    Bool.false
-  else
-    List.range({ start: At 1, end: At (len // 2)}) 
-    |> List.keep_if(|n| len % n == 0)
-    |> List.any(|n| all_equal(List.chunks_of(strl, n)))
+  when len is
+    1 -> Bool.false
+    _ -> List.range({ start: At 1, end: At (len // 2) }) 
+           |> List.keep_if(|n| len % n == 0)
+           |> List.any(|n| all_equal(List.chunks_of(strl, n)))
 
 main! = |_args|
-  ranges = read_file!("input.txt") |> parse_input
-  codes = List.join_map(ranges, to_range)
-  sum1 = List.keep_if(codes, valid_1) |> List.sum
-  sum2 = List.keep_if(codes, valid_2) |> List.sum
-  Stdout.line!("Part 1: ${Num.to_str(sum1)}, Part 2: ${Num.to_str(sum2)}")
+  codes = (File.read_utf8!("input.txt") ?? "")
+    |> parse_input
+    |> List.join_map(to_range)
+  sum1 = List.keep_if(codes, valid_1) |> List.sum |> Num.to_str
+  sum2 = List.keep_if(codes, valid_2) |> List.sum |> Num.to_str
+  Stdout.line!("Part 1: ${sum1}, Part 2: ${sum2}")
   
