@@ -3,9 +3,9 @@ app [main!] { pf: platform "https://github.com/roc-lang/basic-cli/releases/downl
 import pf.Stdout
 import pf.File
 
-to_range : Str -> List U64 [ListWasEmpty, InvalidNumStr]
+to_range : Str -> List U64
 to_range = |range_str|
-  nums = Str.split_on(range_str, "-") |> List.map(|s| Str.to_u64(s) ?? 0)
+  nums = range_str |> Str.split_on("-") |> List.map(|s| Str.to_u64(s) ?? 0)
   List.range({ start: At (List.first(nums) ?? 0), end: At (List.last(nums) ?? 0) })
 
 valid_1 : Num * -> Bool
@@ -36,10 +36,10 @@ valid_2 = |num|
       |> List.any(|n| all_equal(List.chunks_of(strl, n)))
 
 main! = |_args|
-  codes = (File.read_utf8!("input.txt") ?? "")
+  codes = File.read_utf8!("input.txt") ?? ""
     |> Str.split_on(",")
     |> List.join_map(to_range)
-  sum1 = List.keep_if(codes, valid_1) |> List.sum |> Num.to_str
-  sum2 = List.keep_if(codes, valid_2) |> List.sum |> Num.to_str
+  sum1 = codes |> List.keep_if(valid_1) |> List.sum |> Num.to_str
+  sum2 = codes |> List.keep_if(valid_2) |> List.sum |> Num.to_str
   Stdout.line!("Part 1: ${sum1}, Part 2: ${sum2}")
   
