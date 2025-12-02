@@ -3,10 +3,6 @@ app [main!] { pf: platform "https://github.com/roc-lang/basic-cli/releases/downl
 import pf.Stdout
 import pf.File
 
-parse_input : Str -> List Str
-parse_input = |input_str|
-  Str.split_on(input_str, ",")
-
 to_range : Str -> List U64 [ListWasEmpty, InvalidNumStr]
 to_range = |range_str|
   nums = Str.split_on(range_str, "-") |> List.map(|s| Str.to_u64(s) ?? 0)
@@ -41,7 +37,7 @@ valid_2 = |num|
 
 main! = |_args|
   codes = (File.read_utf8!("input.txt") ?? "")
-    |> parse_input
+    |> Str.split_on(",")
     |> List.join_map(to_range)
   sum1 = List.keep_if(codes, valid_1) |> List.sum |> Num.to_str
   sum2 = List.keep_if(codes, valid_2) |> List.sum |> Num.to_str
