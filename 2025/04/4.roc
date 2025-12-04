@@ -35,9 +35,8 @@ main! = |_args|
   removable = grid
     |> Set.keep_if(|p| count_neighbors(grid, p) < 4)
     |> Set.len
-    |> Num.to_str
-  
-  final_grid = remove_neighbors(grid)
-  removed = Set.len(grid) - Set.len(final_grid) |> Num.to_str
 
-  Stdout.line!("Part 1: ${removable}, part 2: ${removed}")
+  final_grid = remove_neighbors(grid)
+  removed = Set.len(grid) - Set.len(final_grid)
+
+  Stdout.line!("Part 1: ${removable |> Num.to_str}, part 2: ${removed |> Num.to_str}")
