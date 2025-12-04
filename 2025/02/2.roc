@@ -3,14 +3,12 @@ app [main!] { pf: platform "https://github.com/roc-lang/basic-cli/releases/downl
 import pf.Stdout
 import pf.File
 
-to_range : Str -> List U64
 to_range = |range_str|
   nums = range_str |> Str.split_on("-") |> List.map(|s| Str.to_u64(s) ?? 0)
   when nums is
     [first, last] -> List.range({ start: At first, end: At last })
     _ -> []
 
-valid_1 : Num * -> Bool
 valid_1 = |num|
   strl = Num.to_str(num) |> Str.to_utf8
   len = List.len(strl)
@@ -20,14 +18,13 @@ valid_1 = |num|
     half = len // 2
     List.sublist(strl, { start: 0, len: half }) ==  List.sublist(strl, { start: half, len: half })
 
-all_equal : List (List a) -> Bool where a implements Bool.Eq
 all_equal = |list|
   when list is
     [] -> Bool.true
     [_] -> Bool.true
     [a, b, .. as tail] -> a == b and all_equal(List.prepend(tail, b))
 
-valid_2 : Num * -> Bool
+
 valid_2 = |num|
   strl = Num.to_str(num) |> Str.to_utf8()
   len = List.len(strl)

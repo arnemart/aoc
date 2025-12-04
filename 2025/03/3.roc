@@ -3,17 +3,14 @@ app [main!] { pf: platform "https://github.com/roc-lang/basic-cli/releases/downl
 import pf.Stdout
 import pf.File
 
-line_to_digits: Str -> List U8
 line_to_digits = |line|
   Str.to_utf8(line) |> List.map(|d| d - 48)
 
-max_indexed: List U8, U64, (U64, U8) -> (U64, U8)
 max_indexed = |list, i, (max_i, max_n)|
   when list is
     [] -> (max_i, max_n)
     [n, .. as rest] -> max_indexed(rest, i + 1, (if n > max_n then (i, n) else (max_i, max_n)))
 
-joltage: U64, List U8 -> Str
 joltage = |more, batteries|
   if more == 0 then
     ""
@@ -23,7 +20,6 @@ joltage = |more, batteries|
       |> max_indexed(0, (0, 0))
     Num.to_str(first_n) |> Str.concat(joltage(more - 1, List.drop_first(batteries, first_i + 1)))
 
-get_joltage: U64, List(List U8) -> Str
 get_joltage = |count, batteries|
   batteries
     |> List.map(|b| joltage(count, b))
