@@ -24,7 +24,6 @@ all_equal = |list|
     [_] -> Bool.true
     [a, b, .. as tail] -> a == b and all_equal(List.prepend(tail, b))
 
-
 valid_2 = |num|
   strl = Num.to_str(num) |> Str.to_utf8()
   len = List.len(strl)
