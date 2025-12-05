@@ -1,25 +1,24 @@
 (ns aoc.2025.05.5
   (:require
-   [aoc.common :refer [lines parse-input remove-index]]
+   [aoc.common :refer [lines parse-input]]
    [blancas.kern.core :refer [<$> <*> << dec-num many-till new-line* sep-by sym*]]))
 
 (defn in-range [ranges ingredient]
   (->> ranges
        (some (fn [[from to]] (<= from ingredient to)))))
 
-(defn shrink-ranges [ranges]
-  (loop [i 1 ranges ranges]
-    (if (>= i (count ranges))
-      ranges
-      (let [[start end] (nth ranges i)
-            [_ test-end] (nth ranges (dec i))]
-        (cond
-          (<= end test-end)  (recur i (remove-index ranges i))                          ; full overlapp
-          (> start test-end) (recur (inc i) ranges)                                     ; null overlapp
-          :else              (recur (inc i) (assoc ranges i [(inc test-end) end]))))))) ; litt overlapp
+(defn shrink-ranges [[range & ranges]]
+  (->> ranges
+       (reduce (fn [ranges [start end]]
+                 (let [[_ test-end] (last ranges)]
+                   (cond
+                     (<= end test-end)  ranges                                ; full overlapp
+                     (> start test-end) (conj ranges [start end])             ; null overlapp
+                     :else              (conj ranges [(inc test-end) end])))) ; litt overlapp
+               [range])))
 
 (let [[ranges ingredients] (parse-input
-                            (<*> (<$> (comp vec (partial sort-by first))
+                            (<*> (<$> (partial sort-by first)
                                       (many-till (<< (sep-by (sym* \-) dec-num) new-line*) new-line*))
                                  (lines dec-num)))]
   (->> ingredients
