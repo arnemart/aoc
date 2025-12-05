@@ -1,44 +1,31 @@
 (ns aoc.2025.05.5
   (:require
-   [aoc.common :refer [lines parse-input]]
+   [aoc.common :refer [lines parse-input remove-index]]
    [blancas.kern.core :refer [<$> <*> << dec-num many-till new-line* sep-by sym*]]))
 
 (defn in-range [ranges ingredient]
   (->> ranges
        (some (fn [[from to]] (<= from ingredient to)))))
 
-(defn shrink-range [ranges range]
-  (->> ranges
-       (filter (partial not= range))
-       (reduce (fn [[start end] [test-start test-end]]
-                 (cond
-                   (or (< end test-start) (> start test-end)) [start end]       ; outside, skip
-                   (and (>= start test-start) (<= end test-end)) (reduced nil)  ; completely contained, delete
-                   (<= end test-end) [start (dec test-start)]                   ; shrink from end
-                   (>= start test-start) [(inc test-end) end]                   ; shrink from start
-                   :else [start end]))
-               range)))
+(defn shrink-range [[start end] [_ test-end]]
+  (cond
+    (<= end test-end)   nil                  ; full overlapp
+    (> start test-end)  [start end]          ; null overlapp 
+    (<= start test-end) [(inc test-end) end] ; litt overlapp
+    :else [start end]))
 
 (defn shrink-all-ranges [ranges]
-  (loop [i 0 ranges (vec ranges)]
+  (loop [i 1 ranges ranges]
     (if (>= i (count ranges))
       ranges
-      (let [shrinked (shrink-range ranges (nth ranges i))]
-        (recur (inc i)
-               (->> (assoc ranges i shrinked) (filter some?) vec))))))
-
-(defn sum-ranges [ranges]
-  (->> ranges
-       (map #(inc (abs (apply - %1))))
-       (apply +)))
-
-(defn iterate-until-stable [f test v]
-  (reduce #(let [ra (test %1) rb (test %2)]
-             (if (= ra rb) (reduced ra) %2))
-          (iterate f v)))
+      (let [shrunk (shrink-range (nth ranges i) (nth ranges (dec i)))]
+        (if (nil? shrunk)
+          (recur i (remove-index ranges i))
+          (recur (inc i) (assoc ranges i shrunk)))))))
 
 (let [[ranges ingredients] (parse-input
-                            (<*> (<$> set (many-till (<< (sep-by (sym* \-) dec-num) new-line*) new-line*))
+                            (<*> (<$> (comp vec (partial sort-by first) set)
+                                      (many-till (<< (sep-by (sym* \-) dec-num) new-line*) new-line*))
                                  (lines dec-num)))]
   (->> ingredients
        (filter (partial in-range ranges))
@@ -46,5 +33,7 @@
        (println "Part 1:"))
 
   (->> ranges
-       (iterate-until-stable shrink-all-ranges sum-ranges)
+       shrink-all-ranges
+       (map #(inc (abs (apply - %1))))
+       (apply +)
        (println "Part 2:")))
