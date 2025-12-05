@@ -7,15 +7,15 @@
   (->> ranges
        (some (fn [[from to]] (<= from ingredient to)))))
 
-(defn shrink-ranges [[range & ranges]]
-  (->> ranges
+(defn shrink-ranges [[first & rest]]
+  (->> rest
        (reduce (fn [ranges [start end]]
-                 (let [[_ test-end] (last ranges)]
+                 (let [[_ test-end] (peek ranges)]
                    (cond
                      (<= end test-end)  ranges                                ; full overlapp
                      (> start test-end) (conj ranges [start end])             ; null overlapp
                      :else              (conj ranges [(inc test-end) end])))) ; litt overlapp
-               [range])))
+               [first])))
 
 (let [[ranges ingredients] (parse-input
                             (<*> (<$> (partial sort-by first)
