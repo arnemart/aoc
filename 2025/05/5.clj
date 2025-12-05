@@ -32,13 +32,10 @@
        (map #(inc (abs (apply - %1))))
        (apply +)))
 
-(defn iterate-until-stable
-  ([f v] (iterate-until-stable f identity v))
-  ([f test v]
-   (reduce (fn [a b]
-             (let [ra (test a) rb (test b)]
-               (if (= ra rb) (reduced ra) b)))
-           (iterate f v))))
+(defn iterate-until-stable [f test v]
+  (reduce #(let [ra (test %1) rb (test %2)]
+             (if (= ra rb) (reduced ra) %2))
+          (iterate f v)))
 
 (let [[ranges ingredients] (parse-input
                             (<*> (<$> set (many-till (<< (sep-by (sym* \-) dec-num) new-line*) new-line*))
