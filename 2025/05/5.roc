@@ -24,19 +24,18 @@ in_ranges = |ranges, ingredient|
     |> List.any |(start, end)| 
       start <= ingredient and ingredient <= end
 
-shrink_ranges = |ranges, i|
-  if i >= List.len ranges then
-    ranges
-  else
-    (_, prev_end) = List.get ranges (i - 1) ?? (0, 0)
-    (start, end) = List.get ranges i ?? (0, 0)
-
-    if end <= prev_end then
-      shrink_ranges (ranges |> List.drop_at i) i
-    else if start > prev_end then
-      shrink_ranges ranges (i + 1)
-    else
-      shrink_ranges (ranges |> List.set i (prev_end + 1, end)) (i + 1)
+shrink_ranges = |start_ranges|
+  when start_ranges is
+    [first, .. as rest] -> rest
+      |> List.walk [first] |ranges, (start, end)|
+        (_, prev_end) = List.last ranges ?? (0, 0)
+        if end <= prev_end then
+          ranges
+        else if start > prev_end then
+          ranges |> List.append (start, end)
+        else
+          (ranges |> List.append (prev_end + 1, end))
+    _ -> []
 
 main! = |_args|
   parts = File.read_utf8! "input.txt" ?? ""
@@ -49,7 +48,7 @@ main! = |_args|
     |> List.count_if |ingredient| in_ranges ranges ingredient
   
   total_safe_ingredients = ranges
-    |> shrink_ranges 1
+    |> shrink_ranges
     |> List.map |(start, end)| end - start + 1
     |> List.sum
 
