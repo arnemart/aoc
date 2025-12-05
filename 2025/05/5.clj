@@ -1,8 +1,7 @@
 (ns aoc.2025.05.5
   (:require
    [aoc.common :refer [lines parse-input]]
-   [blancas.kern.core :refer [<$> <*> << dec-num many-till new-line* sep-by
-                              sym*]]))
+   [blancas.kern.core :refer [<$> <*> << dec-num many-till new-line* sep-by sym*]]))
 
 (defn in-range [ranges ingredient]
   (->> ranges
@@ -30,7 +29,7 @@
 
 (defn sum-ranges [ranges]
   (->> ranges
-       (map (fn ([[from to]] (inc (- to from)))))
+       (map #(inc (abs (apply - %1))))
        (apply +)))
 
 (defn iterate-until-stable
@@ -49,4 +48,6 @@
        count
        (println "Part 1:"))
 
-  (println "Part 2:" (iterate-until-stable shrink-all-ranges sum-ranges ranges)))
+  (->> ranges
+       (iterate-until-stable shrink-all-ranges sum-ranges)
+       (println "Part 2:")))
