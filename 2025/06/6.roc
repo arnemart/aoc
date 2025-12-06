@@ -31,13 +31,15 @@ take_while = |list, fn|
     [] -> []
     [v, .. as rest] -> if fn v then (List.concat [v] (take_while rest fn)) else []
 
-partition : List a, (a -> Bool), List (List a) -> List (List a)
-partition = |list, fn, grps|
-  if List.is_empty list then
-    grps
-  else
-    grp = take_while list fn
-    (partition (List.drop_first list ((List.len grp) + 1)) fn (List.append grps grp))
+partition_by : List a, (a -> Bool) -> List (List a)
+partition_by = |list, fn|
+  partition_by_internal = |lst, grps|
+    if List.is_empty lst then
+      grps
+    else
+      grp = take_while lst fn
+      (partition_by_internal (List.drop_first lst ((List.len grp) + 1)) (List.append grps grp))
+  partition_by_internal list []
 
 sum_all : List (List U128), List Str -> U128
 sum_all = |nums, ops|
@@ -69,7 +71,7 @@ main! = |_args|
     |> zip 0
     |> List.map |n| Str.from_utf8 n ?? "" |> Str.trim
     |> List.map |n| Str.to_u128 n ?? 0
-    |> partition (|n| n != 0) []
+    |> partition_by (|n| n != 0)
     |> sum_all (List.reverse ops)
 
   Stdout.line! "Part 1: ${sum_1 |> Num.to_str}\nPart 2: ${sum_2 |> Num.to_str}"
