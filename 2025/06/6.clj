@@ -4,16 +4,17 @@
    [clojure.string :as str]))
 
 (defn eval-sum [strs]
-  (->> strs
-       (map #(str/join " " %1))
-       (map #(str "(" (first %1) " " (subs %1 1) ")"))
-       (map (comp eval read-string))
-       (apply +)))
+  (as-> strs v
+    (map #(str/join " " %1) v)
+    (map #(str "(" (first %1) " " (subs %1 1) ")") v)
+    (str/join " " v)
+    (str "(+ " v ")")
+    (read-string v)
+    (eval v)))
 
 (let [input-lines (->> (read-input)
                        (tee [drop-last last])
                        (apply conj))]
-
   (->> input-lines
        (map #(str/split %1 #"\s+"))
        (apply zip)
@@ -29,4 +30,3 @@
        (map reverse)
        eval-sum
        (println "Part 2:")))
-
