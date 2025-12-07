@@ -27,20 +27,19 @@
         :else grid))
     grid))
 
-(let [grid (->> (read-input)
-                (map (comp vec seq))
-                vec)
+(let [grid (->> (read-input) (map (comp vec seq)) vec)
       search-coords (cartesian-product (range 1 (count grid)) (range (count (first grid))))
-      split-grid (->> search-coords
-                      (reduce split-beams grid))
-      with-splits (->> search-coords
-                       (filter (fn [[y x]]
-                                 (and (= \^ (get-in split-grid [y x]))
-                                      (is-beam (get-in split-grid [(dec y) x]))))))]
+      grid-with-beams (->> search-coords
+                           (reduce split-beams grid))]
 
-  (println "Part 1:" (count with-splits))
+  (->> search-coords
+       (filter (fn [[y x]]
+                 (and (= \^ (get-in grid-with-beams [y x]))
+                      (is-beam (get-in grid-with-beams [(dec y) x])))))
+       count
+       (println "Part 1:"))
 
-  (->> split-grid
+  (->> grid-with-beams
        last
        (filter number?)
        (apply +)
