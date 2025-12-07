@@ -13,7 +13,7 @@ split_line = |ops_str|
 parse_nums = |nums_str|
   nums_str
     |> split_line
-    |> List.map |s| Str.to_u128 s ?? 0
+    |> List.map |s| Str.to_u64 s ?? 0
 
 zip : List (List a), a -> List (List a)
 zip = |lists, default|
@@ -41,7 +41,7 @@ partition_by = |list, fn|
       (partition_by_internal (List.drop_first lst ((List.len grp) + 1)) (List.append grps grp))
   partition_by_internal list []
 
-sum_all : List (List U128), List Str -> U128
+sum_all : List (List U64), List Str -> U64
 sum_all = |nums, ops|
   List.range { start: At 0, end: Length (List.len nums) }
     |> List.map |i| 
@@ -70,7 +70,7 @@ main! = |_args|
       |> List.reverse
     |> zip 0
     |> List.map |n| Str.from_utf8 n ?? "" |> Str.trim
-    |> List.map |n| Str.to_u128 n ?? 0
+    |> List.map |n| Str.to_u64 n ?? 0
     |> partition_by (|n| n != 0)
     |> sum_all (List.reverse ops)
 
