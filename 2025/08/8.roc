@@ -52,11 +52,11 @@ main! = |_args|
   points = File.read_utf8! "input.txt" ?? ""
     |> Str.split_on "\n"
     |> List.map parse_line
-  
+
   distances = combinations points
     |> List.map |(a, b)| (distance a b, (a, b))
     |> List.sort_with |(a, _), (b, _)| Num.compare a b
-  
+
   after_1000 = distances |> List.take_first 1000 |> List.walk [] combine
 
   res_1 = after_1000
@@ -64,7 +64,7 @@ main! = |_args|
     |> List.sort_desc
     |> List.take_first 3
     |> List.walk 1 Num.mul
-  
+
   res_2 = distances
     |> List.drop_first 1000
     |> List.walk_until (0, after_1000) |(_, circuits), (d, ((x1, y1, z1), (x2, y2, z2)))|
@@ -73,6 +73,5 @@ main! = |_args|
         Break (x1 * x2, next_circuits)
       else
         Continue (0, next_circuits)
-  
 
   Stdout.line! "Part 1: ${res_1 |> Num.to_str}\nPart 2: ${res_2.0 |> Num.to_str}"
