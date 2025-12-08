@@ -2,14 +2,14 @@
   (:require
    [aoc.common :refer [comma-or-space-sep lines parse-input]]
    [blancas.kern.core :refer [dec-num]]
+   [clojure.math :as math]
    [clojure.math.combinatorics :as combo]
-   [clojure.math.numeric-tower :as math]
    [clojure.set :as set]))
 
 (defn distance [[[x1 y1 z1] [x2 y2 z2]]]
-  [(math/sqrt (+ (math/expt (- x1 x2) 2)
-                 (math/expt (- y1 y2) 2)
-                 (math/expt (- z1 z2) 2)))
+  [(math/sqrt (+ (math/pow (- x1 x2) 2)
+                 (math/pow (- y1 y2) 2)
+                 (math/pow (- z1 z2) 2)))
    [[x1 y1 z1] [x2 y2 z2]]])
 
 (defn combine [circuits [_ [b1 b2]]]
