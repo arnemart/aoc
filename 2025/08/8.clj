@@ -39,12 +39,12 @@
        (apply *)
        (println "Part 1:"))
 
-  (->> (loop [i 1000 circuits after-1000]
-         (if (and (= 1 (count circuits))
-                  (= (count (first circuits)) (count boxes)))
-           (get distances (dec i))
-           (recur (inc i) (combine circuits (get distances i)))))
-       last
-       (map first)
-       (apply *)
+  (->> (drop 1000 distances)
+       (reduce (fn [circuits p]
+                 (let [next-circuits (combine circuits p)]
+                   (if (and (= 1 (count next-circuits))
+                            (= (count (first next-circuits)) (count boxes)))
+                     (reduced (->> p (drop 1) first (map first) (apply *)))
+                     next-circuits)))
+               after-1000)
        (println "Part 2:")))
