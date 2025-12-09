@@ -36,6 +36,11 @@
 (defn exclusive-range [a b]
   (range (inc (min a b)) (max a b)))
 
+(defn largest-square [pairs]
+  (->> pairs
+       (map square)
+       (apply max)))
+
 (time
  (let [points (parse-input (lines nums))
        [walls corners] (->> points
@@ -53,19 +58,40 @@
                                                 (reduce conj walls)))
                                          (-> corners (conj [x1 y1 dir]) (conj [x2 y2 dir]))]))
                                     [#{} #{}]))
+
+       [[_ [div-x]]] (->> points
+                          cycle
+                          (drop 1)
+                          (zip points)
+                          (filter (fn [[[x1] [x2]]]
+                                    (> (abs (- x1 x2)) 10000))))
+
+       [div1 div2] (->> points
+                        (filter #(= div-x (first %)))
+                        sort)
+       above (->> points
+                  (filter (fn [[_ y]]
+                            (<= y (last div1))))
+                  (map #(vector div1 %)))
+       below (->> points
+                  (filter (fn [[_ y]]
+                            (>= y (last div2))))
+                  (map #(vector div2 %)))
+
        dirless-walls (->> walls (map drop-last) set)
        dirless-corners (->> corners (map drop-last) set)
        y-walls (group-by #(nth % 1) walls)
-       y-corners (group-by #(nth % 1) corners)
-       sorted (->> (combinations points 2)
-                   (sort-by square)
-                   reverse)]
-   (->> sorted
-        first
-        square
+       y-corners (group-by #(nth % 1) corners)]
+
+   (->> (combinations points 2)
+        largest-square
         (println "Part 1:"))
 
-   (->> sorted
-        (some #(when (inside dirless-walls dirless-corners y-walls y-corners %) %))
-        square
+   (->> [above, below]
+        (map (fn [p] (->> p
+                          (sort-by square)
+                          reverse
+                          (some #(when (inside dirless-walls dirless-corners y-walls y-corners %) %))
+                          square)))
+        (apply max)
         (println "Part 2:"))))
