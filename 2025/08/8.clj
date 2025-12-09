@@ -1,7 +1,6 @@
 (ns aoc.2025.08.8
   (:require
-   [aoc.common :refer [comma-or-space-sep lines parse-input]]
-   [blancas.kern.core :refer [dec-num]]
+   [aoc.common :refer [lines nums parse-input]]
    [clojure.math :as math]
    [clojure.math.combinatorics :as combo]
    [clojure.set :as set]))
@@ -22,7 +21,7 @@
           (disj found-2)
           (conj (conj (set/union found-1 found-2) b1 b2))))))
 
-(let [boxes (parse-input (lines (comma-or-space-sep dec-num)))
+(let [boxes (parse-input (lines nums))
       distances (->> (combo/combinations boxes 2)
                      (map distance)
                      (sort-by first)
