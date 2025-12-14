@@ -6,10 +6,9 @@
 (def count-paths
   (memoize (fn [devices [from to]]
              (->> (get devices from)
-                  (map (fn [dev]
-                         (if (= dev to)
-                           1
-                           (count-paths devices [dev to]))))
+                  (map #(if (= % to)
+                          1
+                          (count-paths devices [% to])))
                   (apply +)))))
 
 (let [devices (parse-input (<$> (partial into {})
