@@ -83,7 +83,7 @@
 (defn remove-index [vect idx]
   (into (subvec vect 0 idx) (subvec vect (inc idx))))
 
-(defn spy-with [f v] (pprint (f v)) v)
+(defn spy-with [f v] (locking *out* (pprint (f v))) v)
 (def spy (partial spy-with identity))
 
 (defn re-seq-indexed [pattern string]
