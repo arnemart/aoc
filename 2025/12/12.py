@@ -1,1 +1,1 @@
-print(sum(eval(l[:2]+"/8*"+l[3:5])>sum(map(int,l[7:].split()))for l in open("a")if"x"in l))
+print(sum(eval(l.translate({120:"*",58:"/8>",32:"+"}))for l in[*open("a")][31:]))
