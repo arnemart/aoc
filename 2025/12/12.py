@@ -1,1 +1,1 @@
-print(len([l for l in open("a")if"x"in l and int(l[:2])*int(l[3:5])>=sum(map(int,l[7:].split(" ")))*9]))
+print(sum(eval(l[:2]+"/8*"+l[3:5])>sum(map(int,l[7:].split()))for l in open("a")if"x"in l))
