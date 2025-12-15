@@ -10,7 +10,7 @@
                         (apply +))]
     (< shape-area region-area)))
 
-(let [parts (read-input {:split-with #"\n\n"})
+(let [parts (read-input :split-with #"\n\n")
       shapes (->> (drop-last parts)
                   (map (partial value (>> (<*> dec-num (sym* \:) new-line*)
                                           (<$> #(->> % (filter (fn [[v]] (= \# v))) (map (fn [[_ [y x]]] [(dec y) x])))

@@ -21,11 +21,6 @@
 
 (defn turn-on-machine [[_ buttons joltages]]
   (let [max-joltage (apply max joltages)
-        buttons-for-joltages (->> joltages
-                                  (map-indexed (fn [i _]
-                                                 (->> buttons
-                                                      (keep-indexed #(when (contains? %2 i) (kw %1)))
-                                                      set))))
         model (-> [; x er fra max til 2*max
                    ($in :x max-joltage (* 2 max-joltage))
                    ; x er summen av alle knappetrykkene
@@ -36,9 +31,13 @@
                                               ($in (kw i) 0
                                                    (->> joltages (keep-indexed #(when (contains? b %1) %2)) (apply min)))))))
                   ; joltagene er summen av alle knappene som påvirker joltagen
-                  (concat (->> buttons-for-joltages
-                               (map-indexed #($= (apply $+ %2) (nth joltages %1))))))]
-    
+                  (concat (map-indexed (fn [i _]
+                                         ($= (nth joltages i)
+                                             (->> buttons
+                                                  (keep-indexed #(when (contains? %2 i) (kw %1)))
+                                                  (apply $+))))
+                                       joltages)))]
+
     (:x (solution model :minimize :x :timeout (* 10 60 1000)))))
 
 (let [machines (parse-input (lines (<*>  (<$> (comp vec (partial map #(= \# %))) (<< (between (sym* \[) (sym* \]) (many (<|> (sym* \.) (sym* \#)))) white-space))
